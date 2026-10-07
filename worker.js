@@ -28,7 +28,6 @@ export default {
           }, 400);
         }
 
-        // নিরাপদ ID validation
         if (!/^[A-Za-z0-9_-]{1,100}$/.test(id)) {
           return json({
             success: false,
@@ -36,10 +35,8 @@ export default {
           }, 400);
         }
 
-        // Firebase access token
         const accessToken = await getFirebaseAccessToken(env);
 
-        // Firebase থেকে নির্দিষ্ট person
         const firebaseUrl =
           "https://jannat-projects-default-rtdb.firebaseio.com/people/" +
           encodeURIComponent(id) +
@@ -56,8 +53,7 @@ export default {
         if (!response.ok) {
           return json({
             success: false,
-            error: "Firebase request failed",
-            details: data
+            error: "Firebase request failed"
           }, 500);
         }
 
@@ -80,6 +76,130 @@ export default {
         }, 500);
       }
     }
+
+
+    // ==============================
+    // SEARCH API
+    // /api/search?q=Bipul
+    // ==============================
+    if (url.pathname === "/api/search") {
+      try {
+        const q = (url.searchParams.get("q") || "")
+          .trim()
+          .toLowerCase();
+
+        if (!q) {
+          return json({
+            success: false,
+            error: "Search query is required"
+          }, 400);
+        }
+
+        if (q.length < 2) {
+          return json({
+            success: false,
+            error: "Search query must contain at least 2 characters"
+          }, 400);
+        }
+
+        // খুব বড় query আটকানো
+        if (q.length > 100) {
+          return json({
+            success: false,
+            error: "Search query is too long"
+          }, 400);
+        }
+
+        const accessToken = await getFirebaseAccessToken(env);
+
+        const firebaseUrl =
+          "https://jannat-projects-default-rtdb.firebaseio.com/people.json";
+
+        const response = await fetch(firebaseUrl, {
+          headers: {
+            Authorization: "Bearer " + accessToken
+          }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          return json({
+            success: false,
+            error: "Firebase request failed"
+          }, 500);
+        }
+
+        if (!data || typeof data !== "object") {
+          return json({
+            success: true,
+            results: [],
+            total: 0
+          });
+        }
+
+        const results = [];
+
+        for (const [id, person] of Object.entries(data)) {
+
+          if (!person || typeof person !== "object") {
+            continue;
+          }
+
+          // শুধুমাত্র public profile search result-এ দেখাবে
+          if (person.visibility &&
+              person.visibility.toLowerCase() !== "public") {
+            continue;
+          }
+
+          const searchableText = [
+            id,
+            person.name,
+            person.father,
+            person.village,
+            person.upazilla,
+            person.zilla
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+          if (searchableText.includes(q)) {
+
+            results.push({
+              id: person.id || id,
+              name: person.name || "",
+              father: person.father || "",
+              village: person.village || "",
+              upazilla: person.upazilla || "",
+              zilla: person.zilla || "",
+              avatar: person.avatar || "",
+              gender: person.gender || "",
+              status: person.status || ""
+            });
+          }
+
+          // সর্বোচ্চ 50টি result
+          if (results.length >= 50) {
+            break;
+          }
+        }
+
+        return json({
+          success: true,
+          query: q,
+          total: results.length,
+          results: results
+        });
+
+      } catch (error) {
+        return json({
+          success: false,
+          error: error.message
+        }, 500);
+      }
+    }
+
 
     // ==============================
     // TEMPORARY FIREBASE TEST
@@ -123,6 +243,7 @@ export default {
       }
     }
 
+
     // ==============================
     // STATIC WEBSITE
     // ==============================
@@ -145,7 +266,8 @@ async function getFirebaseAccessToken(env) {
     throw new Error("FIREBASE_PRIVATE_KEY পাওয়া যায়নি");
   }
 
-  const privateKey = env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n");
+  const privateKey =
+    env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n");
 
   const pemContents = privateKey
     .replace("-----BEGIN PRIVATE KEY-----", "")
