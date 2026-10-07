@@ -3,6 +3,10 @@
   "main": "worker.js",
   "compatibility_date": "2026-10-07",
 
+  "vars": {
+    "FIREBASE_CLIENT_EMAIL": "firebase-adminsdk-fbsvc@jannat-projects.iam.gserviceaccount.com"
+  },
+
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
