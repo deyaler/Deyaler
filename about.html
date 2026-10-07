@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>বিপুল শেখ | স্মৃতির দেয়াল</title>
+
+<meta name="description"
+content="বিপুল শেখের পরিচিতি এবং স্মৃতির দেয়াল—মানুষ, পরিবার, ছবি, পরিচয় ও স্মৃতি সংরক্ষণের একটি দীর্ঘমেয়াদি উদ্যোগ।">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --green:#0f766e;
+    --green-dark:#075e59;
+    --green-soft:#eaf6f3;
+    --gold:#c99a3b;
+    --gold-soft:#fbf5e6;
+
+    --dark:#172522;
+    --text:#394743;
+    --muted:#77827e;
+
+    --bg:#f5f7f6;
+    --white:#ffffff;
+    --line:#e4ebe8;
+
+    --shadow:0 12px 35px rgba(24,48,43,.07);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Noto Sans Bengali",sans-serif;
+    line-height:1.75;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    height:66px;
+    background:rgba(255,255,255,.94);
+    border-bottom:1px solid var(--line);
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 24px;
+
+    position:sticky;
+    top:0;
+    z-index:50;
+
+    backdrop-filter:blur(14px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:11px;
+}
+
+.brand-mark{
+    width:38px;
+    height:38px;
+
+    border-radius:12px;
+
+    background:linear-gradient(
+        145deg,
+        var(--green),
+        var(--green-dark)
+    );
+
+    color:white;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:18px;
+
+    box-shadow:0 6px 15px rgba(15,118,110,.18);
+}
+
+.brand-name{
+    font-size:16px;
+    font-weight:800;
+    color:var(--dark);
+
+    line-height:1.15;
+}
+
+.brand-sub{
+    font-size:9px;
+    color:var(--muted);
+    letter-spacing:.8px;
+}
+
+.home-btn{
+    font-size:12px;
+    font-weight:600;
+    color:var(--green);
+
+    padding:7px 12px;
+
+    border:1px solid #dce9e5;
+    border-radius:9px;
+
+    background:#fbfdfc;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.container{
+    width:min(930px,calc(100% - 30px));
+    margin:auto;
+}
+
+
+/* =========================
+   INTRO
+========================= */
+
+.intro{
+    text-align:center;
+    padding:42px 15px 25px;
+}
+
+.intro-label{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+
+    padding:5px 11px;
+
+    border-radius:30px;
+
+    background:var(--green-soft);
+    color:var(--green);
+
+    font-size:10px;
+    font-weight:700;
+
+    margin-bottom:10px;
+}
+
+.intro h1{
+    color:var(--dark);
+    font-size:31px;
+    line-height:1.3;
+
+    margin-bottom:7px;
+}
+
+.intro h1 span{
+    color:var(--green);
+}
+
+.intro p{
+    max-width:600px;
+    margin:auto;
+
+    font-size:13px;
+    color:var(--muted);
+}
+
+
+/* =========================
+   FOUNDER CARD
+========================= */
+
+.founder{
+    background:var(--white);
+
+    border:1px solid var(--line);
+    border-radius:24px;
+
+    padding:25px;
+
+    display:grid;
+    grid-template-columns:170px 1fr;
+
+    gap:28px;
+
+    box-shadow:var(--shadow);
+
+    position:relative;
+    overflow:hidden;
+}
+
+.founder:before{
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:5px;
+    height:100%;
+
+    background:linear-gradient(
+        var(--green),
+        var(--gold)
+    );
+}
+
+.photo-wrap{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+}
+
+.photo{
+    width:145px;
+    height:145px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:5px solid white;
+
+    outline:2px solid #dbe8e4;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.1);
+}
+
+.founder-content{
+    padding-top:3px;
+}
+
+.founder-role{
+    color:var(--green);
+
+    font-size:10px;
+    font-weight:800;
+
+    letter-spacing:.7px;
+
+    text-transform:uppercase;
+
+    margin-bottom:4px;
+}
+
+.founder h2{
+    color:var(--dark);
+
+    font-size:27px;
+
+    margin-bottom:3px;
+}
+
+.founder-title{
+    font-size:12px;
+    font-weight:600;
+
+    color:#697772;
+
+    margin-bottom:13px;
+}
+
+.founder-text{
+    font-size:13px;
+    color:#56645f;
+
+    max-width:620px;
+}
+
+.founder-text strong{
+    color:var(--green);
+}
+
+
+/* =========================
+   PROJECT FEATURE
+========================= */
+
+.project{
+    margin-top:20px;
+
+    border-radius:24px;
+
+    padding:28px 30px;
+
+    color:white;
+
+    background:
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(255,255,255,.12),
+            transparent 28%
+        ),
+        linear-gradient(
+            135deg,
+            #0f766e,
+            #075e59
+        );
+
+    box-shadow:
+        0 16px 40px rgba(15,118,110,.16);
+
+    position:relative;
+    overflow:hidden;
+}
+
+.project:after{
+    content:"❝";
+
+    position:absolute;
+
+    right:25px;
+    bottom:-35px;
+
+    font-size:150px;
+
+    opacity:.055;
+}
+
+.project-top{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    color:#bce4de;
+
+    font-size:10px;
+    font-weight:800;
+
+    letter-spacing:1px;
+
+    margin-bottom:3px;
+}
+
+.project h2{
+    font-size:29px;
+    margin-bottom:4px;
+}
+
+.project-tagline{
+    font-size:13px;
+    color:#e2f3f0;
+
+    margin-bottom:13px;
+}
+
+.project-description{
+    max-width:720px;
+
+    font-size:13px;
+
+    color:#d5ebe8;
+}
+
+.project-actions{
+    display:flex;
+    flex-wrap:wrap;
+
+    gap:9px;
+
+    margin-top:18px;
+}
+
+.btn{
+    padding:8px 14px;
+
+    border-radius:9px;
+
+    font-size:11px;
+    font-weight:700;
+
+    background:white;
+    color:var(--green-dark);
+}
+
+.btn.secondary{
+    background:rgba(255,255,255,.09);
+    color:white;
+
+    border:1px solid rgba(255,255,255,.22);
+}
+
+
+/* =========================
+   PURPOSE
+========================= */
+
+.purpose{
+    margin-top:20px;
+
+    display:grid;
+
+    grid-template-columns:1.25fr .75fr;
+
+    gap:20px;
+}
+
+.card{
+    background:white;
+
+    border:1px solid var(--line);
+
+    border-radius:21px;
+
+    padding:23px;
+
+    box-shadow:0 7px 25px rgba(25,50,45,.045);
+}
+
+.card-label{
+    color:var(--green);
+
+    font-size:10px;
+    font-weight:800;
+
+    letter-spacing:.5px;
+
+    margin-bottom:5px;
+}
+
+.card h3{
+    color:var(--dark);
+
+    font-size:18px;
+
+    margin-bottom:9px;
+}
+
+.card p{
+    font-size:12.5px;
+    color:#596762;
+}
+
+.card p + p{
+    margin-top:10px;
+}
+
+
+/* =========================
+   VALUES
+========================= */
+
+.values{
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:10px;
+
+    margin-top:12px;
+}
+
+.value{
+    padding:14px;
+
+    border-radius:14px;
+
+    background:#f8faf9;
+
+    border:1px solid #e9efed;
+}
+
+.value-icon{
+    width:33px;
+    height:33px;
+
+    border-radius:9px;
+
+    background:var(--green-soft);
+
+    color:var(--green);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:14px;
+
+    margin-bottom:8px;
+}
+
+.value strong{
+    display:block;
+
+    color:var(--dark);
+
+    font-size:12px;
+
+    margin-bottom:2px;
+}
+
+.value span{
+    display:block;
+
+    color:var(--muted);
+
+    font-size:10px;
+
+    line-height:1.5;
+}
+
+
+/* =========================
+   CREATOR / WRITER
+========================= */
+
+.creator{
+    margin-top:20px;
+
+    background:var(--gold-soft);
+
+    border:1px solid #f0e5c9;
+
+    border-radius:20px;
+
+    padding:20px 22px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+}
+
+.creator-text h3{
+    color:#604b20;
+
+    font-size:16px;
+
+    margin-bottom:3px;
+}
+
+.creator-text p{
+    color:#796b4e;
+
+    font-size:11.5px;
+}
+
+.creator-link{
+    flex-shrink:0;
+
+    padding:8px 13px;
+
+    border-radius:9px;
+
+    background:white;
+
+    color:#76591f;
+
+    border:1px solid #eadcb9;
+
+    font-size:11px;
+
+    font-weight:700;
+}
+
+
+/* =========================
+   CONTACT
+========================= */
+
+.contact{
+    margin-top:20px;
+}
+
+.section-heading{
+    display:flex;
+    align-items:end;
+    justify-content:space-between;
+
+    margin-bottom:10px;
+}
+
+.section-heading h3{
+    font-size:18px;
+    color:var(--dark);
+}
+
+.section-heading span{
+    font-size:10px;
+    color:var(--muted);
+}
+
+.contact-grid{
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:9px;
+}
+
+.contact-item{
+    background:white;
+
+    border:1px solid var(--line);
+
+    border-radius:14px;
+
+    padding:12px;
+
+    text-align:center;
+
+    transition:.2s;
+}
+
+.contact-item:hover{
+    transform:translateY(-2px);
+
+    border-color:#c9dfda;
+
+    box-shadow:0 8px 20px rgba(15,118,110,.07);
+}
+
+.contact-icon{
+    width:31px;
+    height:31px;
+
+    margin:0 auto 5px;
+
+    border-radius:8px;
+
+    background:var(--green-soft);
+
+    color:var(--green);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:13px;
+    font-weight:700;
+}
+
+.contact-item strong{
+    display:block;
+
+    font-size:10.5px;
+
+    color:var(--dark);
+}
+
+.contact-item span{
+    display:block;
+
+    font-size:8.5px;
+
+    color:var(--muted);
+
+    margin-top:1px;
+}
+
+
+/* =========================
+   LOCATION
+========================= */
+
+.location{
+    margin-top:18px;
+
+    padding:15px 18px;
+
+    border:1px solid var(--line);
+
+    border-radius:16px;
+
+    background:white;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    gap:8px;
+
+    color:var(--muted);
+
+    font-size:11px;
+}
+
+.location strong{
+    color:var(--dark);
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    text-align:center;
+
+    padding:25px 10px 32px;
+
+    color:#8a9691;
+
+    font-size:9.5px;
+
+    line-height:1.8;
+}
+
+footer strong{
+    color:var(--green);
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:720px){
+
+    .header{
+        padding:0 15px;
+    }
+
+    .container{
+        width:calc(100% - 20px);
+    }
+
+    .intro{
+        padding:28px 8px 19px;
+    }
+
+    .intro h1{
+        font-size:25px;
+    }
+
+    .founder{
+        grid-template-columns:1fr;
+
+        text-align:center;
+
+        gap:14px;
+
+        padding:22px 18px;
+    }
+
+    .photo-wrap{
+        justify-content:center;
+    }
+
+    .photo{
+        width:105px;
+        height:105px;
+    }
+
+    .founder-content{
+        padding:0;
+    }
+
+    .founder h2{
+        font-size:23px;
+    }
+
+    .founder-text{
+        font-size:12px;
+    }
+
+    .purpose{
+        grid-template-columns:1fr;
+    }
+
+    .values{
+        grid-template-columns:1fr;
+    }
+
+    .project{
+        padding:23px 20px;
+    }
+
+    .project h2{
+        font-size:24px;
+    }
+
+    .creator{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .creator-link{
+        width:100%;
+        text-align:center;
+    }
+
+    .contact-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:400px){
+
+    .intro h1{
+        font-size:22px;
+    }
+
+    .project h2{
+        font-size:22px;
+    }
+
+    .project-description,
+    .project-tagline{
+        font-size:11.5px;
+    }
+
+    .contact-item{
+        padding:10px 7px;
+    }
+
+    .contact-item strong{
+        font-size:9.5px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="header">
+
+    <a href="/" class="brand">
+
+        <div class="brand-mark">
+            ✦
+        </div>
+
+        <div>
+            <div class="brand-name">
+                স্মৃতির দেয়াল
+            </div>
+
+            <div class="brand-sub">
+                COMMUNITY MEMORY ARCHIVE
+            </div>
+        </div>
+
+    </a>
+
+
+    <a href="/" class="home-btn">
+        ← মূল পেজ
+    </a>
+
+</header>
+
+
+
+<main class="container">
+
+
+<!-- =========================
+     INTRO
+========================= -->
+
+<section class="intro">
+
+    <div class="intro-label">
+        ✦ FOUNDER & CREATOR
+    </div>
+
+    <h1>
+        একটি মানুষ থেকে শুরু,
+        <span>একটি স্মৃতির আর্কাইভের স্বপ্ন</span>
+    </h1>
+
+    <p>
+        মানুষ চলে যায়, সময় বদলে যায়—
+        কিন্তু ছবি, পরিচয় আর গল্পগুলো থেকে যায়।
+        সেই স্মৃতিগুলোকে আরও যত্নের সঙ্গে সংরক্ষণ করাই
+        “স্মৃতির দেয়াল”-এর উদ্দেশ্য।
+    </p>
+
+</section>
+
+
+
+<!-- =========================
+     FOUNDER
+========================= -->
+
+<section class="founder">
+
+    <div class="photo-wrap">
+
+        <img
+            class="photo"
+            src="https://lh3.googleusercontent.com/a/ACg8ocLRKOvfpPKqX0kE5URzp_3Kb_0vS4q2CfVCatT-0eL1KTraFw=s576-c-no"
+            alt="বিপুল শেখ">
+
+    </div>
+
+
+    <div class="founder-content">
+
+        <div class="founder-role">
+            Founder & Creator
+        </div>
+
+        <h2>
+            বিপুল শেখ
+        </h2>
+
+        <div class="founder-title">
+            লেখক · প্রযুক্তিপ্রেমী · উদ্যোক্তা · Java Developer
+        </div>
+
+        <p class="founder-text">
+
+            আমি বিপুল শেখ। লেখালেখি ও প্রযুক্তির প্রতি আগ্রহ থেকেই
+            দীর্ঘদিন ধরে বিভিন্ন ডিজিটাল ও সফটওয়্যারভিত্তিক কাজের সঙ্গে যুক্ত।
+            <strong>স্মৃতির দেয়াল</strong> আমার কাছে শুধু একটি ওয়েবসাইট নয়—
+            এটি মানুষের জীবনের গুরুত্বপূর্ণ স্মৃতিগুলোকে
+            ভবিষ্যতের জন্য রেখে যাওয়ার একটি চেষ্টা।
+
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     PROJECT
+========================= -->
+
+<section class="project">
+
+    <div class="project-top">
+        <span>✦</span>
+        <span>THE PROJECT</span>
+    </div>
+
+    <h2>
+        স্মৃতির দেয়াল
+    </h2>
+
+    <div class="project-tagline">
+        “একটি ছবি, একটি পরিচয়, একটি গল্প—হারিয়ে যাওয়ার আগে সংরক্ষণ করি।”
+    </div>
+
+    <p class="project-description">
+
+        আমাদের পরিবার, আত্মীয়স্বজন ও পরিচিত মানুষের জীবনে
+        অসংখ্য গল্প ছড়িয়ে আছে। কারও একটি পুরোনো ছবি,
+        কারও নাম, কারও পারিবারিক পরিচয়—সময় চলে যাওয়ার সঙ্গে
+        সঙ্গে এসব তথ্যও ধীরে ধীরে হারিয়ে যায়।
+
+        <br><br>
+
+        <strong>
+        স্মৃতির দেয়াল
+        </strong>
+        সেই হারিয়ে যাওয়ার জায়গাটিতে একটি ডিজিটাল সংরক্ষণাগার
+        তৈরি করার চেষ্টা। এখানে মানুষের ছবি, পরিচয়,
+        পারিবারিক সম্পর্ক এবং প্রয়োজনীয় স্মৃতিগুলোকে
+        একটি কাঠামোবদ্ধভাবে সংরক্ষণ করার লক্ষ্য রয়েছে।
+
+    </p>
+
+
+    <div class="project-actions">
+
+        <a href="/" class="btn">
+            স্মৃতির দেয়ালে প্রবেশ →
+        </a>
+
+        <a href="/find.html" class="btn secondary">
+            মানুষ খুঁজুন
+        </a>
+
+        <a href="/tree-view.html?id=Bipul" class="btn secondary">
+            আমার Family Tree
+        </a>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     PURPOSE
+========================= -->
+
+<section class="purpose">
+
+
+    <div class="card">
+
+        <div class="card-label">
+            WHY THIS PROJECT
+        </div>
+
+        <h3>
+            কেন “স্মৃতির দেয়াল”?
+        </h3>
+
+        <p>
+            আমরা অনেক সময় মনে করি, একটি ছবি ফোনে বা
+            Facebook-এ থাকলেই সেটি সংরক্ষিত হয়ে গেছে।
+            কিন্তু বছর পেরিয়ে গেলে সেই ছবির সঙ্গে থাকা
+            মানুষের পরিচয়, সম্পর্ক এবং গল্পটি হারিয়ে যেতে পারে।
+        </p>
+
+        <p>
+            তাই এই উদ্যোগের লক্ষ্য শুধু ছবি জমা রাখা নয়।
+            বরং একটি ছবির সঙ্গে তার <strong>মানুষটিকেও
+            পরিচিত করে রাখা</strong>—যাতে ভবিষ্যৎ প্রজন্ম
+            জানতে পারে, ছবিতে থাকা মানুষটি কে ছিলেন,
+            কোথা থেকে এসেছিলেন এবং কার সঙ্গে তার সম্পর্ক ছিল।
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-label">
+            OUR FOCUS
+        </div>
+
+        <h3>
+            যা সংরক্ষণ করতে চাই
+        </h3>
+
+        <div class="values">
+
+            <div class="value">
+
+                <div class="value-icon">
+                    ◉
+                </div>
+
+                <strong>মানুষ</strong>
+
+                <span>
+                    ছবি ও পরিচয়ের মাধ্যমে একজন মানুষকে
+                    স্মরণে রাখা।
+                </span>
+
+            </div>
+
+
+            <div class="value">
+
+                <div class="value-icon">
+                    ⌘
+                </div>
+
+                <strong>পরিবার</strong>
+
+                <span>
+                    পারিবারিক সম্পর্ক ও বংশপরিচয়
+                    সহজভাবে সংরক্ষণ।
+                </span>
+
+            </div>
+
+
+            <div class="value">
+
+                <div class="value-icon">
+                    ♡
+                </div>
+
+                <strong>স্মৃতি</strong>
+
+                <span>
+                    সময়ের সঙ্গে হারিয়ে যেতে পারে এমন
+                    গল্প ও তথ্য ধরে রাখা।
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     WRITER
+========================= -->
+
+<section class="creator">
+
+    <div class="creator-text">
+
+        <h3>
+            লেখক হিসেবেও আমার একটি আলাদা জগৎ আছে
+        </h3>
+
+        <p>
+            মানুষের অনুভূতি, সম্পর্ক ও জীবনের গল্প নিয়ে
+            লেখালেখি করি। “পদ্ম কাহিনী” আমার উল্লেখযোগ্য
+            লেখালেখির একটি কাজ।
+        </p>
+
+    </div>
+
+
+    <a
+        href="/find.html?id=Bipul"
+        class="creator-link">
+        আমার Profile →
+    </a>
+
+</section>
+
+
+
+<!-- =========================
+     CONTACT
+========================= -->
+
+<section class="contact">
+
+    <div class="section-heading">
+
+        <h3>
+            যোগাযোগ
+        </h3>
+
+        <span>
+            Connect with Bipul
+        </span>
+
+    </div>
+
+
+    <div class="contact-grid">
+
+
+        <a
+            class="contact-item"
+            href="tel:+8801723068952">
+
+            <div class="contact-icon">
+                ☎
+            </div>
+
+            <strong>
+                01723-068952
+            </strong>
+
+            <span>
+                Mobile
+            </span>
+
+        </a>
+
+
+        <a
+            class="contact-item"
+            href="tel:+8801602350708">
+
+            <div class="contact-icon">
+                ☎
+            </div>
+
+            <strong>
+                01602-350708
+            </strong>
+
+            <span>
+                Mobile
+            </span>
+
+        </a>
+
+
+        <a
+            class="contact-item"
+            href="mailto:bipul.mgl1@gmail.com">
+
+            <div class="contact-icon">
+                ✉
+            </div>
+
+            <strong>
+                Email
+            </strong>
+
+            <span>
+                bipul.mgl1@gmail.com
+            </span>
+
+        </a>
+
+
+        <a
+            class="contact-item"
+            href="https://wa.me/8801723068952"
+            target="_blank">
+
+            <div class="contact-icon">
+                ◉
+            </div>
+
+            <strong>
+                WhatsApp
+            </strong>
+
+            <span>
+                Message
+            </span>
+
+        </a>
+
+
+        <a
+            class="contact-item"
+            href="https://www.facebook.com/kaloporirbor"
+            target="_blank">
+
+            <div class="contact-icon">
+                f
+            </div>
+
+            <strong>
+                Facebook
+            </strong>
+
+            <span>
+                @kaloporirbor
+            </span>
+
+        </a>
+
+
+        <a
+            class="contact-item"
+            href="https://www.instagram.com/kaloporirbor"
+            target="_blank">
+
+            <div class="contact-icon">
+                ◎
+            </div>
+
+            <strong>
+                Instagram
+            </strong>
+
+            <span>
+                @kaloporirbor
+            </span>
+
+        </a>
+
+
+        <a
+            class="contact-item"
+            href="https://t.me/kaloporirbor"
+            target="_blank">
+
+            <div class="contact-icon">
+                ➤
+            </div>
+
+            <strong>
+                Telegram
+            </strong>
+
+            <span>
+                @kaloporirbor
+            </span>
+
+        </a>
+
+
+        <a
+            class="contact-item"
+            href="https://en.everybodywiki.com/Bipul_sheikh"
+            target="_blank">
+
+            <div class="contact-icon">
+                W
+            </div>
+
+            <strong>
+                EverybodyWiki
+            </strong>
+
+            <span>
+                Public Profile
+            </span>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     LOCATION
+========================= -->
+
+<div class="location">
+
+    <span>📍</span>
+
+    <span>
+        <strong>সাইনদহ, পলাশবাড়ী ৫৭৩০</strong>
+        · গাইবান্ধা, বাংলাদেশ
+    </span>
+
+</div>
+
+
+</main>
+
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <strong>স্মৃতির দেয়াল</strong>
+    · Community Memory Archive
+
+    <br>
+
+    মানুষের পরিচয়, পরিবার ও স্মৃতি—
+    সময়ের সীমা পেরিয়ে সংরক্ষণের একটি ছোট উদ্যোগ।
+
+    <br><br>
+
+    © 2026 · Founder & Creator — বিপুল শেখ
+
+</footer>
+
+
+</body>
+</html>
