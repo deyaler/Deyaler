@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>স্মৃতির দেয়াল — নতুন তথ্য যোগ করুন</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,"Noto Sans Bengali",sans-serif;
+  background:#f5f7fa;
+  color:#172033;
+}
+
+.container{
+  max-width:760px;
+  margin:30px auto;
+  padding:15px;
+}
+
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:25px;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+
+h1{
+  text-align:center;
+  margin:0 0 8px;
+  font-size:28px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#687386;
+  margin-bottom:25px;
+  line-height:1.6;
+}
+
+.notice{
+  background:#fff8e6;
+  border:1px solid #f0d98a;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:22px;
+  line-height:1.7;
+  font-size:14px;
+}
+
+.step{
+  display:none;
+}
+
+.step.active{
+  display:block;
+}
+
+.step-title{
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:18px;
+}
+
+label{
+  display:block;
+  margin-top:16px;
+  margin-bottom:7px;
+  font-weight:600;
+}
+
+input,
+select{
+  width:100%;
+  padding:13px 14px;
+  border:1px solid #d8dde6;
+  border-radius:10px;
+  font-size:15px;
+  outline:none;
+  background:#fff;
+}
+
+input:focus,
+select:focus{
+  border-color:#5267ff;
+}
+
+.radio-group{
+  display:flex;
+  gap:20px;
+  margin-top:10px;
+}
+
+.radio-group label{
+  font-weight:500;
+  margin:0;
+}
+
+.radio-group input{
+  width:auto;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:22px;
+  border:0;
+  border-radius:11px;
+  background:#253cff;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.secondary{
+  background:#eef1f6;
+  color:#172033;
+}
+
+.preview{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:15px;
+}
+
+.preview img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.id-box{
+  background:#eef3ff;
+  border:1px solid #ccd6ff;
+  padding:15px;
+  border-radius:12px;
+  margin-top:18px;
+}
+
+.id-box strong{
+  font-size:20px;
+  letter-spacing:1px;
+}
+
+.private-box{
+  background:#f1f5f9;
+  padding:15px;
+  border-radius:12px;
+  margin-top:18px;
+  line-height:1.6;
+}
+
+.warning{
+  background:#fff1f1;
+  border:1px solid #ffcaca;
+  color:#9b2226;
+  padding:14px;
+  border-radius:10px;
+  margin-top:18px;
+  line-height:1.6;
+}
+
+.storage-box{
+  background:#f7f8ff;
+  border:1px solid #dce1ff;
+  padding:15px;
+  border-radius:12px;
+  margin-top:18px;
+}
+
+.storage-label{
+  margin-top:0;
+}
+
+.storage-help{
+  color:#687386;
+  font-size:13px;
+  line-height:1.5;
+  margin-top:8px;
+}
+
+.progress-box{
+  margin-top:25px;
+  display:none;
+}
+
+.progress-text{
+  text-align:center;
+  margin-bottom:10px;
+  font-weight:600;
+}
+
+.progress-bar{
+  height:10px;
+  background:#e5e7eb;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:#253cff;
+  transition:width .3s;
+}
+
+.loading{
+  text-align:center;
+  padding:25px 10px;
+}
+
+.spinner{
+  width:42px;
+  height:42px;
+  border:4px solid #e1e5ee;
+  border-top-color:#253cff;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:0 auto 15px;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg)
+  }
+}
+
+.success{
+  text-align:center;
+  padding:20px 5px;
+}
+
+.success-icon{
+  font-size:55px;
+}
+
+.final-id{
+  font-size:25px;
+  font-weight:800;
+  letter-spacing:2px;
+  background:#eef3ff;
+  padding:15px;
+  border-radius:12px;
+  margin:20px 0;
+}
+
+.small{
+  color:#687386;
+  font-size:13px;
+  line-height:1.6;
+}
+
+@media(max-width:500px){
+
+  .card{
+    padding:18px;
+  }
+
+  .preview{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .preview img{
+    height:110px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h1>স্মৃতির দেয়াল</h1>
+
+<div class="subtitle">
+একজন মানুষের স্মৃতি সংরক্ষণে তথ্য যোগ করুন
+</div>
+
+<div class="notice">
+
+<b>গুরুত্বপূর্ণ সতর্কতা:</b><br>
+
+অনুগ্রহ করে শুধুমাত্র সঠিক ও যাচাই করা তথ্য প্রদান করুন।
+ভুল নাম, পরিচয়, জন্মতারিখ, মৃত্যুর তথ্য বা অন্য কোনো বিভ্রান্তিকর তথ্য প্রদান করবেন না।
+প্রয়োজনে পরিবারের সদস্যদের কাছ থেকে তথ্য যাচাই করে তারপর জমা দিন।
+
+<br><br>
+
+জমা দেওয়ার পর তথ্য ও ছবিগুলো <b>AI Review System</b> দ্বারা পর্যালোচনা করা হবে।
+অনুমোদিত হলে তথ্য স্মৃতির দেয়ালে প্রকাশ করা হবে।
+
+</div>
+
+
+<!-- STEP 1 -->
+
+<div id="step1" class="step active">
+
+<div class="step-title">
+১. ছবি নির্বাচন করুন
+</div>
+
+<p>
+যার স্মৃতি সংরক্ষণ করতে চান, তার পরিষ্কার ও সঠিক ছবি নির্বাচন করুন।
+</p>
+
+<input
+  type="file"
+  id="photoInput"
+  accept="image/jpeg,image/png,image/webp,image/gif"
+  multiple
+>
+
+<div id="preview" class="preview"></div>
+
+<p class="small">
+সর্বোচ্চ ৬ MB-এর ছবি ব্যবহার করুন। একাধিক ছবি নির্বাচন করা যাবে।
+</p>
+
+<button
+  id="continueBtn"
+  onclick="goToForm()"
+  disabled
+>
+ছবি নির্বাচন করুন
+</button>
+
+</div>
+
+
+<!-- STEP 2 -->
+
+<div id="step2" class="step">
+
+<div class="step-title">
+২. ব্যক্তির তথ্য দিন
+</div>
+
+<div class="id-box">
+
+এই ব্যক্তির জন্য সিস্টেম একটি ইউনিক Person ID তৈরি করবে।
+
+<br>
+
+<b>Person ID:</b>
+
+<strong id="personIdText">
+Generating...
+</strong>
+
+</div>
+
+
+<label>পূর্ণ নাম *</label>
+
+<input
+ id="name"
+ type="text"
+ placeholder="পূর্ণ নাম লিখুন"
+>
+
+
+<label>পিতার নাম *</label>
+
+<input
+ id="father"
+ type="text"
+ placeholder="পিতার নাম লিখুন"
+>
+
+
+<label>গ্রাম *</label>
+
+<input
+ id="village"
+ type="text"
+ placeholder="গ্রামের নাম"
+>
+
+
+<label>উপজেলা *</label>
+
+<input
+ id="upazilla"
+ type="text"
+ placeholder="উপজেলার নাম"
+>
+
+
+<label>জেলা *</label>
+
+<input
+ id="zilla"
+ type="text"
+ placeholder="জেলার নাম"
+>
+
+
+<label>জন্মতারিখ *</label>
+
+<input
+ id="dateOfBirth"
+ type="date"
+>
+
+
+<label>বর্তমান অবস্থা *</label>
+
+<div class="radio-group">
+
+<label>
+
+<input
+ type="radio"
+ name="status"
+ value="true"
+ onchange="toggleDeathDate()"
+>
+
+জীবিত
+
+</label>
+
+
+<label>
+
+<input
+ type="radio"
+ name="status"
+ value="false"
+ onchange="toggleDeathDate()"
+>
+
+মৃত
+
+</label>
+
+</div>
+
+
+<div
+ id="deathDateBox"
+ style="display:none;"
+>
+
+<label>
+মৃত্যুর তারিখ *
+</label>
+
+<input
+ id="deathDate"
+ type="date"
+>
+
+</div>
+
+
+<!-- STORAGE SERVER -->
+
+<div class="storage-box">
+
+<label
+ class="storage-label"
+ for="storageServerSelect"
+>
+Storage Server
+</label>
+
+<select id="storageServerSelect">
+
+<option value="auto">
+Auto Random
+</option>
+
+</select>
+
+<div class="storage-help">
+
+Auto Random নির্বাচন করলে সিস্টেম নিজে থেকে
+কনফিগার করা Storage Server-এর মধ্যে একটি নির্বাচন করবে।
+প্রয়োজনে নির্দিষ্ট Server-ও নির্বাচন করা যাবে।
+
+</div>
+
+</div>
+
+
+<div class="private-box">
+
+<b>Privacy:</b> Private
+
+<br><br>
+
+এই তথ্য বর্তমানে ব্যক্তিগত অবস্থায় থাকবে।
+পর্যালোচনা সম্পন্ন হওয়ার পর অনুমোদিত তথ্য প্রকাশের জন্য বিবেচনা করা হবে।
+
+</div>
+
+
+<div class="warning">
+
+<b>জমা দেওয়ার আগে নিশ্চিত করুন:</b>
+
+<br>
+
+• নাম সঠিক কি না<br>
+• পিতার নাম সঠিক কি না<br>
+• গ্রাম, উপজেলা ও জেলা সঠিক কি না<br>
+• জন্মতারিখ সঠিক কি না<br>
+• জীবিত/মৃত অবস্থাটি সঠিক কি না<br>
+• মৃত হলে মৃত্যুর তারিখ সঠিক কি না<br>
+• ছবিগুলো সঠিক ব্যক্তির কি না
+
+</div>
+
+
+<button
+ onclick="submitInformation()"
+ id="submitBtn"
+>
+তথ্য জমা দিন
+</button>
+
+
+<button
+ class="secondary"
+ onclick="backToPhotos()"
+ id="backBtn"
+>
+পিছনে যান
+</button>
+
+</div>
+
+
+<!-- STEP 3 -->
+
+<div id="step3" class="step">
+
+<div class="loading">
+
+<div class="spinner"></div>
+
+<h3 id="loadingTitle">
+তথ্য প্রক্রিয়া করা হচ্ছে...
+</h3>
+
+<p id="loadingText">
+দয়া করে এই পেজটি বন্ধ করবেন না।
+</p>
+
+</div>
+
+
+<div
+ class="progress-box"
+ id="progressBox"
+>
+
+<div
+ class="progress-text"
+ id="progressText"
+>
+প্রসেসিং...
+</div>
+
+<div class="progress-bar">
+
+<div
+ class="progress-fill"
+ id="progressFill"
+>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- STEP 4 -->
+
+<div id="step4" class="step">
+
+<div class="success">
+
+<div class="success-icon">
+✓
+</div>
+
+<h2>
+তথ্য সফলভাবে জমা হয়েছে
+</h2>
+
+<p>
+আপনার দেওয়া তথ্য ও ছবিগুলো এখন পর্যালোচনার জন্য পাঠানো হয়েছে।
+</p>
+
+<div class="final-id">
+
+<span id="finalPersonId"></span>
+
+</div>
+
+<p>
+উপরের <b>Person ID</b>টি সংরক্ষণ করে রাখুন।
+ভবিষ্যতে এই ID দিয়ে ব্যক্তিটির তথ্য খুঁজে পাওয়া যাবে।
+</p>
+
+<br>
+
+<p class="small">
+
+AI Review System তথ্য ও ছবিগুলো যাচাই করবে।
+তথ্য সঠিক ও গ্রহণযোগ্য হলে এটি স্মৃতির দেয়ালে প্রকাশ করা হবে।
+
+</p>
+
+</div>
+
+</div>
+
+
+</div>
+</div>
+
+
+<script>
+
+/* =========================================================
+   STORAGE CONFIGURATION
+========================================================= */
+
+const STORAGE_CONFIG = {
+  storages: [
+    {
+      id: "A",
+      upload:
+        "https://script.google.com/macros/s/AKfycby-rtMQ3x0qRHD86ZvOGmgTwa9F7zmmPVUKa00ioIPNKXPI7ylMgQJs8IRUNz4WhGOsIw/exec",
+      view:
+        "https://script.google.com/macros/s/AKfycby-rtMQ3x0qRHD86ZvOGmgTwa9F7zmmPVUKa00ioIPNKXPI7ylMgQJs8IRUNz4WhGOsIw/exec"
+    },
+
+    {
+      id: "B",
+      upload:
+        "https://script.google.com/macros/s/AKfycbzzGBlbZkCuKHhBEJUg6AKkkSrvbC7txrqBklzAZNa09632dyZ14zHEnwjEdreme_Q1/exec",
+      view:
+        "https://script.google.com/macros/s/AKfycbyQPhJhTMUJqWLTf8mL9_NyO9H3xmK39XB-Z3ltuOrdc9jKtuZGnJ95lVzbBF3Y54fy/exec"
+    }
+  ]
+};
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+const FIREBASE_URL =
+"https://jannat-projects-default-rtdb.firebaseio.com";
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
+let selectedFiles = [];
+
+let generatedPersonId = "";
+
+let selectedStorage = null;
+
+
+/* =========================================================
+   STORAGE DROPDOWN
+========================================================= */
+
+function setupStorageDropdown(){
+
+  const select =
+  document.getElementById(
+    "storageServerSelect"
+  );
+
+
+  /*
+    আগের option থাকলে শুধু Auto Random রাখি
+  */
+
+  select.innerHTML = "";
+
+  const autoOption =
+  document.createElement("option");
+
+  autoOption.value = "auto";
+
+  autoOption.textContent =
+  "Auto Random";
+
+  select.appendChild(
+    autoOption
+  );
+
+
+  /*
+    Config থেকে A, B, C, D...
+    automatically dropdown-এ যোগ হবে।
+  */
+
+  STORAGE_CONFIG.storages.forEach(
+    storage => {
+
+      if(
+        !storage.upload ||
+        !storage.upload.trim()
+      ){
+        return;
+      }
+
+
+      const option =
+      document.createElement("option");
+
+
+      option.value =
+      storage.id;
+
+
+      option.textContent =
+      `Server ${storage.id}`;
+
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   STORAGE SELECT
+========================================================= */
+
+function selectStorage(){
+
+  const select =
+  document.getElementById(
+    "storageServerSelect"
+  );
+
+
+  const selectedValue =
+  select.value;
+
+
+  /*
+    Auto Random
+  */
+
+  if(
+    selectedValue === "auto"
+  ){
+
+    const availableStorages =
+    STORAGE_CONFIG.storages.filter(
+      storage =>
+        storage.upload &&
+        storage.upload.trim() !== ""
+    );
+
+
+    if(
+      availableStorages.length === 0
+    ){
+
+      throw new Error(
+        "কোনো Upload Storage configuration পাওয়া যায়নি।"
+      );
+
+    }
+
+
+    const randomIndex =
+    Math.floor(
+      Math.random() *
+      availableStorages.length
+    );
+
+
+    return availableStorages[
+      randomIndex
+    ];
+
+  }
+
+
+  /*
+    User manually selected
+    server
+  */
+
+  const storage =
+  STORAGE_CONFIG.storages.find(
+    item =>
+      item.id === selectedValue &&
+      item.upload &&
+      item.upload.trim() !== ""
+  );
+
+
+  if(!storage){
+
+    throw new Error(
+      "নির্বাচিত Storage Server পাওয়া যায়নি।"
+    );
+
+  }
+
+
+  return storage;
+
+}
+
+
+/* =========================================================
+   PHOTO SELECTION
+========================================================= */
+
+document
+.getElementById("photoInput")
+.addEventListener(
+  "change",
+  function(){
+
+    selectedFiles =
+    Array.from(this.files);
+
+
+    const preview =
+    document.getElementById(
+      "preview"
+    );
+
+
+    preview.innerHTML = "";
+
+
+    if(
+      selectedFiles.length === 0
+    ){
+
+      document
+      .getElementById(
+        "continueBtn"
+      )
+      .disabled = true;
+
+      return;
+
+    }
+
+
+    let hasInvalidFile = false;
+
+
+    selectedFiles.forEach(
+      file => {
+
+        if(
+          file.size >
+          6 * 1024 * 1024
+        ){
+
+          alert(
+            `"${file.name}" ৬ MB-এর বেশি। অনুগ্রহ করে ছোট ছবি নির্বাচন করুন।`
+          );
+
+
+          hasInvalidFile = true;
+
+          return;
+
+        }
+
+
+        const img =
+        document.createElement(
+          "img"
+        );
+
+
+        img.src =
+        URL.createObjectURL(
+          file
+        );
+
+
+        preview.appendChild(
+          img
+        );
+
+      }
+    );
+
+
+    if(hasInvalidFile){
+
+      document
+      .getElementById(
+        "continueBtn"
+      )
+      .disabled = true;
+
+      return;
+
+    }
+
+
+    document
+    .getElementById(
+      "continueBtn"
+    )
+    .disabled = false;
+
+
+    document
+    .getElementById(
+      "continueBtn"
+    )
+    .innerText =
+    "তথ্য পূরণ করুন";
+
+  }
+);
+
+
+/* =========================================================
+   STEP CONTROL
+========================================================= */
+
+function showStep(step){
+
+  document
+  .querySelectorAll(".step")
+  .forEach(
+    el => {
+
+      el.classList.remove(
+        "active"
+      );
+
+    }
+  );
+
+
+  document
+  .getElementById(step)
+  .classList.add(
+    "active"
+  );
+
+}
+
+
+function goToForm(){
+
+  if(
+    selectedFiles.length === 0
+  ){
+
+    alert(
+      "প্রথমে অন্তত একটি ছবি নির্বাচন করুন।"
+    );
+
+    return;
+
+  }
+
+
+  generateUniquePersonId();
+
+  showStep("step2");
+
+}
+
+
+function backToPhotos(){
+
+  showStep("step1");
+
+}
+
+
+/* =========================================================
+   PERSON ID
+========================================================= */
+
+function createPersonId(){
+
+  const chars =
+  "abcdefghijklmnopqrstuvwxyz0123456789";
+
+
+  let id = "";
+
+
+  for(
+    let i = 0;
+    i < 6;
+    i++
+  ){
+
+    id += chars.charAt(
+      Math.floor(
+        Math.random() *
+        chars.length
+      )
+    );
+
+  }
+
+
+  return id;
+
+}
+
+
+async function generateUniquePersonId(){
+
+  document
+  .getElementById(
+    "personIdText"
+  )
+  .innerText =
+  "Generating...";
+
+
+  let attempts = 0;
+
+
+  while(
+    attempts < 10
+  ){
+
+    attempts++;
+
+
+    const id =
+    createPersonId();
+
+
+    try{
+
+      const response =
+      await fetch(
+        FIREBASE_URL +
+        "/people/" +
+        encodeURIComponent(
+          id
+        ) +
+        ".json"
+      );
+
+
+      const data =
+      await response.json();
+
+
+      if(
+        data === null
+      ){
+
+        generatedPersonId =
+        id;
+
+
+        document
+        .getElementById(
+          "personIdText"
+        )
+        .innerText =
+        id;
+
+
+        return;
+
+      }
+
+    }catch(error){
+
+      console.error(
+        error
+      );
+
+    }
+
+  }
+
+
+  alert(
+    "Person ID তৈরি করা যাচ্ছে না। অনুগ্রহ করে আবার চেষ্টা করুন।"
+  );
+
+}
+
+
+/* =========================================================
+   DEATH DATE
+========================================================= */
+
+function toggleDeathDate(){
+
+  const status =
+  document.querySelector(
+    'input[name="status"]:checked'
+  );
+
+
+  const box =
+  document.getElementById(
+    "deathDateBox"
+  );
+
+
+  if(
+    status &&
+    status.value === "false"
+  ){
+
+    box.style.display =
+    "block";
+
+  }else{
+
+    box.style.display =
+    "none";
+
+
+    document
+    .getElementById(
+      "deathDate"
+    )
+    .value = "";
+
+  }
+
+}
+
+
+/* =========================================================
+   VALIDATION
+========================================================= */
+
+function validateForm(){
+
+  const fields = [
+
+    ["name","পূর্ণ নাম"],
+    ["father","পিতার নাম"],
+    ["village","গ্রাম"],
+    ["upazilla","উপজেলা"],
+    ["zilla","জেলা"],
+    ["dateOfBirth","জন্মতারিখ"]
+
+  ];
+
+
+  for(
+    const field of fields
+  ){
+
+    const input =
+    document.getElementById(
+      field[0]
+    );
+
+
+    if(
+      !input.value.trim()
+    ){
+
+      alert(
+        field[1] +
+        " অবশ্যই দিতে হবে।"
+      );
+
+
+      input.focus();
+
+
+      return false;
+
+    }
+
+  }
+
+
+  const status =
+  document.querySelector(
+    'input[name="status"]:checked'
+  );
+
+
+  if(!status){
+
+    alert(
+      "ব্যক্তিটি জীবিত নাকি মৃত—এটি নির্বাচন করুন।"
+    );
+
+    return false;
+
+  }
+
+
+  if(
+    status.value === "false" &&
+    !document
+    .getElementById(
+      "deathDate"
+    )
+    .value
+  ){
+
+    alert(
+      "মৃত ব্যক্তির ক্ষেত্রে মৃত্যুর তারিখ অবশ্যই দিতে হবে।"
+    );
+
+    return false;
+
+  }
+
+
+  if(
+    !generatedPersonId
+  ){
+
+    alert(
+      "Person ID তৈরি হয়নি। অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।"
+    );
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
+/* =========================================================
+   MAIN SUBMISSION
+========================================================= */
+
+async function submitInformation(){
+
+  if(
+    !validateForm()
+  ){
+    return;
+  }
+
+
+  const confirmSubmit =
+  confirm(
+    "আপনি কি নিশ্চিত যে দেওয়া সব তথ্য সঠিক এবং ছবিগুলো সঠিক ব্যক্তির?"
+  );
+
+
+  if(!confirmSubmit){
+    return;
+  }
+
+
+  document
+  .getElementById(
+    "submitBtn"
+  )
+  .disabled = true;
+
+
+  document
+  .getElementById(
+    "backBtn"
+  )
+  .disabled = true;
+
+
+  showStep("step3");
+
+
+  document
+  .getElementById(
+    "progressBox"
+  )
+  .style.display =
+  "block";
+
+
+  try{
+
+    /* =====================================================
+       STEP 1
+    ===================================================== */
+
+    updateProgress(
+      10,
+      "Person ID প্রস্তুত করা হচ্ছে..."
+    );
+
+
+    const personId =
+    generatedPersonId;
+
+
+    /* =====================================================
+       STEP 2
+       STORAGE SELECT
+    ===================================================== */
+
+    selectedStorage =
+    selectStorage();
+
+
+    console.log(
+      "Selected Storage:",
+      selectedStorage.id
+    );
+
+
+    const storageMode =
+    document
+    .getElementById(
+      "storageServerSelect"
+    )
+    .value;
+
+
+    if(
+      storageMode === "auto"
+    ){
+
+      updateProgress(
+        15,
+        `Auto Random: Storage ${selectedStorage.id} নির্বাচন করা হয়েছে...`
+      );
+
+    }else{
+
+      updateProgress(
+        15,
+        `Storage ${selectedStorage.id} নির্বাচন করা হয়েছে...`
+      );
+
+    }
+
+
+    /* =====================================================
+       STEP 3
+       FILE PREPARATION
+    ===================================================== */
+
+    updateProgress(
+      20,
+      "ছবিগুলো প্রস্তুত করা হচ্ছে..."
+    );
+
+
+    const filesData = [];
+
+
+    for(
+      let i = 0;
+      i < selectedFiles.length;
+      i++
+    ){
+
+      const file =
+      selectedFiles[i];
+
+
+      const base64 =
+      await fileToBase64(
+        file
+      );
+
+
+      filesData.push({
+
+        name:
+        file.name,
+
+        mimeType:
+        file.type,
+
+        data:
+        base64
+
+      });
+
+
+      const percent =
+      20 +
+      Math.round(
+        (
+          (i + 1) /
+          selectedFiles.length
+        ) * 25
+      );
+
+
+      updateProgress(
+        percent,
+        `ছবি প্রস্তুত হচ্ছে (${i + 1}/${selectedFiles.length})...`
+      );
+
+    }
+
+
+    /* =====================================================
+       STEP 4
+       UPLOAD
+    ===================================================== */
+
+    updateProgress(
+      50,
+      `Storage ${selectedStorage.id}-এ ছবি সংরক্ষণ করা হচ্ছে...`
+    );
+
+
+    const uploadPayload = {
+
+      personId:
+      personId,
+
+      files:
+      filesData
+
+    };
+
+
+    await fetch(
+
+      selectedStorage.upload,
+
+      {
+
+        method:
+        "POST",
+
+        mode:
+        "no-cors",
+
+        headers:{
+
+          "Content-Type":
+          "text/plain;charset=utf-8"
+
+        },
+
+        body:
+        JSON.stringify(
+          uploadPayload
+        )
+
+      }
+
+    );
+
+
+    /* =====================================================
+       STEP 5
+       FIREBASE DATA
+    ===================================================== */
+
+    updateProgress(
+      75,
+      "তথ্য সংরক্ষণ করা হচ্ছে..."
+    );
+
+
+    const status =
+    document
+    .querySelector(
+      'input[name="status"]:checked'
+    )
+    .value === "true";
+
+
+    const today =
+    new Date()
+    .toISOString()
+    .split("T")[0];
+
+
+    const personData = {
+
+      id:
+      personId,
+
+
+      name:
+      document
+      .getElementById(
+        "name"
+      )
+      .value
+      .trim(),
+
+
+      father:
+      document
+      .getElementById(
+        "father"
+      )
+      .value
+      .trim(),
+
+
+      village:
+      document
+      .getElementById(
+        "village"
+      )
+      .value
+      .trim(),
+
+
+      upazilla:
+      document
+      .getElementById(
+        "upazilla"
+      )
+      .value
+      .trim(),
+
+
+      zilla:
+      document
+      .getElementById(
+        "zilla"
+      )
+      .value
+      .trim(),
+
+
+      dateOfBirth:
+      document
+      .getElementById(
+        "dateOfBirth"
+      )
+      .value,
+
+
+      deathDate:
+      status
+      ? ""
+      : document
+        .getElementById(
+          "deathDate"
+        )
+        .value,
+
+
+      status:
+      status,
+
+
+      key:
+      "",
+
+
+      visibility:
+      "private",
+
+
+      todayDate:
+      today,
+
+
+      reviewStatus:
+      "under_review",
+
+
+      /*
+        শুধুমাত্র Storage ID
+        Firebase-এ রাখা হচ্ছে।
+
+        যেমন:
+        A
+        অথবা
+        B
+      */
+
+      storageServer:
+      selectedStorage.id
+
+    };
+
+
+    updateProgress(
+      88,
+      "AI Review-এর জন্য তথ্য প্রস্তুত করা হচ্ছে..."
+    );
+
+
+    /* =====================================================
+       SAVE TO FIREBASE
+    ===================================================== */
+
+    const firebaseResponse =
+    await fetch(
+
+      FIREBASE_URL +
+      "/people/" +
+      encodeURIComponent(
+        personId
+      ) +
+      ".json",
+
+      {
+
+        method:
+        "PUT",
+
+        headers:{
+
+          "Content-Type":
+          "application/json"
+
+        },
+
+        body:
+        JSON.stringify(
+          personData
+        )
+
+      }
+
+    );
+
+
+    if(
+      !firebaseResponse.ok
+    ){
+
+      throw new Error(
+        "Firebase save failed"
+      );
+
+    }
+
+
+    /* =====================================================
+       COMPLETE
+    ===================================================== */
+
+    updateProgress(
+      100,
+      "Submission সম্পন্ন হয়েছে।"
+    );
+
+
+    setTimeout(
+      () => {
+
+        document
+        .getElementById(
+          "finalPersonId"
+        )
+        .innerText =
+        personId;
+
+
+        showStep(
+          "step4"
+        );
+
+      },
+      800
+    );
+
+
+  }catch(error){
+
+    console.error(
+      error
+    );
+
+
+    alert(
+      "তথ্য জমা দেওয়ার সময় সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।"
+    );
+
+
+    document
+    .getElementById(
+      "submitBtn"
+    )
+    .disabled = false;
+
+
+    document
+    .getElementById(
+      "backBtn"
+    )
+    .disabled = false;
+
+
+    showStep(
+      "step2"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+function updateProgress(
+  percent,
+  message
+){
+
+  document
+  .getElementById(
+    "progressFill"
+  )
+  .style.width =
+  percent + "%";
+
+
+  document
+  .getElementById(
+    "progressText"
+  )
+  .innerText =
+  message;
+
+
+  document
+  .getElementById(
+    "loadingTitle"
+  )
+  .innerText =
+  message;
+
+}
+
+
+/* =========================================================
+   FILE → BASE64
+========================================================= */
+
+function fileToBase64(
+  file
+){
+
+  return new Promise(
+    (
+      resolve,
+      reject
+    ) => {
+
+      const reader =
+      new FileReader();
+
+
+      reader.onload = () => {
+
+        const result =
+        reader.result;
+
+
+        /*
+          data:image/jpeg;base64,...
+          থেকে শুধু Base64 অংশ নেওয়া হচ্ছে
+        */
+
+        const base64 =
+        result
+        .split(",")[1];
+
+
+        resolve(
+          base64
+        );
+
+      };
+
+
+      reader.onerror =
+      reject;
+
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+setupStorageDropdown();
+
+</script>
+
+</body>
+</html>
