@@ -1,0 +1,6015 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<meta name="description"
+      content="স্মৃতির দেয়াল — মানুষের ছবি, পরিচয় ও স্মৃতি সংরক্ষণের একটি স্বেচ্ছাসেবী সামাজিক উদ্যোগ।">
+
+<meta name="theme-color"
+      content="#167052">
+
+<title>স্মৃতির দেয়াল | Community Memory Archive</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap"
+      rel="stylesheet">
+
+
+<style>
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+:root{
+
+  --green:#167052;
+  --green-dark:#0d4f3a;
+  --green-deep:#083c2c;
+
+  --green-soft:#edf8f3;
+  --green-light:#f5fbf8;
+
+  --gold:#c99b3b;
+  --gold-soft:#fff8e8;
+
+  --red:#a52d3c;
+  --red-soft:#fff1f3;
+
+  --blue:#376d8d;
+  --blue-soft:#eef6fa;
+
+  --text:#17251f;
+  --text-soft:#3f5049;
+  --muted:#718079;
+
+  --border:#e3ebe7;
+
+  --white:#ffffff;
+  --bg:#f6f9f7;
+
+  --shadow:
+    0 12px 35px rgba(18,60,44,.07);
+
+  --shadow-hover:
+    0 20px 45px rgba(18,60,44,.12);
+
+  --radius:20px;
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  background:var(--bg);
+
+  color:var(--text);
+
+  font-family:
+    "Hind Siliguri",
+    "Noto Sans Bengali",
+    Arial,
+    sans-serif;
+
+  line-height:1.6;
+
+  -webkit-font-smoothing:antialiased;
+
+}
+
+a{
+  text-decoration:none;
+}
+
+button,
+input{
+  font-family:inherit;
+}
+
+img{
+  max-width:100%;
+  display:block;
+}
+
+.mw-page{
+
+  width:100%;
+  max-width:1180px;
+
+  margin:auto;
+
+  padding-left:20px;
+  padding-right:20px;
+
+}
+
+.mw-section{
+  padding:82px 0;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.mw-header{
+
+  position:sticky;
+  top:0;
+
+  z-index:999;
+
+  background:
+    rgba(255,255,255,.94);
+
+  border-bottom:
+    1px solid rgba(227,235,231,.9);
+
+  backdrop-filter:
+    blur(15px);
+
+}
+
+.mw-header-inner{
+
+  max-width:1180px;
+
+  margin:auto;
+
+  min-height:72px;
+
+  padding:
+    10px 20px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:20px;
+
+}
+
+.mw-logo{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:11px;
+
+  color:var(--text);
+
+}
+
+.mw-logo-icon{
+
+  width:45px;
+  height:45px;
+
+  border-radius:14px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  color:#fff;
+
+  font-size:21px;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--green),
+      var(--green-dark)
+    );
+
+  box-shadow:
+    0 7px 20px rgba(22,112,82,.2);
+
+}
+
+.mw-logo-text strong{
+
+  display:block;
+
+  color:var(--green);
+
+  font-size:18px;
+
+  line-height:1.15;
+
+}
+
+.mw-logo-text span{
+
+  display:block;
+
+  color:#89958f;
+
+  margin-top:3px;
+
+  font-size:8px;
+
+  letter-spacing:1.5px;
+
+}
+
+.mw-nav{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:4px;
+
+}
+
+.mw-nav a{
+
+  color:#45534d;
+
+  font-size:13px;
+
+  padding:
+    9px 12px;
+
+  border-radius:9px;
+
+  transition:.2s;
+
+}
+
+.mw-nav a:hover{
+
+  color:var(--green);
+
+  background:var(--green-soft);
+
+}
+
+.mw-nav .mw-nav-button{
+
+  color:#fff;
+
+  background:var(--green);
+
+  padding:
+    10px 17px;
+
+}
+
+.mw-nav .mw-nav-button:hover{
+
+  color:#fff;
+
+  background:var(--green-dark);
+
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.mw-hero{
+
+  position:relative;
+
+  overflow:hidden;
+
+  background:
+
+    radial-gradient(
+      circle at 85% 10%,
+      rgba(201,155,59,.16),
+      transparent 26%
+    ),
+
+    radial-gradient(
+      circle at 5% 90%,
+      rgba(22,112,82,.12),
+      transparent 30%
+    ),
+
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #f8fcfa
+    );
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.mw-hero:before{
+
+  content:"";
+
+  position:absolute;
+
+  width:260px;
+  height:260px;
+
+  border-radius:50%;
+
+  right:-120px;
+  bottom:-130px;
+
+  border:
+    1px solid rgba(22,112,82,.08);
+
+}
+
+.mw-hero-inner{
+
+  min-height:670px;
+
+  display:grid;
+
+  grid-template-columns:
+    1.1fr .9fr;
+
+  align-items:center;
+
+  gap:65px;
+
+}
+
+.mw-hero-content{
+
+  max-width:650px;
+
+}
+
+.mw-eyebrow{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  padding:
+    7px 13px;
+
+  border-radius:30px;
+
+  background:var(--green-soft);
+
+  color:var(--green);
+
+  font-size:12px;
+
+  font-weight:600;
+
+  margin-bottom:19px;
+
+}
+
+.mw-eyebrow-dot{
+
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:var(--gold);
+
+  box-shadow:
+    0 0 0 4px rgba(201,155,59,.1);
+
+}
+
+.mw-hero h1{
+
+  font-size:52px;
+
+  line-height:1.17;
+
+  letter-spacing:-1.5px;
+
+  color:#15251e;
+
+}
+
+.mw-hero h1 span{
+
+  color:var(--green);
+
+}
+
+.mw-hero-description{
+
+  max-width:610px;
+
+  margin-top:20px;
+
+  color:var(--muted);
+
+  font-size:16px;
+
+  line-height:1.95;
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.mw-search{
+
+  max-width:630px;
+
+  margin-top:28px;
+
+  padding:6px;
+
+  display:flex;
+
+  background:#fff;
+
+  border:
+    1px solid #dbe6e1;
+
+  border-radius:15px;
+
+  box-shadow:
+    0 12px 35px rgba(18,60,44,.07);
+
+}
+
+.mw-search:focus-within{
+
+  border-color:
+    rgba(22,112,82,.45);
+
+  box-shadow:
+    0 12px 35px rgba(22,112,82,.11);
+
+}
+
+.mw-search input{
+
+  flex:1;
+
+  min-width:0;
+
+  border:0;
+  outline:0;
+
+  background:transparent;
+
+  padding:
+    13px 15px;
+
+  color:var(--text);
+
+  font-size:14px;
+
+}
+
+.mw-search input::placeholder{
+
+  color:#9aa6a1;
+
+}
+
+.mw-search button{
+
+  flex-shrink:0;
+
+  border:0;
+  outline:0;
+
+  cursor:pointer;
+
+  color:#fff;
+
+  background:var(--green);
+
+  border-radius:10px;
+
+  padding:
+    0 21px;
+
+  font-size:13px;
+
+  font-weight:600;
+
+  transition:.2s;
+
+}
+
+.mw-search button:hover{
+
+  background:var(--green-dark);
+
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.mw-actions{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin-top:14px;
+
+}
+
+.mw-btn{
+
+  min-height:46px;
+
+  padding:
+    0 18px;
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:7px;
+
+  border-radius:10px;
+
+  font-size:13px;
+
+  font-weight:600;
+
+  transition:
+    transform .2s,
+    background .2s,
+    box-shadow .2s;
+
+}
+
+.mw-btn:hover{
+
+  transform:translateY(-2px);
+
+}
+
+.mw-btn-primary{
+
+  color:#fff;
+
+  background:var(--green);
+
+  box-shadow:
+    0 8px 20px rgba(22,112,82,.18);
+
+}
+
+.mw-btn-primary:hover{
+
+  color:#fff;
+
+  background:var(--green-dark);
+
+}
+
+.mw-btn-gold{
+
+  color:#fff;
+
+  background:var(--gold);
+
+  box-shadow:
+    0 8px 20px rgba(201,155,59,.15);
+
+}
+
+.mw-btn-gold:hover{
+
+  color:#fff;
+
+  background:#b68830;
+
+}
+
+.mw-btn-outline{
+
+  color:var(--green);
+
+  background:#fff;
+
+  border:
+    1px solid #cbd9d3;
+
+}
+
+.mw-btn-outline:hover{
+
+  color:var(--green);
+
+  background:var(--green-soft);
+
+  border-color:var(--green);
+
+}
+
+
+/* =========================================================
+   HERO CARD
+========================================================= */
+
+.mw-hero-card{
+
+  position:relative;
+
+  padding:31px;
+
+  background:
+    rgba(255,255,255,.92);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:25px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.mw-hero-card:after{
+
+  content:"";
+
+  position:absolute;
+
+  width:85px;
+  height:85px;
+
+  right:-18px;
+  top:-18px;
+
+  border-radius:50%;
+
+  background:
+    rgba(201,155,59,.09);
+
+  z-index:-1;
+
+}
+
+.mw-hero-card-top{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:14px;
+
+  margin-bottom:21px;
+
+}
+
+.mw-hero-card-icon{
+
+  width:60px;
+  height:60px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  border-radius:17px;
+
+  background:var(--green-soft);
+
+  font-size:28px;
+
+}
+
+.mw-hero-card-label{
+
+  color:var(--green);
+
+  font-size:11px;
+
+  font-weight:700;
+
+  letter-spacing:.7px;
+
+}
+
+.mw-hero-card-title{
+
+  margin-top:2px;
+
+  font-size:22px;
+
+  font-weight:700;
+
+}
+
+.mw-hero-card-text{
+
+  color:var(--muted);
+
+  font-size:13px;
+
+  line-height:1.9;
+
+}
+
+.mw-card-divider{
+
+  height:1px;
+
+  background:var(--border);
+
+  margin:
+    23px 0;
+
+}
+
+.mw-feature-list{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:13px;
+
+}
+
+.mw-feature-item{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  color:#52625b;
+
+  font-size:12px;
+
+}
+
+.mw-feature-check{
+
+  width:24px;
+  height:24px;
+
+  flex-shrink:0;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  border-radius:50%;
+
+  background:var(--green-soft);
+
+  color:var(--green);
+
+  font-size:11px;
+
+}
+
+
+/* =========================================================
+   TRUST STRIP
+========================================================= */
+
+.mw-trust{
+
+  background:#fff;
+
+  border-bottom:
+    1px solid var(--border);
+
+  padding:
+    13px 0;
+
+}
+
+.mw-trust-inner{
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  flex-wrap:wrap;
+
+  gap:10px 25px;
+
+  color:#65736d;
+
+  font-size:11px;
+
+}
+
+.mw-trust-item{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:7px;
+
+}
+
+.mw-trust-item strong{
+
+  color:var(--green);
+
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+.mw-stats-section{
+
+  background:#fff;
+
+  padding:
+    22px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.mw-stats{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:13px;
+
+}
+
+.mw-stat{
+
+  min-height:88px;
+
+  padding:
+    15px 20px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:14px;
+
+  background:#fff;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:15px;
+
+  transition:.2s;
+
+}
+
+.mw-stat:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:var(--shadow);
+
+}
+
+.mw-stat-icon{
+
+  width:44px;
+  height:44px;
+
+  flex-shrink:0;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  border-radius:12px;
+
+  background:var(--green-soft);
+
+  font-size:19px;
+
+}
+
+.mw-stat-number{
+
+  display:block;
+
+  color:var(--green);
+
+  font-size:23px;
+
+  font-weight:700;
+
+  line-height:1.1;
+
+}
+
+.mw-stat-label{
+
+  display:block;
+
+  margin-top:3px;
+
+  color:var(--muted);
+
+  font-size:11px;
+
+}
+
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+.mw-heading{
+
+  max-width:720px;
+
+  margin:
+    0 auto 42px;
+
+  text-align:center;
+
+}
+
+.mw-heading small{
+
+  display:block;
+
+  margin-bottom:8px;
+
+  color:var(--green);
+
+  font-size:10px;
+
+  font-weight:700;
+
+  letter-spacing:1.8px;
+
+}
+
+.mw-heading h2{
+
+  font-size:32px;
+
+  line-height:1.35;
+
+}
+
+.mw-heading p{
+
+  margin-top:11px;
+
+  color:var(--muted);
+
+  font-size:14px;
+
+  line-height:1.9;
+
+}
+
+
+/* =========================================================
+   MEMORY
+========================================================= */
+
+.mw-memory-section{
+
+  background:
+
+    linear-gradient(
+      180deg,
+      #f6faf8,
+      #ffffff
+    );
+
+}
+
+.mw-memory-box{
+
+  max-width:940px;
+
+  margin:auto;
+
+  display:grid;
+
+  grid-template-columns:
+    250px 1fr;
+
+  gap:32px;
+
+  align-items:center;
+
+  padding:20px;
+
+  background:#fff;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:23px;
+
+  box-shadow:var(--shadow);
+
+}
+
+.mw-memory-photo{
+
+  width:250px;
+  height:225px;
+
+  overflow:hidden;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--red-soft),
+      #fff
+    );
+
+  border-radius:17px;
+
+  color:var(--red);
+
+  font-size:50px;
+
+}
+
+.mw-memory-photo img{
+
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+
+}
+
+.mw-memory-tag{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  padding:
+    5px 11px;
+
+  border-radius:20px;
+
+  background:var(--red-soft);
+
+  color:var(--red);
+
+  font-size:11px;
+
+  font-weight:700;
+
+  margin-bottom:9px;
+
+}
+
+.mw-memory-content h3{
+
+  font-size:25px;
+
+  line-height:1.35;
+
+}
+
+.mw-memory-father{
+
+  margin-top:3px;
+
+  color:var(--muted);
+
+  font-size:13px;
+
+}
+
+.mw-memory-place{
+
+  margin-top:9px;
+
+  color:#53615b;
+
+  font-size:12px;
+
+}
+
+.mw-memory-text{
+
+  margin-top:12px;
+
+  color:var(--muted);
+
+  font-size:13px;
+
+  line-height:1.85;
+
+}
+
+.mw-memory-link{
+
+  display:inline-flex;
+
+  margin-top:15px;
+
+  padding:
+    9px 14px;
+
+  border-radius:9px;
+
+  background:var(--green-soft);
+
+  color:var(--green);
+
+  font-size:12px;
+
+  font-weight:600;
+
+  transition:.2s;
+
+}
+
+.mw-memory-link:hover{
+
+  color:#fff;
+
+  background:var(--green);
+
+}
+
+
+/* =========================================================
+   BIRTHDAY
+========================================================= */
+
+.mw-birthday-section{
+
+  background:#fff;
+
+}
+
+.mw-birthday-list{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:17px;
+
+}
+
+.mw-birthday-card{
+
+  position:relative;
+
+  overflow:hidden;
+
+  padding:25px 20px;
+
+  text-align:center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fffdf7,
+      #fff8e7
+    );
+
+  border:
+    1px solid #f0dfb2;
+
+  border-radius:18px;
+
+  transition:.2s;
+
+}
+
+.mw-birthday-card:hover{
+
+  transform:translateY(-3px);
+
+  box-shadow:
+    0 15px 35px rgba(110,84,31,.08);
+
+}
+
+.mw-birthday-icon{
+
+  font-size:31px;
+
+  margin-bottom:7px;
+
+}
+
+.mw-birthday-card h3{
+
+  color:#6e541f;
+
+  font-size:17px;
+
+}
+
+.mw-birthday-card p{
+
+  margin-top:3px;
+
+  color:#806f4c;
+
+  font-size:12px;
+
+}
+
+.mw-birthday-link{
+
+  display:inline-block;
+
+  margin-top:12px;
+
+  color:var(--green);
+
+  font-size:11px;
+
+  font-weight:700;
+
+}
+
+.mw-empty{
+
+  grid-column:1 / -1;
+
+  padding:28px;
+
+  text-align:center;
+
+  color:var(--muted);
+
+  background:#f8faf9;
+
+  border:
+    1px dashed #d4e2db;
+
+  border-radius:15px;
+
+  font-size:13px;
+
+}
+
+
+/* =========================================================
+   PURPOSE
+========================================================= */
+
+.mw-purpose{
+
+  background:#f8fbf9;
+
+}
+
+.mw-purpose-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:18px;
+
+}
+
+.mw-info-card{
+
+  padding:28px;
+
+  background:#fff;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:18px;
+
+  transition:.25s;
+
+}
+
+.mw-info-card:hover{
+
+  transform:translateY(-4px);
+
+  border-color:#d1dfd8;
+
+  box-shadow:var(--shadow-hover);
+
+}
+
+.mw-card-icon{
+
+  width:48px;
+  height:48px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  background:var(--green-soft);
+
+  color:var(--green);
+
+  border-radius:13px;
+
+  font-size:21px;
+
+  margin-bottom:17px;
+
+}
+
+.mw-info-card h3{
+
+  font-size:18px;
+
+  margin-bottom:8px;
+
+}
+
+.mw-info-card p{
+
+  color:var(--muted);
+
+  font-size:13px;
+
+  line-height:1.9;
+
+}
+
+
+/* =========================================================
+   SOCIAL MESSAGE
+========================================================= */
+
+.mw-message{
+
+  background:#fff;
+
+}
+
+.mw-message-box{
+
+  max-width:920px;
+
+  margin:auto;
+
+  padding:
+    40px 45px;
+
+  text-align:center;
+
+  background:
+
+    linear-gradient(
+      135deg,
+      #edf8f3,
+      #fffaf0
+    );
+
+  border:
+    1px solid var(--border);
+
+  border-radius:24px;
+
+}
+
+.mw-message-icon{
+
+  width:55px;
+  height:55px;
+
+  margin:
+    0 auto 14px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  border-radius:50%;
+
+  background:#fff;
+
+  font-size:25px;
+
+  box-shadow:
+    0 8px 25px rgba(20,55,42,.07);
+
+}
+
+.mw-message-box h2{
+
+  font-size:27px;
+
+  line-height:1.45;
+
+}
+
+.mw-message-box p{
+
+  max-width:680px;
+
+  margin:
+    11px auto 0;
+
+  color:var(--muted);
+
+  font-size:14px;
+
+  line-height:1.9;
+
+}
+
+
+/* =========================================================
+   HOW IT WORKS
+========================================================= */
+
+.mw-how{
+
+  background:var(--green-soft);
+
+}
+
+.mw-steps{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:18px;
+
+}
+
+.mw-step{
+
+  position:relative;
+
+  padding:28px;
+
+  background:#fff;
+
+  border:
+    1px solid #dce9e3;
+
+  border-radius:18px;
+
+}
+
+.mw-step-number{
+
+  width:38px;
+  height:38px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  background:var(--green);
+
+  color:#fff;
+
+  border-radius:11px;
+
+  font-size:12px;
+
+  font-weight:700;
+
+  margin-bottom:18px;
+
+}
+
+.mw-step h3{
+
+  font-size:18px;
+
+  margin-bottom:7px;
+
+}
+
+.mw-step p{
+
+  color:var(--muted);
+
+  font-size:13px;
+
+  line-height:1.9;
+
+}
+
+
+/* =========================================================
+   JOIN
+========================================================= */
+
+.mw-join{
+
+  background:#fff;
+
+}
+
+.mw-join-box{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:50px;
+
+  align-items:center;
+
+  padding:43px;
+
+  background:
+
+    linear-gradient(
+      135deg,
+      #f0f8f4,
+      #fffaf0
+    );
+
+  border:
+    1px solid var(--border);
+
+  border-radius:23px;
+
+}
+
+.mw-join-box h2{
+
+  font-size:29px;
+
+  line-height:1.4;
+
+  margin-bottom:12px;
+
+}
+
+.mw-join-box p{
+
+  color:var(--muted);
+
+  font-size:14px;
+
+  line-height:1.9;
+
+}
+
+.mw-benefits{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:16px;
+
+}
+
+.mw-benefit{
+
+  display:flex;
+
+  gap:12px;
+
+  align-items:flex-start;
+
+}
+
+.mw-benefit-icon{
+
+  width:34px;
+  height:34px;
+
+  flex-shrink:0;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  background:#fff;
+
+  color:var(--green);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:9px;
+
+}
+
+.mw-benefit strong{
+
+  display:block;
+
+  font-size:13px;
+
+  margin-bottom:2px;
+
+}
+
+.mw-benefit span{
+
+  color:var(--muted);
+
+  font-size:11px;
+
+  line-height:1.7;
+
+}
+
+
+/* =========================================================
+   PRIVACY
+========================================================= */
+
+.mw-privacy{
+
+  background:#f8faf9;
+
+}
+
+.mw-privacy-box{
+
+  max-width:880px;
+
+  margin:auto;
+
+  padding:
+    25px 32px;
+
+  background:#fff;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:19px;
+
+}
+
+.mw-privacy-row{
+
+  display:flex;
+
+  gap:15px;
+
+  padding:18px 0;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+.mw-privacy-row:last-child{
+
+  border-bottom:0;
+
+}
+
+.mw-privacy-icon{
+
+  width:40px;
+  height:40px;
+
+  flex-shrink:0;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  background:var(--green-soft);
+
+  border-radius:11px;
+
+}
+
+.mw-privacy-row h3{
+
+  font-size:14px;
+
+  margin-bottom:4px;
+
+}
+
+.mw-privacy-row p{
+
+  color:var(--muted);
+
+  font-size:12px;
+
+  line-height:1.8;
+
+}
+
+
+/* =========================================================
+   CTA
+========================================================= */
+
+.mw-cta{
+
+  position:relative;
+
+  overflow:hidden;
+
+  padding:
+    82px 0;
+
+  text-align:center;
+
+  color:#fff;
+
+  background:
+
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255,255,255,.08),
+      transparent 25%
+    ),
+
+    linear-gradient(
+      135deg,
+      var(--green-dark),
+      var(--green)
+    );
+
+}
+
+.mw-cta h2{
+
+  font-size:32px;
+
+  line-height:1.4;
+
+}
+
+.mw-cta p{
+
+  max-width:660px;
+
+  margin:
+    12px auto 26px;
+
+  color:
+    rgba(255,255,255,.82);
+
+  font-size:14px;
+
+  line-height:1.9;
+
+}
+
+.mw-cta .mw-btn-primary{
+
+  background:#fff;
+
+  color:var(--green);
+
+  box-shadow:none;
+
+}
+
+.mw-cta .mw-btn-primary:hover{
+
+  background:#f5f5f5;
+
+  color:var(--green);
+
+}
+
+
+/* =========================================================
+   ABOUT
+========================================================= */
+
+.mw-about{
+
+  background:#fff;
+
+}
+
+.mw-about-card{
+
+  max-width:820px;
+
+  margin:auto;
+
+  text-align:center;
+
+}
+
+.mw-about-card h3{
+
+  font-size:21px;
+
+  margin-bottom:5px;
+
+}
+
+.mw-about-role{
+
+  color:var(--green);
+
+  font-size:12px;
+
+  font-weight:600;
+
+}
+
+.mw-about-card p{
+
+  max-width:680px;
+
+  margin:
+    16px auto;
+
+  color:var(--muted);
+
+  font-size:13px;
+
+  line-height:1.9;
+
+}
+
+.mw-contact-info{
+
+  display:flex;
+
+  justify-content:center;
+
+  flex-wrap:wrap;
+
+  gap:8px;
+
+  margin-top:20px;
+
+}
+
+.mw-contact-info span{
+
+  padding:
+    8px 13px;
+
+  background:#f5f8f6;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:9px;
+
+  color:#53615b;
+
+  font-size:11px;
+
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.mw-footer{
+
+  background:#0d261d;
+
+  color:#fff;
+
+  padding:
+    38px 0;
+
+}
+
+.mw-footer-inner{
+
+  max-width:1050px;
+
+  margin:auto;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:20px;
+
+}
+
+.mw-footer-brand{
+
+  font-size:17px;
+
+  font-weight:600;
+
+}
+
+.mw-footer-text{
+
+  margin-top:4px;
+
+  color:
+    rgba(255,255,255,.52);
+
+  font-size:10px;
+
+}
+
+.mw-footer-links{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:18px;
+
+}
+
+.mw-footer-links a{
+
+  color:
+    rgba(255,255,255,.68);
+
+  font-size:11px;
+
+}
+
+.mw-footer-links a:hover{
+
+  color:#fff;
+
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.mw-loading{
+
+  color:var(--muted);
+
+  text-align:center;
+
+  font-size:12px;
+
+  padding:15px;
+
+}
+
+
+/* =========================================================
+   MOBILE NAV
+========================================================= */
+
+.mw-mobile-nav{
+
+  display:none;
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media(max-width:900px){
+
+  .mw-hero-inner{
+
+    grid-template-columns:1fr;
+
+    gap:40px;
+
+    min-height:auto;
+
+    padding-top:75px;
+
+    padding-bottom:70px;
+
+  }
+
+  .mw-hero-content{
+
+    max-width:720px;
+
+  }
+
+  .mw-hero h1{
+
+    font-size:44px;
+
+  }
+
+  .mw-memory-box{
+
+    grid-template-columns:
+      200px 1fr;
+
+  }
+
+  .mw-memory-photo{
+
+    width:200px;
+    height:195px;
+
+  }
+
+  .mw-purpose-grid,
+  .mw-steps{
+
+    grid-template-columns:
+      repeat(3,1fr);
+
+  }
+
+  .mw-join-box{
+
+    grid-template-columns:1fr;
+
+    padding:34px;
+
+    gap:30px;
+
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:650px){
+
+  .mw-page{
+
+    padding-left:15px;
+    padding-right:15px;
+
+  }
+
+  .mw-header-inner{
+
+    min-height:64px;
+
+    padding:
+      9px 15px;
+
+  }
+
+  .mw-logo-icon{
+
+    width:40px;
+    height:40px;
+
+    border-radius:12px;
+
+    font-size:19px;
+
+  }
+
+  .mw-logo-text strong{
+
+    font-size:16px;
+
+  }
+
+  .mw-logo-text span{
+
+    font-size:7px;
+
+  }
+
+  .mw-nav{
+
+    display:none;
+
+  }
+
+  .mw-hero-inner{
+
+    padding-top:55px;
+
+    padding-bottom:58px;
+
+  }
+
+  .mw-hero h1{
+
+    font-size:35px;
+
+    letter-spacing:-.6px;
+
+  }
+
+  .mw-hero-description{
+
+    font-size:14px;
+
+    line-height:1.9;
+
+  }
+
+  .mw-search{
+
+    flex-direction:column;
+
+    padding:6px;
+
+  }
+
+  .mw-search input{
+
+    width:100%;
+
+    min-height:46px;
+
+  }
+
+  .mw-search button{
+
+    width:100%;
+
+    min-height:46px;
+
+  }
+
+  .mw-actions{
+
+    flex-direction:column;
+
+  }
+
+  .mw-btn{
+
+    width:100%;
+
+  }
+
+  .mw-hero-card{
+
+    padding:24px;
+
+  }
+
+  .mw-trust-inner{
+
+    justify-content:flex-start;
+
+    gap:8px 18px;
+
+    line-height:1.4;
+
+  }
+
+  .mw-section{
+
+    padding:62px 0;
+
+  }
+
+  .mw-heading{
+
+    margin-bottom:32px;
+
+  }
+
+  .mw-heading h2{
+
+    font-size:26px;
+
+  }
+
+  .mw-heading p{
+
+    font-size:13px;
+
+  }
+
+  .mw-stats{
+
+    grid-template-columns:
+      repeat(3,1fr);
+
+    gap:7px;
+
+  }
+
+  .mw-stat{
+
+    min-height:83px;
+
+    padding:
+      10px 5px;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    text-align:center;
+
+    gap:5px;
+
+  }
+
+  .mw-stat-icon{
+
+    width:34px;
+    height:34px;
+
+    font-size:15px;
+
+  }
+
+  .mw-stat-number{
+
+    font-size:17px;
+
+  }
+
+  .mw-stat-label{
+
+    font-size:8px;
+
+  }
+
+  .mw-memory-box{
+
+    grid-template-columns:1fr;
+
+    padding:15px;
+
+  }
+
+  .mw-memory-photo{
+
+    width:100%;
+
+    height:220px;
+
+  }
+
+  .mw-memory-content{
+
+    padding:5px;
+
+  }
+
+  .mw-memory-content h3{
+
+    font-size:22px;
+
+  }
+
+  .mw-birthday-list{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .mw-purpose-grid,
+  .mw-steps{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .mw-message-box{
+
+    padding:
+      32px 22px;
+
+  }
+
+  .mw-message-box h2{
+
+    font-size:24px;
+
+  }
+
+  .mw-join-box{
+
+    padding:25px;
+
+  }
+
+  .mw-join-box h2{
+
+    font-size:24px;
+
+  }
+
+  .mw-privacy-box{
+
+    padding:
+      18px 20px;
+
+  }
+
+  .mw-privacy-row{
+
+    gap:12px;
+
+  }
+
+  .mw-privacy-icon{
+
+    width:36px;
+    height:36px;
+
+  }
+
+  .mw-cta{
+
+    padding:
+      65px 0;
+
+  }
+
+  .mw-cta h2{
+
+    font-size:26px;
+
+  }
+
+  .mw-footer{
+
+    padding:
+      32px 0;
+
+  }
+
+  .mw-footer-inner{
+
+    flex-direction:column;
+
+    text-align:center;
+
+  }
+
+  .mw-footer-links{
+
+    justify-content:center;
+
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL SCREEN
+========================================================= */
+
+@media(max-width:380px){
+
+  .mw-hero h1{
+
+    font-size:31px;
+
+  }
+
+  .mw-stats{
+
+    gap:5px;
+
+  }
+
+  .mw-stat-number{
+
+    font-size:15px;
+
+  }
+
+  .mw-stat-label{
+
+    font-size:7px;
+
+  }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+  *{
+
+    scroll-behavior:auto !important;
+
+    transition:none !important;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="mw-header">
+
+  <div class="mw-header-inner">
+
+    <a href="/" class="mw-logo">
+
+      <div class="mw-logo-icon">
+        ♡
+      </div>
+
+      <div class="mw-logo-text">
+
+        <strong>
+          স্মৃতির দেয়াল
+        </strong>
+
+        <span>
+          COMMUNITY MEMORY ARCHIVE
+        </span>
+
+      </div>
+
+    </a>
+
+
+    <nav class="mw-nav">
+
+      <a href="#about">
+        আমাদের কথা
+      </a>
+
+      <a href="#how">
+        কীভাবে কাজ করে
+      </a>
+
+      <a href="#privacy">
+        গোপনীয়তা
+      </a>
+
+      <a
+        href="/contact.html"
+        class="mw-nav-button">
+
+        যোগাযোগ
+
+      </a>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="mw-hero">
+
+  <div class="mw-page">
+
+    <div class="mw-hero-inner">
+
+
+      <div class="mw-hero-content">
+
+        <div class="mw-eyebrow">
+
+          <span class="mw-eyebrow-dot"></span>
+
+          একটি স্বেচ্ছাসেবী সামাজিক উদ্যোগ
+
+        </div>
+
+
+        <h1>
+
+          মানুষ হারিয়ে যায়,<br>
+
+          <span>
+            স্মৃতি হারায় না।
+          </span>
+
+        </h1>
+
+
+        <p class="mw-hero-description">
+
+          আমাদের চারপাশের মানুষ, তাদের ছবি,
+          পরিচয় ও জীবনের ছোট ছোট গল্পগুলো
+          সময়ের সঙ্গে হারিয়ে না গিয়ে
+          ভবিষ্যৎ প্রজন্মের কাছে পৌঁছে যাক—
+          এই ছোট্ট ভাবনা থেকেই
+          <strong>স্মৃতির দেয়াল</strong>।
+
+        </p>
+
+
+        <form
+          class="mw-search"
+          onsubmit="homepageSearch(event)">
+
+          <input
+            id="homepageSearchInput"
+            type="search"
+            placeholder="নাম, পিতার নাম বা এলাকার নাম দিয়ে খুঁজুন..."
+            autocomplete="off">
+
+          <button type="submit">
+            🔎 খুঁজুন
+          </button>
+
+        </form>
+
+
+        <div class="mw-actions">
+
+          <a
+            href="/find.html"
+            class="mw-btn mw-btn-primary">
+
+            👥 মানুষ খুঁজুন
+
+          </a>
+
+          <a
+            href="/upload.html"
+            class="mw-btn mw-btn-gold">
+
+            📷 তথ্য যোগ করুন
+
+          </a>
+
+          <a
+            href="/contact.html"
+            class="mw-btn mw-btn-outline">
+
+            ✉ যোগাযোগ
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- HERO CARD -->
+
+      <div class="mw-hero-card">
+
+        <div class="mw-hero-card-top">
+
+          <div class="mw-hero-card-icon">
+            🫶
+          </div>
+
+          <div>
+
+            <div class="mw-hero-card-label">
+              COMMUNITY MEMORY
+            </div>
+
+            <div class="mw-hero-card-title">
+              একটি মানুষ, একটি স্মৃতি
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <p class="mw-hero-card-text">
+
+          প্রত্যেকটি মানুষই কোনো না কোনো
+          পরিবারের গল্পের অংশ।
+          কারও বাবা, কারও মা, কারও ভাই,
+          বোন কিংবা প্রিয় একজন মানুষ।
+          সেই সম্পর্ক ও স্মৃতিগুলোকে সম্মানের সঙ্গে
+          সংরক্ষণ করাই আমাদের উদ্দেশ্য।
+
+        </p>
+
+
+        <div class="mw-card-divider"></div>
+
+
+        <div class="mw-feature-list">
+
+          <div class="mw-feature-item">
+
+            <span class="mw-feature-check">
+              ✓
+            </span>
+
+            মানুষের ছবি ও পরিচিতি
+
+          </div>
+
+
+          <div class="mw-feature-item">
+
+            <span class="mw-feature-check">
+              ✓
+            </span>
+
+            সহজে মানুষ খুঁজে পাওয়ার ব্যবস্থা
+
+          </div>
+
+
+          <div class="mw-feature-item">
+
+            <span class="mw-feature-check">
+              ✓
+            </span>
+
+            Public, Family ও Private visibility
+
+          </div>
+
+
+          <div class="mw-feature-item">
+
+            <span class="mw-feature-check">
+              ✓
+            </span>
+
+            ভবিষ্যৎ প্রজন্মের জন্য স্মৃতি
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     TRUST
+===================================================== -->
+
+<section class="mw-trust">
+
+  <div class="mw-page">
+
+    <div class="mw-trust-inner">
+
+      <div class="mw-trust-item">
+        <span>🤝</span>
+        <span><strong>স্বেচ্ছায়</strong> অংশগ্রহণ</span>
+      </div>
+
+      <div class="mw-trust-item">
+        <span>🔐</span>
+        <span><strong>সম্মতি</strong> ও গোপনীয়তা</span>
+      </div>
+
+      <div class="mw-trust-item">
+        <span>🌱</span>
+        <span><strong>ভবিষ্যৎ</strong> প্রজন্মের জন্য</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     STATISTICS
+===================================================== -->
+
+<section class="mw-stats-section">
+
+  <div class="mw-page">
+
+    <div class="mw-stats">
+
+
+      <div class="mw-stat">
+
+        <div class="mw-stat-icon">
+          👥
+        </div>
+
+        <div>
+
+          <span
+            id="totalPeople"
+            class="mw-stat-number">
+            —
+          </span>
+
+          <span class="mw-stat-label">
+            মোট মানুষ
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="mw-stat">
+
+        <div class="mw-stat-icon">
+          🌿
+        </div>
+
+        <div>
+
+          <span
+            id="alivePeople"
+            class="mw-stat-number">
+            —
+          </span>
+
+          <span class="mw-stat-label">
+            জীবিত
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="mw-stat">
+
+        <div class="mw-stat-icon">
+          🕊️
+        </div>
+
+        <div>
+
+          <span
+            id="deceasedPeople"
+            class="mw-stat-number">
+            —
+          </span>
+
+          <span class="mw-stat-label">
+            প্রয়াত
+          </span>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     TODAY MEMORY
+===================================================== -->
+
+<section class="mw-section mw-memory-section">
+
+  <div class="mw-page">
+
+    <div class="mw-heading">
+
+      <small>
+        TODAY'S MEMORY
+      </small>
+
+      <h2>
+        আজকের স্মৃতি
+      </h2>
+
+      <p>
+
+        কিছু মানুষ আমাদের মাঝে নেই,
+        কিন্তু তাদের ভালোবাসা ও স্মৃতি
+        আমাদের মাঝে থেকে যায়।
+
+      </p>
+
+    </div>
+
+
+    <div class="mw-memory-box">
+
+
+      <div
+        id="featuredPhoto"
+        class="mw-memory-photo">
+
+        🕊️
+
+      </div>
+
+
+      <div class="mw-memory-content">
+
+        <span class="mw-memory-tag">
+          🕊️ শ্রদ্ধায় ও স্মৃতিতে
+        </span>
+
+
+        <h3 id="featuredName">
+          স্মৃতি খোঁজা হচ্ছে...
+        </h3>
+
+
+        <div
+          id="featuredFather"
+          class="mw-memory-father">
+
+          —
+
+        </div>
+
+
+        <div
+          id="featuredPlace"
+          class="mw-memory-place">
+
+          —
+
+        </div>
+
+
+        <div
+          id="featuredNote"
+          class="mw-memory-text">
+
+          —
+
+        </div>
+
+
+        <a
+          id="featuredButton"
+          href="#"
+          class="mw-memory-link">
+
+          স্মৃতিতে দেখুন →
+
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     BIRTHDAY
+===================================================== -->
+
+<section class="mw-section mw-birthday-section">
+
+  <div class="mw-page">
+
+    <div class="mw-heading">
+
+      <small>
+        BIRTHDAY
+      </small>
+
+      <h2>
+        আজ কারও জন্মদিন?
+      </h2>
+
+      <p>
+
+        আমাদের সংরক্ষিত মানুষদের মধ্যে
+        আজ যাদের জন্মদিন, তাদের জন্য
+        রইল আন্তরিক শুভেচ্ছা।
+
+      </p>
+
+    </div>
+
+
+    <div
+      id="birthdayList"
+      class="mw-birthday-list">
+
+      <div class="mw-loading">
+
+        জন্মদিনের তথ্য খোঁজা হচ্ছে...
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PURPOSE
+===================================================== -->
+
+<section
+  class="mw-section mw-purpose"
+  id="about">
+
+  <div class="mw-page">
+
+    <div class="mw-heading">
+
+      <small>
+        OUR PURPOSE
+      </small>
+
+      <h2>
+        কেন এই উদ্যোগ?
+      </h2>
+
+      <p>
+
+        সময়ের সঙ্গে মানুষ বদলায়,
+        প্রজন্ম বদলায়।
+        কিন্তু একটি ছবি অনেক বছর পরেও
+        একটি মানুষকে আমাদের সামনে ফিরিয়ে আনতে পারে।
+
+      </p>
+
+    </div>
+
+
+    <div class="mw-purpose-grid">
+
+
+      <div class="mw-info-card">
+
+        <div class="mw-card-icon">
+          🖼️
+        </div>
+
+        <h3>
+          স্মৃতি সংরক্ষণ
+        </h3>
+
+        <p>
+
+          মানুষের গুরুত্বপূর্ণ ছবি ও পরিচিত তথ্য
+          একটি নির্দিষ্ট জায়গায় সংরক্ষণ করার
+          সুযোগ তৈরি করা।
+
+        </p>
+
+      </div>
+
+
+      <div class="mw-info-card">
+
+        <div class="mw-card-icon">
+          🔎
+        </div>
+
+        <h3>
+          সহজে খুঁজে পাওয়া
+        </h3>
+
+        <p>
+
+          নাম, পরিচয় বা নির্দিষ্ট তথ্যের মাধ্যমে
+          প্রয়োজনের সময় একজন মানুষকে
+          সহজে খুঁজে পাওয়ার ব্যবস্থা করা।
+
+        </p>
+
+      </div>
+
+
+      <div class="mw-info-card">
+
+        <div class="mw-card-icon">
+          👨‍👩‍👧‍👦
+        </div>
+
+        <h3>
+          পরিবারের জন্য
+        </h3>
+
+        <p>
+
+          পরিবারের পুরোনো ছবি ও স্মৃতিগুলো
+          সুন্দরভাবে সংরক্ষণ করে ভবিষ্যৎ
+          প্রজন্মের কাছে পৌঁছে দেওয়া।
+
+        </p>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     MESSAGE
+===================================================== -->
+
+<section class="mw-section mw-message">
+
+  <div class="mw-page">
+
+    <div class="mw-message-box">
+
+      <div class="mw-message-icon">
+        ❤️
+      </div>
+
+      <h2>
+        স্মৃতি শুধু একটি ছবি নয়
+      </h2>
+
+      <p>
+
+        একটি ছবির পেছনে থাকে একটি পরিবার,
+        একটি সময়, কিছু সম্পর্ক এবং
+        অনেকগুলো না বলা গল্প।
+        সেই গল্পগুলোর প্রতি সম্মান থেকেই
+        এই উদ্যোগের পথচলা।
+
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     HOW IT WORKS
+===================================================== -->
+
+<section
+  class="mw-section mw-how"
+  id="how">
+
+  <div class="mw-page">
+
+    <div class="mw-heading">
+
+      <small>
+        HOW IT WORKS
+      </small>
+
+      <h2>
+        কীভাবে কাজ করবে?
+      </h2>
+
+      <p>
+
+        পুরো প্রক্রিয়াটি সহজ রাখার চেষ্টা করা হচ্ছে,
+        যাতে সাধারণ মানুষও স্বেচ্ছায় অংশ নিতে পারেন।
+
+      </p>
+
+    </div>
+
+
+    <div class="mw-steps">
+
+
+      <div class="mw-step">
+
+        <div class="mw-step-number">
+          01
+        </div>
+
+        <h3>
+          তথ্য জমা দিন
+        </h3>
+
+        <p>
+
+          সম্মতির ভিত্তিতে প্রয়োজনীয় ছবি ও
+          পরিচিত তথ্য জমা দেওয়া যাবে।
+
+        </p>
+
+      </div>
+
+
+      <div class="mw-step">
+
+        <div class="mw-step-number">
+          02
+        </div>
+
+        <h3>
+          আমরা সংরক্ষণ করব
+        </h3>
+
+        <p>
+
+          পাওয়া তথ্য নির্ধারিত কাঠামো অনুযায়ী
+          সাজিয়ে সংরক্ষণ করার চেষ্টা করা হবে।
+
+        </p>
+
+      </div>
+
+
+      <div class="mw-step">
+
+        <div class="mw-step-number">
+          03
+        </div>
+
+        <h3>
+          প্রয়োজন হলে খুঁজে নিন
+        </h3>
+
+        <p>
+
+          নির্দিষ্ট পরিচয় বা আইডির মাধ্যমে
+          সংরক্ষিত তথ্য খুঁজে দেখা যাবে।
+
+        </p>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     JOIN
+===================================================== -->
+
+<section class="mw-section mw-join">
+
+  <div class="mw-page">
+
+    <div class="mw-join-box">
+
+
+      <div>
+
+        <h2>
+          আপনিও এই স্মৃতির অংশ হতে পারেন
+        </h2>
+
+        <p>
+
+          এই উদ্যোগ কোনো ব্যক্তি বা পরিবারের
+          একার জন্য নয়।
+          যারা স্বেচ্ছায় অংশ নিতে চান,
+          তাদের জন্য একটি সহজ, সম্মানজনক
+          ও মানবিক স্মৃতি সংরক্ষণের জায়গা
+          তৈরি করাই আমাদের লক্ষ্য।
+
+        </p>
+
+      </div>
+
+
+      <div class="mw-benefits">
+
+
+        <div class="mw-benefit">
+
+          <div class="mw-benefit-icon">
+            ✓
+          </div>
+
+          <div>
+
+            <strong>
+              স্বেচ্ছায় অংশগ্রহণ
+            </strong>
+
+            <span>
+
+              আপনার ইচ্ছা ও সম্মতির ভিত্তিতেই
+              তথ্য সংরক্ষণ করা হবে।
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="mw-benefit">
+
+          <div class="mw-benefit-icon">
+            ✓
+          </div>
+
+          <div>
+
+            <strong>
+              সহজ প্রক্রিয়া
+            </strong>
+
+            <span>
+
+              প্রয়োজনীয় তথ্য যতটা সম্ভব
+              সহজভাবে জমা দেওয়ার ব্যবস্থা থাকবে।
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="mw-benefit">
+
+          <div class="mw-benefit-icon">
+            ✓
+          </div>
+
+          <div>
+
+            <strong>
+              ভবিষ্যতের জন্য
+            </strong>
+
+            <span>
+
+              সময়ের সঙ্গে উদ্যোগটিকে আরও সুন্দর
+              ও কার্যকর করার চেষ্টা থাকবে।
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PRIVACY
+===================================================== -->
+
+<section
+  class="mw-section mw-privacy"
+  id="privacy">
+
+  <div class="mw-page">
+
+    <div class="mw-heading">
+
+      <small>
+        PRIVACY & CONSENT
+      </small>
+
+      <h2>
+        আপনার তথ্য, আপনার নিয়ন্ত্রণ
+      </h2>
+
+      <p>
+
+        মানুষের ছবি ও পরিচিত তথ্য নিয়ে কাজ করার
+        ক্ষেত্রে সম্মতি, প্রয়োজনীয়তা এবং
+        দৃশ্যমানতার বিষয়গুলোকে গুরুত্ব দেওয়া হবে।
+
+      </p>
+
+    </div>
+
+
+    <div class="mw-privacy-box">
+
+
+      <div class="mw-privacy-row">
+
+        <div class="mw-privacy-icon">
+          🌐
+        </div>
+
+        <div>
+
+          <h3>
+            Public
+          </h3>
+
+          <p>
+
+            Public profile হলে নির্ধারিত তথ্য
+            সবার জন্য প্রদর্শিত হবে।
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="mw-privacy-row">
+
+        <div class="mw-privacy-icon">
+          👨‍👩‍👧
+        </div>
+
+        <div>
+
+          <h3>
+            Family
+          </h3>
+
+          <p>
+
+            Family profile-এর পূর্ণ তথ্য দেখতে
+            নির্ধারিত Access Key প্রয়োজন হবে।
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="mw-privacy-row">
+
+        <div class="mw-privacy-icon">
+          🔒
+        </div>
+
+        <div>
+
+          <h3>
+            Private
+          </h3>
+
+          <p>
+
+            Private profile-এ সীমিত পরিচিত তথ্য
+            প্রদর্শন করা হবে।
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="mw-privacy-row">
+
+        <div class="mw-privacy-icon">
+          ✋
+        </div>
+
+        <div>
+
+          <h3>
+            সংশোধন বা অপসারণ
+          </h3>
+
+          <p>
+
+            নিজের তথ্য সংশোধন বা সরানোর প্রয়োজন হলে
+            যোগাযোগের মাধ্যমে অনুরোধ করা যাবে।
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     CTA
+===================================================== -->
+
+<section class="mw-cta">
+
+  <div class="mw-page">
+
+    <h2>
+      একটি স্মৃতি হয়তো কারও কাছে অমূল্য।
+    </h2>
+
+    <p>
+
+      আজকের একটি ছবি,
+      আগামী দিনের একটি স্মৃতি।
+      আসুন, সম্মতি ও যত্নের সঙ্গে
+      আমাদের মানুষের গল্পগুলো
+      সংরক্ষণ করার চেষ্টা করি।
+
+    </p>
+
+
+    <a
+      href="/upload.html"
+      class="mw-btn mw-btn-primary">
+
+      📷 তথ্য যোগ করুন
+
+    </a>
+
+  </div>
+
+</section>
+
+
+
+
+<script>
+const MW_DATABASE_URL =
+"https://jannat-projects-default-rtdb.firebaseio.com";
+
+let homepagePeople = [];
+
+
+/* =========================================================
+   BIPUL BANGLA ENTITY DECODER
+   Blogger যদি বাংলা অক্ষরকে &#....; বানিয়ে দেয়,
+   এই ফাংশন সেটাকে আবার আসল বাংলা অক্ষরে রূপান্তর করবে।
+========================================================= */
+
+function bipulDecode(value){
+  if(value === null || value === undefined){
+    return "";
+  }
+
+  let result = String(value);
+
+  for(let i = 0; i < 5; i++){
+    const textarea = document.createElement("textarea");
+
+    textarea.innerHTML = result;
+
+    const decoded = textarea.value;
+
+    if(decoded === result){
+      break;
+    }
+
+    result = decoded;
+  }
+
+  return result;
+}
+
+
+/* =========================================================
+   SAFE TEXT SETTER
+========================================================= */
+
+function bipulSetText(elementId, value){
+
+  const element = document.getElementById(elementId);
+
+  if(!element){
+    return;
+  }
+
+  element.textContent = bipulDecode(value);
+}
+
+
+/* =========================================================
+   BANGLA NUMBER
+========================================================= */
+
+function toBanglaNumber(value){
+
+  const map = {
+    "0":"০",
+    "1":"১",
+    "2":"২",
+    "3":"৩",
+    "4":"৪",
+    "5":"৫",
+    "6":"৬",
+    "7":"৭",
+    "8":"৮",
+    "9":"৯"
+  };
+
+  return String(value).replace(/[0-9]/g, function(n){
+    return map[n];
+  });
+}
+
+
+/* =========================================================
+   LOCAL DATE PARSER
+========================================================= */
+
+function parseLocalDate(value){
+
+  if(!value){
+    return null;
+  }
+
+  const parts = String(value).split("-");
+
+  if(parts.length !== 3){
+    return null;
+  }
+
+  const year = Number(parts[0]);
+  const month = Number(parts[1]) - 1;
+  const day = Number(parts[2]);
+
+  const date = new Date(year, month, day);
+
+  if(
+    date.getFullYear() !== year ||
+    date.getMonth() !== month ||
+    date.getDate() !== day
+  ){
+    return null;
+  }
+
+  return date;
+}
+
+
+/* =========================================================
+   ALIVE / DECEASED
+========================================================= */
+
+function isAlive(person){
+
+  return String(person.status).toLowerCase() !== "false";
+
+}
+
+
+/* =========================================================
+   BIRTHDAY CHECK
+========================================================= */
+
+function isBirthdayToday(dateOfBirth){
+
+  const birth = parseLocalDate(dateOfBirth);
+
+  if(!birth){
+    return false;
+  }
+
+  const today = new Date();
+
+  return (
+    birth.getMonth() === today.getMonth() &&
+    birth.getDate() === today.getDate()
+  );
+
+}
+
+
+/* =========================================================
+   LOAD HOMEPAGE DATA
+========================================================= */
+
+async function loadHomepageData(){
+
+  try{
+
+    const response = await fetch(
+      MW_DATABASE_URL + "/people.json"
+    );
+
+    if(!response.ok){
+      throw new Error("Firebase request failed");
+    }
+
+    const data = await response.json();
+
+    homepagePeople = [];
+
+
+    if(data){
+
+      Object.keys(data).forEach(function(key){
+
+        const person = data[key];
+
+        if(!person){
+          return;
+        }
+
+        if(!person.id){
+          person.id = key;
+        }
+
+        homepagePeople.push(person);
+
+      });
+
+    }
+
+
+    updateStatistics();
+
+    updateBirthdays();
+
+    updateFeaturedMemory();
+
+
+  }catch(error){
+
+    console.error("Homepage:", error);
+
+
+    /* -----------------------------------------
+       Statistics
+    ----------------------------------------- */
+
+    bipulSetText(
+      "totalPeople",
+      "—"
+    );
+
+    bipulSetText(
+      "alivePeople",
+      "—"
+    );
+
+    bipulSetText(
+      "deceasedPeople",
+      "—"
+    );
+
+
+    /* -----------------------------------------
+       Birthday
+    ----------------------------------------- */
+
+    const birthdayList =
+      document.getElementById("birthdayList");
+
+    if(birthdayList){
+
+      birthdayList.innerHTML = `
+        <div class="mw-empty">
+          এই মুহূর্তে তথ্য পাওয়া যাচ্ছে না।
+        </div>
+      `;
+
+    }
+
+
+    /* -----------------------------------------
+       Featured memory
+    ----------------------------------------- */
+
+    bipulSetText(
+      "featuredName",
+      "তথ্য পাওয়া যাচ্ছে না"
+    );
+
+    bipulSetText(
+      "featuredNote",
+      "এই মুহূর্তে তথ্য লোড করা সম্ভব হয়নি।"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   UPDATE STATISTICS
+========================================================= */
+
+function updateStatistics(){
+
+  const total =
+    homepagePeople.length;
+
+
+  const alive =
+    homepagePeople.filter(function(person){
+
+      return isAlive(person);
+
+    }).length;
+
+
+  const deceased =
+    homepagePeople.filter(function(person){
+
+      return !isAlive(person);
+
+    }).length;
+
+
+  bipulSetText(
+    "totalPeople",
+    toBanglaNumber(total)
+  );
+
+
+  bipulSetText(
+    "alivePeople",
+    toBanglaNumber(alive)
+  );
+
+
+  bipulSetText(
+    "deceasedPeople",
+    toBanglaNumber(deceased)
+  );
+
+}
+
+
+/* =========================================================
+   UPDATE BIRTHDAYS
+========================================================= */
+
+function updateBirthdays(){
+
+  const container =
+    document.getElementById("birthdayList");
+
+
+  if(!container){
+    return;
+  }
+
+
+  const birthdays =
+    homepagePeople.filter(function(person){
+
+      if(!isAlive(person)){
+        return false;
+      }
+
+      return isBirthdayToday(
+        person.dateOfBirth
+      );
+
+    });
+
+
+  /* -----------------------------------------
+     No birthday today
+  ----------------------------------------- */
+
+  if(!birthdays.length){
+
+    container.innerHTML = `
+      <div class="mw-empty">
+        🎂 আজ আমাদের সংরক্ষিত তালিকায় কারও জন্মদিন নেই।
+        <br>
+        আগামী কোনো শুভ দিনে হয়তো এখানে নতুন নাম দেখা যাবে।
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------
+     Birthday cards
+  ----------------------------------------- */
+
+  container.innerHTML =
+    birthdays
+      .slice(0, 6)
+      .map(function(person){
+
+        return `
+          <div class="mw-birthday-card">
+
+            <div class="mw-birthday-icon">
+              🎂
+            </div>
+
+            <h3>
+              ${escapeHtml(
+                person.name || "অজানা"
+              )}
+            </h3>
+
+            <p>
+              🎉 শুভ জন্মদিন
+            </p>
+
+            <a
+              class="mw-birthday-link"
+              href="/find.html?id=${encodeURIComponent(
+                person.id || ""
+              )}"
+            >
+              প্রোফাইল দেখুন →
+            </a>
+
+          </div>
+        `;
+
+      })
+      .join("");
+
+}
+
+
+/* =========================================================
+   FEATURED MEMORY
+========================================================= */
+
+function updateFeaturedMemory(){
+
+  const deceased =
+    homepagePeople.filter(function(person){
+
+      return !isAlive(person) && person.id;
+
+    });
+
+
+  /* -----------------------------------------
+     No deceased person
+  ----------------------------------------- */
+
+  if(!deceased.length){
+
+    bipulSetText(
+      "featuredName",
+      "এখনও কোনো স্মৃতি যোগ হয়নি"
+    );
+
+
+    bipulSetText(
+      "featuredFather",
+      ""
+    );
+
+
+    bipulSetText(
+      "featuredPlace",
+      ""
+    );
+
+
+    bipulSetText(
+      "featuredNote",
+      "কোনো প্রয়াত ব্যক্তির তথ্য যুক্ত হলে এখানে স্মৃতির একটি অংশ প্রদর্শিত হবে।"
+    );
+
+
+    const button =
+      document.getElementById("featuredButton");
+
+
+    if(button){
+
+      button.style.display = "none";
+
+    }
+
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------
+     Today's deterministic memory
+  ----------------------------------------- */
+
+  const today =
+    new Date();
+
+
+  const dateKey =
+    today.getFullYear() +
+    "-" +
+    (today.getMonth() + 1) +
+    "-" +
+    today.getDate();
+
+
+  let hash = 0;
+
+
+  for(
+    let i = 0;
+    i < dateKey.length;
+    i++
+  ){
+
+    hash =
+      (
+        (hash * 31) +
+        dateKey.charCodeAt(i)
+      ) >>> 0;
+
+  }
+
+
+  const index =
+    hash % deceased.length;
+
+
+  const person =
+    deceased[index];
+
+
+  /* -----------------------------------------
+     Name
+  ----------------------------------------- */
+
+  bipulSetText(
+    "featuredName",
+    person.name || "অজানা"
+  );
+
+
+  /* -----------------------------------------
+     Father
+  ----------------------------------------- */
+
+  bipulSetText(
+    "featuredFather",
+    person.father
+      ? "পিতা: " + person.father
+      : ""
+  );
+
+
+  /* -----------------------------------------
+     Address
+  ----------------------------------------- */
+
+  const place = [
+    person.village,
+    person.upazilla,
+    person.zilla
+  ]
+    .filter(Boolean)
+    .join(" • ");
+
+
+  bipulSetText(
+    "featuredPlace",
+    place
+      ? "📍 " + place
+      : ""
+  );
+
+
+  /* -----------------------------------------
+     Memory note
+  ----------------------------------------- */
+
+  bipulSetText(
+    "featuredNote",
+    "তার জীবন ও পরিচয়কে শ্রদ্ধার সঙ্গে মনে রাখার একটি ছোট্ট প্রয়াস।"
+  );
+
+
+  /* -----------------------------------------
+     Button
+  ----------------------------------------- */
+
+  const button =
+    document.getElementById(
+      "featuredButton"
+    );
+
+
+  if(button){
+
+    button.href =
+      "/find.html?id=" +
+      encodeURIComponent(
+        person.id
+      );
+
+    button.style.display =
+      "inline-flex";
+
+  }
+
+}
+
+
+/* =========================================================
+   HOMEPAGE SEARCH
+========================================================= */
+
+function homepageSearch(event){
+
+  event.preventDefault();
+
+
+  const input =
+    document.getElementById(
+      "homepageSearchInput"
+    );
+
+
+  const query =
+    String(
+      input ? input.value : ""
+    ).trim();
+
+
+  /* -----------------------------------------
+     Empty search
+  ----------------------------------------- */
+
+  if(!query){
+
+    window.location.href =
+      "/find.html";
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------
+     Search query
+  ----------------------------------------- */
+
+  window.location.href =
+    "/find.html?q=" +
+    encodeURIComponent(query);
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   Firebase থেকে আসা user data নিরাপদ রাখার জন্য
+========================================================= */
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ""
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+/* =========================================================
+   PAGE LOAD
+========================================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    loadHomepageData();
+
+  }
+);
+
+</script>
+
+<!-- =========================================================
+     Bipul Sheikh
+========================= -->
+
+<style>
+
+/* =========================================================
+   BIPUL GLOBAL
+========================================================= */
+
+:root{
+  --bipul_green:#176b4d;
+  --bipul_green_dark:#0d5039;
+  --bipul_green_deep:#082f23;
+  --bipul_green_soft:#edf7f2;
+  --bipul_gold:#c89b3c;
+  --bipul_gold_light:#e0c36b;
+  --bipul_text:#17231e;
+  --bipul_muted:#718078;
+  --bipul_border:#e4ebe8;
+  --bipul_white:#ffffff;
+  --bipul_header_height:64px;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+html{
+  scroll-padding-top:75px;
+}
+
+body{
+  padding-top:var(--bipul_header_height) !important;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.bipul_header{
+  position:fixed !important;
+
+  top:0 !important;
+  left:0 !important;
+
+  width:100% !important;
+  height:var(--bipul_header_height);
+
+  background:rgba(255,255,255,.97);
+
+  border-bottom:1px solid var(--bipul_border);
+
+  box-shadow:
+    0 2px 15px rgba(0,0,0,.07);
+
+  z-index:99990;
+
+  font-family:
+    "Noto Sans Bengali",
+    "Hind Siliguri",
+    Arial,
+    sans-serif;
+}
+
+.bipul_header_bar{
+  width:100%;
+  max-width:1200px;
+
+  height:100%;
+
+  margin:auto;
+
+  padding:0 12px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  box-sizing:border-box;
+}
+
+
+/* =========================================================
+   HEADER BUTTON
+========================================================= */
+
+.bipul_header_button{
+  width:42px;
+  height:42px;
+
+  padding:0;
+
+  border:0;
+
+  border-radius:12px;
+
+  background:transparent;
+
+  color:var(--bipul_green);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:25px;
+
+  cursor:pointer;
+
+  transition:
+    background .2s,
+    transform .2s;
+}
+
+.bipul_header_button:hover{
+  background:var(--bipul_green_soft);
+}
+
+.bipul_header_button:active{
+  transform:scale(.92);
+}
+
+
+/* =========================================================
+   HEADER TITLE
+========================================================= */
+
+.bipul_header_title{
+  flex:1;
+
+  min-width:0;
+
+  text-align:center;
+
+  line-height:1.15;
+}
+
+.bipul_page_title{
+  margin:0;
+
+  color:var(--bipul_green_dark);
+
+  font-size:17px;
+
+  font-weight:700;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+}
+
+.bipul_page_subtitle{
+  margin:3px 0 0;
+
+  color:var(--bipul_muted);
+
+  font-size:10px;
+
+  letter-spacing:.4px;
+}
+
+
+/* =========================================================
+   DARK OVERLAY
+========================================================= */
+
+.bipul_screen_overlay{
+  position:fixed;
+
+  inset:0;
+
+  background:rgba(0,0,0,.42);
+
+  opacity:0;
+
+  visibility:hidden;
+
+  transition:.25s;
+
+  z-index:99998;
+}
+
+.bipul_screen_overlay.bipul_overlay_active{
+  opacity:1;
+
+  visibility:visible;
+}
+
+
+/* =========================================================
+   LEFT PROFILE PANEL
+========================================================= */
+
+.bipul_profile_panel{
+  position:fixed;
+
+  top:0;
+  left:0;
+
+  width:min(340px,88vw);
+
+  height:100vh;
+
+  background:#fff;
+
+  transform:translateX(-105%);
+
+  transition:
+    transform .3s ease;
+
+  z-index:99999;
+
+  box-shadow:
+    8px 0 30px rgba(0,0,0,.16);
+
+  overflow-y:auto;
+
+  font-family:
+    "Noto Sans Bengali",
+    "Hind Siliguri",
+    Arial,
+    sans-serif;
+}
+
+.bipul_profile_panel.bipul_profile_open{
+  transform:translateX(0);
+}
+
+
+/* =========================================================
+   PROFILE TOP
+========================================================= */
+
+.bipul_profile_top{
+  position:relative;
+
+  padding:30px 22px 24px;
+
+  text-align:center;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--bipul_green_dark),
+      var(--bipul_green)
+    );
+
+  color:#fff;
+}
+
+.bipul_profile_close{
+  position:absolute;
+
+  top:12px;
+  right:12px;
+
+  width:36px;
+  height:36px;
+
+  padding:0;
+
+  border:0;
+
+  border-radius:50%;
+
+  background:rgba(255,255,255,.14);
+
+  color:#fff;
+
+  font-size:22px;
+
+  cursor:pointer;
+}
+
+.bipul_profile_image{
+  width:88px;
+  height:88px;
+
+  border-radius:50%;
+
+  object-fit:cover;
+
+  display:block;
+
+  margin:0 auto;
+
+  border:3px solid rgba(255,255,255,.9);
+
+  background:#fff;
+
+  box-shadow:
+    0 5px 18px rgba(0,0,0,.18);
+}
+
+.bipul_profile_name{
+  margin:13px 0 3px;
+
+  font-size:20px;
+
+  font-weight:700;
+}
+
+.bipul_profile_role{
+  margin:0;
+
+  color:#d8eee5;
+
+  font-size:12px;
+}
+
+
+/* =========================================================
+   PROFILE CONTENT
+========================================================= */
+
+.bipul_profile_content{
+  padding:22px;
+}
+
+.bipul_profile_section{
+  margin-bottom:25px;
+}
+
+.bipul_profile_heading{
+  margin:0 0 11px;
+
+  color:var(--bipul_green_dark);
+
+  font-size:15px;
+
+  font-weight:700;
+}
+
+.bipul_profile_text{
+  margin:0;
+
+  color:#596962;
+
+  font-size:13px;
+
+  line-height:1.85;
+}
+
+
+/* =========================================================
+   PROFILE LINKS
+========================================================= */
+
+.bipul_profile_link{
+  display:flex;
+
+  align-items:center;
+
+  gap:11px;
+
+  padding:11px 0;
+
+  color:#3e4d47;
+
+  text-decoration:none;
+
+  border-bottom:1px solid #edf1ef;
+
+  font-size:13px;
+
+  transition:.2s;
+}
+
+.bipul_profile_link:last-child{
+  border-bottom:0;
+}
+
+.bipul_profile_link:hover{
+  color:var(--bipul_green);
+
+  padding-left:4px;
+}
+
+
+/* =========================================================
+   RIGHT NAVIGATION MENU
+========================================================= */
+
+.bipul_navigation{
+  position:fixed;
+
+  top:72px;
+  right:12px;
+
+  width:min(
+    300px,
+    calc(100vw - 24px)
+  );
+
+  background:#fff;
+
+  border:1px solid var(--bipul_border);
+
+  border-radius:18px;
+
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.16);
+
+  padding:9px;
+
+  opacity:0;
+
+  visibility:hidden;
+
+  transform:
+    translateY(-8px)
+    scale(.98);
+
+  transition:.2s;
+
+  z-index:99997;
+
+  font-family:
+    "Noto Sans Bengali",
+    "Hind Siliguri",
+    Arial,
+    sans-serif;
+}
+
+.bipul_navigation.bipul_navigation_open{
+  opacity:1;
+
+  visibility:visible;
+
+  transform:
+    translateY(0)
+    scale(1);
+}
+
+
+/* =========================================================
+   NAVIGATION LINKS
+========================================================= */
+
+.bipul_navigation_link{
+  display:flex;
+
+  align-items:center;
+
+  gap:13px;
+
+  padding:13px 14px;
+
+  border-radius:12px;
+
+  color:#34453e;
+
+  text-decoration:none;
+
+  font-size:14px;
+
+  transition:.2s;
+}
+
+.bipul_navigation_link:hover{
+  background:var(--bipul_green_soft);
+
+  color:var(--bipul_green_dark);
+}
+
+.bipul_navigation_icon{
+  width:34px;
+  height:34px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  border-radius:10px;
+
+  background:var(--bipul_green_soft);
+
+  font-size:18px;
+
+  flex-shrink:0;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.bipul_footer{
+  position:relative !important;
+
+  width:100% !important;
+
+  margin-top:55px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #0d5039,
+      #082f23
+    );
+
+  color:#eaf5f0;
+
+  border-top:3px solid var(--bipul_gold);
+
+  overflow:hidden;
+
+  box-sizing:border-box;
+
+  font-family:
+    "Noto Sans Bengali",
+    "Hind Siliguri",
+    Arial,
+    sans-serif;
+}
+
+
+/* Footer decorative circles */
+
+.bipul_footer::before{
+  content:"";
+
+  position:absolute;
+
+  width:230px;
+  height:230px;
+
+  border-radius:50%;
+
+  border:1px solid rgba(255,255,255,.035);
+
+  top:-120px;
+  right:-70px;
+}
+
+.bipul_footer::after{
+  content:"";
+
+  position:absolute;
+
+  width:180px;
+  height:180px;
+
+  border-radius:50%;
+
+  border:1px solid rgba(200,155,60,.045);
+
+  bottom:-100px;
+  left:-70px;
+}
+
+
+/* =========================================================
+   FOOTER INNER
+========================================================= */
+
+.bipul_footer_inner{
+  position:relative;
+
+  z-index:2;
+
+  width:100%;
+
+  max-width:1100px;
+
+  margin:auto;
+
+  padding:42px 22px 20px;
+
+  box-sizing:border-box;
+}
+
+
+/* =========================================================
+   FOOTER GRID
+========================================================= */
+
+.bipul_footer_grid{
+  display:grid;
+
+  grid-template-columns:
+    1.15fr
+    1fr
+    1fr;
+
+  gap:42px;
+
+  padding-bottom:30px;
+}
+
+
+/* =========================================================
+   FOOTER BRAND
+========================================================= */
+
+.bipul_footer_brand{
+  margin:0 0 12px;
+
+  color:#fff;
+
+  font-size:23px;
+
+  font-weight:700;
+}
+
+.bipul_footer_brand_line{
+  width:42px;
+  height:3px;
+
+  margin-bottom:16px;
+
+  border-radius:5px;
+
+  background:var(--bipul_gold);
+}
+
+
+/* =========================================================
+   FOOTER HEADING
+========================================================= */
+
+.bipul_footer_heading{
+  margin:0 0 13px;
+
+  color:var(--bipul_gold_light);
+
+  font-size:16px;
+
+  font-weight:700;
+}
+
+
+/* =========================================================
+   FOOTER TEXT
+========================================================= */
+
+.bipul_footer_text{
+  margin:0;
+
+  color:#c9ddd5;
+
+  font-size:14px;
+
+  line-height:1.95;
+}
+
+
+/* =========================================================
+   FOOTER CONTACT
+========================================================= */
+
+.bipul_footer_contact{
+  margin:0;
+
+  padding:0;
+
+  list-style:none;
+}
+
+.bipul_footer_contact_item{
+  margin-bottom:9px;
+
+  color:#c9ddd5;
+
+  font-size:14px;
+
+  line-height:1.75;
+}
+
+.bipul_footer_contact_link{
+  color:#c9ddd5;
+
+  text-decoration:none;
+
+  transition:.2s;
+}
+
+.bipul_footer_contact_link:hover{
+  color:#fff;
+}
+
+
+/* =========================================================
+   FOOTER DIVIDER
+========================================================= */
+
+.bipul_footer_divider{
+  height:1px;
+
+  margin:0 0 18px;
+
+  background:
+    rgba(255,255,255,.14);
+}
+
+
+/* =========================================================
+   FOOTER BOTTOM
+========================================================= */
+
+.bipul_footer_bottom{
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  gap:15px;
+
+  flex-wrap:wrap;
+}
+
+.bipul_footer_copyright{
+  margin:0;
+
+  color:#9fb8ae;
+
+  font-size:12px;
+
+  line-height:1.7;
+}
+
+.bipul_footer_developer{
+  margin:0;
+
+  color:#b7ccc4;
+
+  font-size:12px;
+}
+
+.bipul_footer_developer strong{
+  color:#e1c36d;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:700px){
+
+  :root{
+    --bipul_header_height:60px;
+  }
+
+  .bipul_header{
+    height:60px;
+  }
+
+  .bipul_header_bar{
+    padding:0 8px;
+  }
+
+  .bipul_header_button{
+    width:40px;
+    height:40px;
+
+    font-size:23px;
+  }
+
+  .bipul_page_title{
+    font-size:15px;
+  }
+
+  .bipul_page_subtitle{
+    font-size:9px;
+  }
+
+
+  /* Footer */
+
+  .bipul_footer_inner{
+    padding:35px 18px 18px;
+  }
+
+  .bipul_footer_grid{
+    grid-template-columns:1fr;
+
+    gap:28px;
+  }
+
+  .bipul_footer_brand{
+    font-size:21px;
+  }
+
+  .bipul_footer_heading{
+    font-size:15px;
+  }
+
+  .bipul_footer_text,
+  .bipul_footer_contact_item{
+    font-size:13.5px;
+  }
+
+  .bipul_footer_bottom{
+    display:block;
+
+    text-align:center;
+  }
+
+  .bipul_footer_developer{
+    margin-top:7px;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media(max-width:360px){
+
+  .bipul_profile_panel{
+    width:92vw;
+  }
+
+  .bipul_footer_inner{
+    padding-left:15px;
+    padding-right:15px;
+  }
+
+  .bipul_footer_text,
+  .bipul_footer_contact_item{
+    font-size:13px;
+  }
+
+}
+
+</style>
+
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="bipul_header">
+
+  <div class="bipul_header_bar">
+
+
+    <!-- PROFILE BUTTON -->
+
+    <button
+      class="bipul_header_button"
+      id="bipul_profile_button"
+      type="button"
+      aria-label="প্রোফাইল"
+      title="বিপুল শেখ"
+    >
+      ☰
+    </button>
+
+
+    <!-- PAGE TITLE -->
+
+    <div class="bipul_header_title">
+
+      <h1
+        class="bipul_page_title"
+        id="bipul_page_title"
+      >
+        স্মৃতির দেয়াল
+      </h1>
+
+      <div class="bipul_page_subtitle">
+        মানুষ • পরিবার • স্মৃতি
+      </div>
+
+    </div>
+
+
+    <!-- MENU BUTTON -->
+
+    <button
+      class="bipul_header_button"
+      id="bipul_menu_button"
+      type="button"
+      aria-label="মেনু"
+      title="মেনু"
+    >
+      ▦
+    </button>
+
+
+  </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     OVERLAY
+========================================================= -->
+
+<div
+  class="bipul_screen_overlay"
+  id="bipul_screen_overlay"
+></div>
+
+
+
+<!-- =========================================================
+     PROFILE PANEL
+========================================================= -->
+
+<aside
+  class="bipul_profile_panel"
+  id="bipul_profile_panel"
+  aria-hidden="true"
+>
+
+
+  <!-- PROFILE TOP -->
+
+  <div class="bipul_profile_top">
+
+
+    <!-- CLOSE -->
+
+    <button
+      class="bipul_profile_close"
+      id="bipul_profile_close"
+      type="button"
+      aria-label="বন্ধ করুন"
+    >
+      ×
+    </button>
+
+
+    <!-- PROFILE IMAGE -->
+
+    <img
+      class="bipul_profile_image"
+      src="https://ajannat.xtgem.com/blog_images/334532270_573471128050979_2447003412433816572_n%201.jpg"
+      alt="বিপুল শেখ"
+    >
+
+
+    <!-- NAME -->
+
+    <h2 class="bipul_profile_name">
+      বিপুল শেখ
+    </h2>
+
+
+    <p class="bipul_profile_role">
+      লেখক • উদ্যোক্তা • “স্মৃতির দেয়াল”
+    </p>
+
+
+  </div>
+
+
+
+  <!-- PROFILE CONTENT -->
+
+  <div class="bipul_profile_content">
+
+
+    <!-- ABOUT -->
+
+    <div class="bipul_profile_section">
+
+      <h3 class="bipul_profile_heading">
+        আমার সম্পর্কে
+      </h3>
+
+      <p class="bipul_profile_text">
+
+        মানুষ, সম্পর্ক ও জীবনের গল্পকে ভালোবাসি।
+        হারিয়ে যেতে বসা স্মৃতি ও মানুষের পরিচয়কে
+        যত্নের সঙ্গে ধরে রাখার একটি ছোট্ট স্বপ্ন
+        থেকেই “স্মৃতির দেয়াল”-এর পথচলা।
+
+      </p>
+
+    </div>
+
+
+
+    <!-- PERSONAL LINKS -->
+
+    <div class="bipul_profile_section">
+
+      <h3 class="bipul_profile_heading">
+        আমার তথ্য
+      </h3>
+
+
+      <a
+        class="bipul_profile_link"
+        href="/profile.html"
+      >
+        <span>👤</span>
+        <span>প্রোফাইল</span>
+      </a>
+
+
+      <a
+        class="bipul_profile_link"
+        href="/about.html"
+      >
+        <span>📖</span>
+        <span>আমার সম্পর্কে</span>
+      </a>
+
+
+      <a
+        class="bipul_profile_link"
+        href="/details.html"
+      >
+        <span>ℹ️</span>
+        <span>বিস্তারিত</span>
+      </a>
+
+
+    </div>
+
+
+
+    <!-- CONTACT -->
+
+    <div class="bipul_profile_section">
+
+      <h3 class="bipul_profile_heading">
+        যোগাযোগ
+      </h3>
+
+
+      <p class="bipul_profile_text">
+
+        📞
+        <a
+          href="tel:01723068952"
+          style="color:inherit;text-decoration:none;"
+        >
+          ০১৭২৩-০৬৮৯৫২
+        </a>
+
+        <br>
+
+
+        📞
+        <a
+          href="tel:01602350708"
+          style="color:inherit;text-decoration:none;"
+        >
+          ০১৬০২-৩৫০৭০৮
+        </a>
+
+        <br>
+
+
+        ✉
+        <a
+          href="mailto:bipul.mgl1@gmail.com"
+          style="color:inherit;text-decoration:none;"
+        >
+          bipul.mgl1@gmail.com
+        </a>
+
+        <br><br>
+
+
+        📍 সাইনদহ, পলাশবাড়ী-৫৭৩০,
+        গাইবান্ধা
+
+      </p>
+
+    </div>
+
+
+  </div>
+
+</aside>
+
+
+
+<!-- =========================================================
+     RIGHT MENU
+========================================================= -->
+
+<nav
+  class="bipul_navigation"
+  id="bipul_navigation"
+  aria-hidden="true"
+>
+
+
+  <!-- HOME -->
+
+  <a
+    class="bipul_navigation_link"
+    href="/"
+  >
+
+    <span class="bipul_navigation_icon">
+      🏠
+    </span>
+
+    <span>
+      হোম
+    </span>
+
+  </a>
+
+
+
+  <!-- ADD PEOPLE -->
+
+  <a
+    class="bipul_navigation_link"
+    href="/upload.html"
+  >
+
+    <span class="bipul_navigation_icon">
+      ➕
+    </span>
+
+    <span>
+      মানুষ ও স্মৃতি যোগ করুন
+    </span>
+
+  </a>
+
+
+
+  <!-- SEARCH -->
+
+  <a
+    class="bipul_navigation_link"
+    href="/find.html"
+  >
+
+    <span class="bipul_navigation_icon">
+      🔎
+    </span>
+
+    <span>
+      মানুষ খুঁজুন
+    </span>
+
+  </a>
+
+
+
+  <!-- FAMILY TREE -->
+
+  <a
+    class="bipul_navigation_link"
+    href="/tree-view.html"
+  >
+
+    <span class="bipul_navigation_icon">
+      🌳
+    </span>
+
+    <span>
+      পরিবারের গাছ
+    </span>
+
+  </a>
+
+
+</nav>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer
+  class="bipul_footer"
+  id="bipul_auto_footer"
+>
+
+
+  <div class="bipul_footer_inner">
+
+
+    <div class="bipul_footer_grid">
+
+
+      <!-- ===================================================
+           ABOUT PROJECT
+      =================================================== -->
+
+      <div>
+
+        <h3 class="bipul_footer_brand">
+          স্মৃতির দেয়াল
+        </h3>
+
+        <div class="bipul_footer_brand_line"></div>
+
+        <p class="bipul_footer_text">
+
+          মানুষ, পরিবার ও স্মৃতিকে যত্নের সঙ্গে
+          সংরক্ষণ করার একটি ছোট্ট উদ্যোগ।
+
+          সময়ের সঙ্গে হারিয়ে যেতে বসা ছবি,
+          পরিচয়, সম্পর্ক ও জীবনের গল্পকে
+          ভবিষ্যৎ প্রজন্মের কাছে পৌঁছে দেওয়াই
+          আমাদের উদ্দেশ্য।
+
+        </p>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           OUR PURPOSE
+      =================================================== -->
+
+      <div>
+
+        <h4 class="bipul_footer_heading">
+          আমাদের ইচ্ছা ও কাজ
+        </h4>
+
+        <p class="bipul_footer_text">
+
+          আমাদের ইচ্ছা—একটি সুন্দর ও নিরাপদ
+          স্মৃতি-ভাণ্ডার তৈরি করা।
+
+          যেখানে একটি মানুষের ছবি, পরিচয়,
+          পরিবার ও জীবনের গুরুত্বপূর্ণ
+          স্মৃতিগুলো ভালোবাসার সঙ্গে
+          সংরক্ষিত থাকবে।
+
+          <br><br>
+
+          আজকের ছোট্ট স্মৃতিই হয়তো
+          আগামী দিনের সবচেয়ে মূল্যবান ইতিহাস।
+
+        </p>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           CONTACT
+      =================================================== -->
+
+      <div>
+
+        <h4 class="bipul_footer_heading">
+          যোগাযোগের ঠিকানা
+        </h4>
+
+
+        <ul class="bipul_footer_contact">
+
+
+          <li class="bipul_footer_contact_item">
+
+            📍
+
+            সাইনদহ, পলাশবাড়ী-৫৭৩০,
+            গাইবান্ধা
+
+          </li>
+
+
+          <li class="bipul_footer_contact_item">
+
+            ☎
+
+            <a
+              class="bipul_footer_contact_link"
+              href="tel:01723068952"
+            >
+              ০১৭২৩-০৬৮৯৫২
+            </a>
+
+          </li>
+
+
+          <li class="bipul_footer_contact_item">
+
+            ☎
+
+            <a
+              class="bipul_footer_contact_link"
+              href="tel:01602350708"
+            >
+              ০১৬০২-৩৫০৭০৮
+            </a>
+
+          </li>
+
+
+          <li class="bipul_footer_contact_item">
+
+            ✉
+
+            <a
+              class="bipul_footer_contact_link"
+              href="mailto:bipul.mgl1@gmail.com"
+            >
+              bipul.mgl1@gmail.com
+            </a>
+
+          </li>
+
+
+        </ul>
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- ===================================================
+         DIVIDER
+    =================================================== -->
+
+    <div class="bipul_footer_divider"></div>
+
+
+
+    <!-- ===================================================
+         COPYRIGHT
+    =================================================== -->
+
+    <div class="bipul_footer_bottom">
+
+
+      <p class="bipul_footer_copyright">
+
+        ©
+        <span id="bipul_footer_year"></span>
+
+        স্মৃতির দেয়াল · সর্বস্বত্ব সংরক্ষিত
+
+      </p>
+
+
+      <p class="bipul_footer_developer">
+
+        পরিকল্পনা ও নির্মাণ:
+
+        <strong>
+          বিপুল শেখ
+        </strong>
+
+      </p>
+
+
+    </div>
+
+
+  </div>
+
+</footer>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+(function(){
+
+  "use strict";
+
+
+  /* =======================================================
+     ELEMENTS
+  ======================================================= */
+
+  var bipul_profile_button =
+    document.getElementById(
+      "bipul_profile_button"
+    );
+
+  var bipul_profile_panel =
+    document.getElementById(
+      "bipul_profile_panel"
+    );
+
+  var bipul_profile_close =
+    document.getElementById(
+      "bipul_profile_close"
+    );
+
+  var bipul_menu_button =
+    document.getElementById(
+      "bipul_menu_button"
+    );
+
+  var bipul_navigation =
+    document.getElementById(
+      "bipul_navigation"
+    );
+
+  var bipul_overlay =
+    document.getElementById(
+      "bipul_screen_overlay"
+    );
+
+  var bipul_page_title =
+    document.getElementById(
+      "bipul_page_title"
+    );
+
+  var bipul_footer_year =
+    document.getElementById(
+      "bipul_footer_year"
+    );
+
+  var bipul_footer =
+    document.getElementById(
+      "bipul_auto_footer"
+    );
+
+
+  /* =======================================================
+     CURRENT YEAR
+  ======================================================= */
+
+  if(bipul_footer_year){
+
+    bipul_footer_year.textContent =
+      new Date().getFullYear();
+
+  }
+
+
+  /* =======================================================
+     PAGE TITLE
+  ======================================================= */
+
+  var bipul_page_titles = {
+
+    "":
+      "হোম",
+
+    "/":
+      "হোম",
+
+    "/find-people.html":
+      "মানুষ খুঁজুন",
+
+    "/submit-your-data.html":
+      "মানুষ ও স্মৃতি যোগ করুন",
+
+    "/tree-view.html":
+      "পরিবারের গাছ",
+
+    "/profile.html":
+      "প্রোফাইল",
+
+    "/about.html":
+      "আমার সম্পর্কে",
+
+    "/details.html":
+      "বিস্তারিত",
+
+    "/contact.html":
+      "যোগাযোগ"
+
+  };
+
+
+  if(bipul_page_title){
+
+    var bipul_current_path =
+      window.location.pathname;
+
+    bipul_page_title.textContent =
+      bipul_page_titles[
+        bipul_current_path
+      ] || "স্মৃতির দেয়াল";
+
+  }
+
+
+  /* =======================================================
+     OPEN PROFILE
+  ======================================================= */
+
+  function bipul_open_profile(){
+
+    if(bipul_profile_panel){
+
+      bipul_profile_panel.classList.add(
+        "bipul_profile_open"
+      );
+
+      bipul_profile_panel.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+    }
+
+    if(bipul_overlay){
+
+      bipul_overlay.classList.add(
+        "bipul_overlay_active"
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     CLOSE PROFILE
+  ======================================================= */
+
+  function bipul_close_profile(){
+
+    if(bipul_profile_panel){
+
+      bipul_profile_panel.classList.remove(
+        "bipul_profile_open"
+      );
+
+      bipul_profile_panel.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+    }
+
+    if(bipul_overlay){
+
+      bipul_overlay.classList.remove(
+        "bipul_overlay_active"
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     OPEN MENU
+  ======================================================= */
+
+  function bipul_open_menu(){
+
+    if(bipul_navigation){
+
+      bipul_navigation.classList.add(
+        "bipul_navigation_open"
+      );
+
+      bipul_navigation.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     CLOSE MENU
+  ======================================================= */
+
+  function bipul_close_menu(){
+
+    if(bipul_navigation){
+
+      bipul_navigation.classList.remove(
+        "bipul_navigation_open"
+      );
+
+      bipul_navigation.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     PROFILE BUTTON
+  ======================================================= */
+
+  if(bipul_profile_button){
+
+    bipul_profile_button.addEventListener(
+      "click",
+      function(){
+
+        bipul_close_menu();
+
+        bipul_open_profile();
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     PROFILE CLOSE
+  ======================================================= */
+
+  if(bipul_profile_close){
+
+    bipul_profile_close.addEventListener(
+      "click",
+      bipul_close_profile
+    );
+
+  }
+
+
+  /* =======================================================
+     MENU BUTTON
+  ======================================================= */
+
+  if(bipul_menu_button){
+
+    bipul_menu_button.addEventListener(
+      "click",
+      function(event){
+
+        event.stopPropagation();
+
+        bipul_close_profile();
+
+        if(
+          bipul_navigation &&
+          bipul_navigation.classList.contains(
+            "bipul_navigation_open"
+          )
+        ){
+
+          bipul_close_menu();
+
+        }else{
+
+          bipul_open_menu();
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     OVERLAY
+  ======================================================= */
+
+  if(bipul_overlay){
+
+    bipul_overlay.addEventListener(
+      "click",
+      bipul_close_profile
+    );
+
+  }
+
+
+  /* =======================================================
+     ESCAPE KEY
+  ======================================================= */
+
+  document.addEventListener(
+    "keydown",
+    function(event){
+
+      if(event.key === "Escape"){
+
+        bipul_close_profile();
+
+        bipul_close_menu();
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     NAVIGATION LINKS
+  ======================================================= */
+
+  document.querySelectorAll(
+    ".bipul_navigation_link"
+  ).forEach(function(bipul_link){
+
+    bipul_link.addEventListener(
+      "click",
+      bipul_close_menu
+    );
+
+  });
+
+
+  /* =======================================================
+     PROFILE LINKS
+  ======================================================= */
+
+  document.querySelectorAll(
+    ".bipul_profile_link"
+  ).forEach(function(bipul_link){
+
+    bipul_link.addEventListener(
+      "click",
+      bipul_close_profile
+    );
+
+  });
+
+
+  /* =======================================================
+     OUTSIDE CLICK
+  ======================================================= */
+
+  document.addEventListener(
+    "click",
+    function(event){
+
+      if(
+        bipul_navigation &&
+        bipul_navigation.classList.contains(
+          "bipul_navigation_open"
+        ) &&
+        !bipul_navigation.contains(
+          event.target
+        ) &&
+        bipul_menu_button &&
+        !bipul_menu_button.contains(
+          event.target
+        )
+      ){
+
+        bipul_close_menu();
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     MOVE FOOTER TO BODY END
+  ======================================================= */
+
+  function bipul_move_footer(){
+
+    if(
+      bipul_footer &&
+      document.body.lastElementChild !==
+      bipul_footer
+    ){
+
+      document.body.appendChild(
+        bipul_footer
+      );
+
+    }
+
+  }
+
+
+  if(
+    document.readyState === "loading"
+  ){
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      bipul_move_footer
+    );
+
+  }else{
+
+    bipul_move_footer();
+
+  }
+
+
+})();
+
+</script>
+</body>
+</html>
