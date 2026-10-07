@@ -1,0 +1,3643 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Family Tree</title>
+
+
+<style>
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+
+  background:
+    linear-gradient(
+      180deg,
+      #eef8ed 0%,
+      #f8fbf5 45%,
+      #eef6ea 100%
+    );
+
+  color:#263326;
+
+  font-family:
+    Arial,
+    "Noto Sans Bengali",
+    sans-serif;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.container{
+  width:min(1250px,96%);
+
+  margin:15px auto 60px;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header{
+  position:relative;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #164d25,
+      #287a35 55%,
+      #3d9143
+    );
+
+  color:white;
+
+  border-radius:24px;
+
+  padding:28px;
+
+  margin-bottom:18px;
+
+  box-shadow:
+    0 12px 35px rgba(35,90,35,.22);
+}
+
+.header:before{
+  content:"🌿";
+
+  position:absolute;
+
+  right:30px;
+  top:5px;
+
+  font-size:80px;
+
+  opacity:.12;
+}
+
+.header:after{
+  content:"🌳";
+
+  position:absolute;
+
+  right:110px;
+  bottom:-18px;
+
+  font-size:65px;
+
+  opacity:.08;
+}
+
+.header h1{
+  position:relative;
+
+  margin:0 0 6px;
+
+  font-size:28px;
+
+  z-index:2;
+}
+
+.header p{
+  position:relative;
+
+  margin:0;
+
+  opacity:.88;
+
+  font-size:14px;
+
+  z-index:2;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status{
+  display:none;
+
+  padding:14px 16px;
+
+  border-radius:14px;
+
+  margin-bottom:18px;
+
+  font-size:14px;
+
+  line-height:1.6;
+}
+
+.status.show{
+  display:block;
+}
+
+.status.info{
+  background:#e0f2fe;
+  color:#075985;
+}
+
+.status.success{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status.error{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.search-card{
+  background:#fff;
+
+  border:1px solid #dce8d8;
+
+  border-radius:20px;
+
+  padding:20px;
+
+  margin-bottom:20px;
+
+  box-shadow:
+    0 7px 25px rgba(36,70,30,.07);
+}
+
+.search-title{
+  font-size:17px;
+
+  font-weight:800;
+
+  margin-bottom:10px;
+
+  color:#244d29;
+}
+
+.search-wrap{
+  position:relative;
+}
+
+#treeSearch{
+  width:100%;
+
+  height:52px;
+
+  padding:0 16px;
+
+  border:1px solid #cbdcc8;
+
+  border-radius:13px;
+
+  outline:none;
+
+  background:#fbfefb;
+
+  color:#263326;
+}
+
+#treeSearch:focus{
+  border-color:#378a43;
+
+  box-shadow:
+    0 0 0 3px rgba(55,138,67,.12);
+}
+
+#searchResults{
+  position:absolute;
+
+  top:59px;
+
+  left:0;
+  right:0;
+
+  z-index:9999;
+
+  display:none;
+
+  background:white;
+
+  border:1px solid #d9e5d6;
+
+  border-radius:14px;
+
+  max-height:350px;
+
+  overflow-y:auto;
+
+  box-shadow:
+    0 18px 40px rgba(25,55,25,.18);
+}
+
+#searchResults.show{
+  display:block;
+}
+
+.search-result-item{
+  width:100%;
+
+  display:block;
+
+  background:white;
+
+  border:0;
+
+  border-bottom:
+    1px solid #edf3eb;
+
+  text-align:left;
+
+  padding:14px;
+
+  cursor:pointer;
+}
+
+.search-result-item:hover{
+  background:#f0f9ef;
+}
+
+.search-result-name{
+  font-size:15px;
+
+  font-weight:800;
+
+  color:#284b2d;
+}
+
+.search-result-info{
+  margin-top:5px;
+
+  color:#718071;
+
+  font-size:12px;
+}
+
+.search-empty{
+  padding:20px;
+
+  text-align:center;
+
+  color:#718071;
+}
+
+
+/* =====================================================
+   MAIN PERSON
+===================================================== */
+
+.main-person{
+  position:relative;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #f3faf0
+    );
+
+  border:3px solid #3b8f43;
+
+  border-radius:22px;
+
+  padding:22px;
+
+  margin-bottom:20px;
+
+  text-align:center;
+
+  box-shadow:
+    0 10px 28px rgba(48,100,45,.12);
+}
+
+.main-person:before{
+  content:"🌳";
+
+  display:block;
+
+  font-size:30px;
+
+  margin-bottom:3px;
+}
+
+.main-label{
+  display:inline-block;
+
+  background:#dff2dc;
+
+  color:#277333;
+
+  padding:6px 13px;
+
+  border-radius:30px;
+
+  font-size:11px;
+
+  font-weight:900;
+
+  margin-bottom:9px;
+}
+
+.main-name{
+  font-size:27px;
+
+  font-weight:900;
+
+  color:#214b27;
+}
+
+.main-id{
+  margin-top:6px;
+
+  color:#718071;
+
+  font-size:12px;
+}
+
+
+/* =====================================================
+   SUMMARY
+===================================================== */
+
+.summary{
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,1fr);
+
+  gap:12px;
+
+  margin-bottom:22px;
+}
+
+.summary-box{
+  background:white;
+
+  border:1px solid #dce8d8;
+
+  border-radius:16px;
+
+  padding:15px;
+
+  text-align:center;
+
+  box-shadow:
+    0 5px 18px rgba(30,70,30,.05);
+}
+
+.summary-number{
+  color:#2e7d36;
+
+  font-size:24px;
+
+  font-weight:900;
+}
+
+.summary-label{
+  color:#718071;
+
+  font-size:12px;
+
+  margin-top:4px;
+}
+
+
+/* =====================================================
+   TREE CONTAINER
+===================================================== */
+
+#tree{
+
+  position:relative;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.96),
+      rgba(247,252,245,.98)
+    );
+
+  border:1px solid #dbe8d7;
+
+  border-radius:24px;
+
+  padding:
+    35px 20px 80px;
+
+  overflow-x:auto;
+
+  box-shadow:
+    0 10px 35px rgba(30,70,30,.06);
+}
+
+
+/* =====================================================
+   TREE GROUND
+===================================================== */
+
+#tree:after{
+
+  content:"";
+
+  position:absolute;
+
+  bottom:0;
+
+  left:50%;
+
+  width:9px;
+
+  height:75px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #604529,
+      #8a6239,
+      #604529
+    );
+
+  border-radius:
+    8px 8px 0 0;
+
+  transform:
+    translateX(-50%);
+
+  opacity:.75;
+}
+
+
+/* =====================================================
+   TREE SECTION
+===================================================== */
+
+.section{
+
+  position:relative;
+
+  background:transparent;
+
+  border:0;
+
+  padding:
+    20px 0 40px;
+
+  margin:0;
+
+  box-shadow:none;
+}
+
+.section-title{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:10px;
+
+  margin-bottom:20px;
+
+  position:relative;
+
+  z-index:5;
+}
+
+.section-title h2{
+
+  margin:0;
+
+  font-size:17px;
+
+  color:#315b35;
+
+  background:#e7f3e4;
+
+  padding:7px 15px;
+
+  border-radius:30px;
+
+  border:1px solid #d1e5cd;
+}
+
+.section-count{
+
+  background:#f1f6ef;
+
+  color:#647463;
+
+  border-radius:20px;
+
+  padding:5px 9px;
+
+  font-size:11px;
+}
+
+
+/* =====================================================
+   SECTION TRUNK
+===================================================== */
+
+.section + .section:before{
+
+  content:"";
+
+  position:absolute;
+
+  top:-15px;
+
+  left:50%;
+
+  width:5px;
+
+  height:30px;
+
+  background:#78986f;
+
+  border-radius:5px;
+
+  transform:
+    translateX(-50%);
+
+  opacity:.8;
+}
+
+
+/* =====================================================
+   PEOPLE GRID
+===================================================== */
+
+.people-grid{
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:flex-start;
+
+  flex-wrap:wrap;
+
+  gap:55px;
+
+  position:relative;
+
+  padding:
+    20px 15px;
+}
+
+
+/*
+  Horizontal branch
+*/
+
+.people-grid:before{
+
+  content:"";
+
+  position:absolute;
+
+  top:0;
+
+  left:10%;
+
+  right:10%;
+
+  height:3px;
+
+  background:#7e9f75;
+
+  border-radius:10px;
+
+  opacity:.7;
+}
+
+
+/*
+  Vertical branch
+*/
+
+.people-grid > .person-card:before{
+
+  content:"";
+
+  position:absolute;
+
+  top:-21px;
+
+  left:50%;
+
+  width:3px;
+
+  height:21px;
+
+  background:#7e9f75;
+
+  border-radius:10px;
+
+  transform:
+    translateX(-50%);
+}
+
+
+/* =====================================================
+   PERSON CARD
+===================================================== */
+
+.person-card{
+
+  position:relative;
+
+  width:220px;
+
+  min-height:145px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f7fbf5
+    );
+
+  border:2px solid #c9ddc5;
+
+  border-radius:18px;
+
+  padding:16px;
+
+  text-align:center;
+
+  box-shadow:
+    0 7px 20px rgba(40,75,35,.08);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    border-color .2s ease;
+}
+
+.person-card:hover{
+
+  transform:
+    translateY(-5px);
+
+  border-color:#78a96e;
+
+  box-shadow:
+    0 12px 28px rgba(40,75,35,.15);
+}
+
+
+/* =====================================================
+   PERSON RELATION
+===================================================== */
+
+.person-relation{
+
+  display:inline-block;
+
+  background:#e5f2e1;
+
+  color:#34723b;
+
+  padding:5px 10px;
+
+  border-radius:20px;
+
+  font-size:11px;
+
+  font-weight:800;
+
+  margin-bottom:9px;
+}
+
+
+/* =====================================================
+   PERSON NAME
+===================================================== */
+
+.person-name{
+
+  font-size:17px;
+
+  font-weight:900;
+
+  color:#294d2e;
+
+  line-height:1.35;
+}
+
+
+/* =====================================================
+   PERSON ID
+===================================================== */
+
+.person-id{
+
+  color:#7a8879;
+
+  font-size:10px;
+
+  margin-top:6px;
+
+  word-break:break-all;
+}
+
+
+/* =====================================================
+   LOCATION
+===================================================== */
+
+.person-location{
+
+  color:#718071;
+
+  font-size:11px;
+
+  margin-top:7px;
+}
+
+
+/* =====================================================
+   CARD ACTIONS
+===================================================== */
+
+.card-actions{
+
+  display:flex;
+
+  gap:7px;
+
+  margin-top:13px;
+}
+
+.card-btn{
+
+  flex:1;
+
+  height:36px;
+
+  border:0;
+
+  border-radius:9px;
+
+  font-size:11px;
+
+  font-weight:800;
+}
+
+.profile-btn{
+
+  background:#315b35;
+
+  color:white;
+}
+
+.main-btn{
+
+  background:#4b8f43;
+
+  color:white;
+}
+
+.profile-btn:hover{
+  background:#244828;
+}
+
+.main-btn:hover{
+  background:#367638;
+}
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty{
+
+  text-align:center;
+
+  color:#718071;
+
+  padding:40px 15px;
+
+  line-height:1.7;
+}
+
+
+/* =====================================================
+   SCROLLBAR
+===================================================== */
+
+#tree::-webkit-scrollbar{
+
+  height:9px;
+}
+
+#tree::-webkit-scrollbar-track{
+
+  background:#e6eee3;
+
+  border-radius:20px;
+}
+
+#tree::-webkit-scrollbar-thumb{
+
+  background:#8eab86;
+
+  border-radius:20px;
+}
+
+#tree::-webkit-scrollbar-thumb:hover{
+
+  background:#688f61;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:700px){
+
+  .container{
+
+    width:95%;
+
+    margin-top:10px;
+  }
+
+  .header{
+
+    padding:21px;
+
+    border-radius:20px;
+  }
+
+  .header h1{
+
+    font-size:23px;
+  }
+
+  .summary{
+
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+  #tree{
+
+    padding:
+      25px 10px 75px;
+
+    overflow-x:auto;
+
+    border-radius:20px;
+  }
+
+  /*
+    Mobile-এ tree horizontal
+    থাকবে যাতে সম্পর্কগুলো
+    সুন্দরভাবে দেখা যায়।
+  */
+
+  #tree > .section{
+
+    min-width:760px;
+  }
+
+  .people-grid{
+
+    flex-wrap:nowrap;
+
+    justify-content:center;
+
+    gap:45px;
+  }
+
+  .person-card{
+
+    flex:
+      0 0 205px;
+  }
+
+  .main-name{
+
+    font-size:22px;
+  }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media(max-width:430px){
+
+  .summary{
+
+    gap:8px;
+  }
+
+  .summary-box{
+
+    padding:
+      12px 7px;
+  }
+
+  .summary-number{
+
+    font-size:21px;
+  }
+
+  .summary-label{
+
+    font-size:11px;
+  }
+
+  .main-person{
+
+    padding:
+      18px 12px;
+  }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+  <!-- =================================================
+       HEADER
+  ================================================== -->
+
+  <div class="header">
+
+    <h1>
+      🌳 Family Tree
+    </h1>
+
+    <p>
+      একজন ব্যক্তিকে Main Person করে
+      তার পরিবারের সম্পর্ক গাছের মতো দেখুন
+    </p>
+
+  </div>
+
+
+  <!-- =================================================
+       STATUS
+  ================================================== -->
+
+  <div
+    id="status"
+    class="status"
+  ></div>
+
+
+  <!-- =================================================
+       SEARCH
+  ================================================== -->
+
+  <div class="search-card">
+
+    <div class="search-title">
+      🔎 Person Search
+    </div>
+
+    <div class="search-wrap">
+
+      <input
+        id="treeSearch"
+        type="search"
+        placeholder="নাম, ID, বাবা, গ্রাম, উপজেলা বা জেলা দিয়ে খুঁজুন..."
+        autocomplete="off"
+      >
+
+      <div id="searchResults"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =================================================
+       MAIN PERSON
+  ================================================== -->
+
+  <div
+    id="mainPersonBox"
+    class="main-person"
+    style="display:none"
+  ></div>
+
+
+  <!-- =================================================
+       SUMMARY
+  ================================================== -->
+
+  <div
+    id="summary"
+    class="summary"
+    style="display:none"
+  ></div>
+
+
+  <!-- =================================================
+       TREE
+  ================================================== -->
+
+  <div id="tree">
+
+    <div class="section">
+
+      <div class="empty">
+
+        🌱
+
+        <br>
+
+        Search box থেকে একজন Person নির্বাচন করুন।
+
+        <br>
+
+        তারপর তার Family Tree এখানে দেখা যাবে।
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =========================================================
+   FIREBASE DATABASE
+========================================================= */
+
+const DB_URL =
+"https://jannat-projects-default-rtdb.firebaseio.com";
+
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+const FT = {
+
+  people:{},
+
+  relationships:{},
+
+  graph:{},
+
+  mainId:null
+
+};
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const searchInput =
+document.getElementById(
+  "treeSearch"
+);
+
+const searchResults =
+document.getElementById(
+  "searchResults"
+);
+
+const statusBox =
+document.getElementById(
+  "status"
+);
+
+const mainPersonBox =
+document.getElementById(
+  "mainPersonBox"
+);
+
+const summaryBox =
+document.getElementById(
+  "summary"
+);
+
+const treeBox =
+document.getElementById(
+  "tree"
+);
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function showStatus(
+  message,
+  type="info"
+){
+
+  statusBox.className =
+    "status show " + type;
+
+  statusBox.innerHTML =
+    message;
+
+}
+
+
+function hideStatus(){
+
+  statusBox.className =
+    "status";
+
+  statusBox.innerHTML =
+    "";
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value){
+
+  return String(
+    value ?? ""
+  )
+
+  .replaceAll(
+    "&",
+    "&amp;"
+  )
+
+  .replaceAll(
+    "<",
+    "&lt;"
+  )
+
+  .replaceAll(
+    ">",
+    "&gt;"
+  )
+
+  .replaceAll(
+    '"',
+    "&quot;"
+  )
+
+  .replaceAll(
+    "'",
+    "&#039;"
+  );
+
+}
+
+
+/* =========================================================
+   FIREBASE FETCH
+========================================================= */
+
+async function firebaseGet(
+  path,
+  label
+){
+
+  const url =
+    DB_URL +
+    path +
+    ".json";
+
+
+  console.log(
+    "Firebase request:",
+    url
+  );
+
+
+  let response;
+
+
+  try{
+
+    response =
+      await fetch(
+        url,
+        {
+          method:"GET",
+          cache:"no-store"
+        }
+      );
+
+  }
+
+  catch(error){
+
+    throw new Error(
+      label +
+      " fetch failed: " +
+      error.message
+    );
+
+  }
+
+
+  console.log(
+    label +
+    " HTTP:",
+    response.status
+  );
+
+
+  if(!response.ok){
+
+    let errorText = "";
+
+
+    try{
+
+      errorText =
+        await response.text();
+
+    }
+
+    catch(e){}
+
+
+    throw new Error(
+      label +
+      " HTTP " +
+      response.status +
+      " " +
+      errorText
+    );
+
+  }
+
+
+  try{
+
+    return await response.json();
+
+  }
+
+  catch(error){
+
+    throw new Error(
+      label +
+      " JSON read failed"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD PEOPLE
+========================================================= */
+
+async function loadPeople(){
+
+  const data =
+    await firebaseGet(
+      "/people",
+      "People"
+    );
+
+
+  if(
+    data === null ||
+    typeof data !== "object"
+  ){
+
+    FT.people = {};
+
+    console.warn(
+      "People path empty."
+    );
+
+    return;
+
+  }
+
+
+  FT.people =
+    data;
+
+}
+
+
+/* =========================================================
+   LOAD RELATIONSHIPS
+========================================================= */
+
+async function loadRelationships(){
+
+  try{
+
+    const data =
+      await firebaseGet(
+        "/relationships",
+        "Relationships"
+      );
+
+
+    if(
+      data === null ||
+      typeof data !== "object"
+    ){
+
+      FT.relationships = {};
+
+      console.log(
+        "Relationships path empty."
+      );
+
+      return;
+
+    }
+
+
+    FT.relationships =
+      data;
+
+  }
+
+  catch(error){
+
+    console.warn(
+      "Relationships load failed:",
+      error
+    );
+
+    FT.relationships = {};
+
+  }
+
+}
+
+
+/* =========================================================
+   GENDER
+========================================================= */
+
+function gender(id){
+
+  const person =
+    FT.people[id];
+
+
+  if(!person)
+    return "";
+
+
+  const value =
+    String(
+      person.gender || ""
+    )
+    .trim()
+    .toLowerCase();
+
+
+  if(
+    value === "male" ||
+    value === "পুরুষ" ||
+    value === "ছেলে"
+  ){
+
+    return "male";
+
+  }
+
+
+  if(
+    value === "female" ||
+    value === "মহিলা" ||
+    value === "মেয়ে" ||
+    value === "মেয়ে"
+  ){
+
+    return "female";
+
+  }
+
+
+  return "";
+
+}
+
+
+FT.gender =
+gender;
+
+
+/* =========================================================
+   LABELS
+========================================================= */
+
+function childLabel(id){
+
+  const g =
+    gender(id);
+
+
+  if(g === "male")
+    return "ছেলে";
+
+
+  if(g === "female")
+    return "মেয়ে";
+
+
+  return "সন্তান";
+
+}
+
+
+function siblingLabel(id){
+
+  const g =
+    gender(id);
+
+
+  if(g === "male")
+    return "ভাই";
+
+
+  if(g === "female")
+    return "বোন";
+
+
+  return "ভাই/বোন";
+
+}
+
+
+function parentLabel(id){
+
+  const g =
+    gender(id);
+
+
+  if(g === "male")
+    return "বাবা";
+
+
+  if(g === "female")
+    return "মা";
+
+
+  return "অভিভাবক";
+
+}
+
+
+function spouseLabel(id){
+
+  const g =
+    gender(id);
+
+
+  if(g === "male")
+    return "স্বামী";
+
+
+  if(g === "female")
+    return "স্ত্রী";
+
+
+  return "স্বামী/স্ত্রী";
+
+}
+
+
+/* =========================================================
+   BUILD GRAPH
+========================================================= */
+
+function buildGraph(){
+
+  FT.graph = {};
+
+
+  Object.keys(
+    FT.people
+  )
+  .forEach(id => {
+
+    FT.graph[id] = [];
+
+  });
+
+
+  Object.values(
+    FT.relationships || {}
+  )
+  .forEach(rel => {
+
+    if(!rel)
+      return;
+
+
+    const from =
+      String(
+        rel.from || ""
+      ).trim();
+
+
+    const to =
+      String(
+        rel.to || ""
+      ).trim();
+
+
+    const type =
+      String(
+        rel.type || ""
+      ).trim();
+
+
+    if(
+      !from ||
+      !to ||
+      !FT.people[from] ||
+      !FT.people[to]
+    ){
+
+      return;
+
+    }
+
+
+    if(type === "father"){
+
+      FT.graph[from].push({
+
+        id:to,
+
+        label:"বাবা",
+
+        raw:"father"
+
+      });
+
+
+      FT.graph[to].push({
+
+        id:from,
+
+        label:childLabel(from),
+
+        raw:"child"
+
+      });
+
+    }
+
+
+    else if(type === "mother"){
+
+      FT.graph[from].push({
+
+        id:to,
+
+        label:"মা",
+
+        raw:"mother"
+
+      });
+
+
+      FT.graph[to].push({
+
+        id:from,
+
+        label:childLabel(from),
+
+        raw:"child"
+
+      });
+
+    }
+
+
+    else if(type === "son"){
+
+      FT.graph[from].push({
+
+        id:to,
+
+        label:"ছেলে",
+
+        raw:"child"
+
+      });
+
+
+      FT.graph[to].push({
+
+        id:from,
+
+        label:parentLabel(from),
+
+        raw:"parent"
+
+      });
+
+    }
+
+
+    else if(type === "daughter"){
+
+      FT.graph[from].push({
+
+        id:to,
+
+        label:"মেয়ে",
+
+        raw:"child"
+
+      });
+
+
+      FT.graph[to].push({
+
+        id:from,
+
+        label:parentLabel(from),
+
+        raw:"parent"
+
+      });
+
+    }
+
+
+    else if(type === "spouse"){
+
+      FT.graph[from].push({
+
+        id:to,
+
+        label:spouseLabel(from),
+
+        raw:"spouse"
+
+      });
+
+
+      FT.graph[to].push({
+
+        id:from,
+
+        label:spouseLabel(to),
+
+        raw:"spouse"
+
+      });
+
+    }
+
+
+    else if(type === "brother"){
+
+      FT.graph[from].push({
+
+        id:to,
+
+        label:"ভাই",
+
+        raw:"sibling"
+
+      });
+
+
+      FT.graph[to].push({
+
+        id:from,
+
+        label:siblingLabel(from),
+
+        raw:"sibling"
+
+      });
+
+    }
+
+
+    else if(type === "sister"){
+
+      FT.graph[from].push({
+
+        id:to,
+
+        label:"বোন",
+
+        raw:"sibling"
+
+      });
+
+
+      FT.graph[to].push({
+
+        id:from,
+
+        label:siblingLabel(from),
+
+        raw:"sibling"
+
+      });
+
+    }
+
+  });
+
+
+  console.log(
+    "Family graph:",
+    FT.graph
+  );
+
+}
+
+
+/* =========================================================
+   UNIQUE
+========================================================= */
+
+function uniquePeople(list){
+
+  const map =
+    new Map();
+
+
+  list.forEach(item => {
+
+    if(
+      item &&
+      item.id &&
+      !map.has(item.id)
+    ){
+
+      map.set(
+        item.id,
+        item
+      );
+
+    }
+
+  });
+
+
+  return [...map.values()];
+
+}
+
+
+/* =========================================================
+   CONNECTION
+========================================================= */
+
+function connections(id){
+
+  return FT.graph[id] || [];
+
+}
+
+
+/* =========================================================
+   PARENTS
+========================================================= */
+
+function parents(id){
+
+  const result = [];
+
+
+  connections(id)
+  .forEach(c => {
+
+    if(
+      c.raw === "father" ||
+      c.raw === "mother" ||
+      c.raw === "parent"
+    ){
+
+      result.push({
+
+        id:c.id,
+
+        label:c.label
+
+      });
+
+    }
+
+  });
+
+
+  return uniquePeople(
+    result
+  );
+
+}
+
+
+/* =========================================================
+   CHILDREN
+========================================================= */
+
+function children(id){
+
+  const result = [];
+
+
+  connections(id)
+  .forEach(c => {
+
+    if(c.raw === "child"){
+
+      result.push({
+
+        id:c.id,
+
+        label:c.label
+
+      });
+
+    }
+
+  });
+
+
+  return uniquePeople(
+    result
+  );
+
+}
+
+
+/* =========================================================
+   SPOUSE
+========================================================= */
+
+function spouses(id){
+
+  return uniquePeople(
+
+    connections(id)
+
+    .filter(
+      c =>
+        c.raw === "spouse"
+    )
+
+    .map(c => ({
+
+      id:c.id,
+
+      label:c.label
+
+    }))
+
+  );
+
+}
+
+
+/* =========================================================
+   SIBLINGS
+========================================================= */
+
+function siblings(id){
+
+  const result = [];
+
+
+  connections(id)
+  .forEach(c => {
+
+    if(
+      c.raw === "sibling"
+    ){
+
+      result.push({
+
+        id:c.id,
+
+        label:
+          siblingLabel(c.id)
+
+      });
+
+    }
+
+  });
+
+
+  parents(id)
+  .forEach(parent => {
+
+    children(parent.id)
+    .forEach(child => {
+
+      if(
+        child.id !== id
+      ){
+
+        result.push({
+
+          id:child.id,
+
+          label:
+            siblingLabel(
+              child.id
+            )
+
+        });
+
+      }
+
+    });
+
+  });
+
+
+  return uniquePeople(
+    result
+  );
+
+}
+
+
+/* =========================================================
+   GRANDPARENTS
+========================================================= */
+
+function grandparents(id){
+
+  const result = [];
+
+
+  parents(id)
+  .forEach(parent => {
+
+    parents(parent.id)
+    .forEach(gp => {
+
+      let label =
+        parentLabel(
+          gp.id
+        );
+
+
+      if(
+        parent.label === "বাবা"
+      ){
+
+        label =
+          gender(gp.id) === "male"
+          ? "দাদা"
+          : "দাদি";
+
+      }
+
+
+      if(
+        parent.label === "মা"
+      ){
+
+        label =
+          gender(gp.id) === "male"
+          ? "নানা"
+          : "নানি";
+
+      }
+
+
+      result.push({
+
+        id:gp.id,
+
+        label:label
+
+      });
+
+    });
+
+  });
+
+
+  return uniquePeople(
+    result
+  );
+
+}
+
+
+/* =========================================================
+   GRANDCHILDREN
+========================================================= */
+
+function grandchildren(id){
+
+  const result = [];
+
+
+  children(id)
+  .forEach(child => {
+
+    children(child.id)
+    .forEach(gc => {
+
+      result.push({
+
+        id:gc.id,
+
+        label:
+
+          gender(gc.id) === "male"
+
+          ? "নাতি"
+
+          :
+
+          gender(gc.id) === "female"
+
+          ? "নাতনি"
+
+          :
+
+          "নাতি/নাতনি"
+
+      });
+
+    });
+
+  });
+
+
+  return uniquePeople(
+    result
+  );
+
+}
+
+
+/* =========================================================
+   UNCLE / AUNT
+========================================================= */
+
+function unclesAunts(id){
+
+  const result = [];
+
+
+  parents(id)
+  .forEach(parent => {
+
+    siblings(parent.id)
+    .forEach(sibling => {
+
+      let label =
+        siblingLabel(
+          sibling.id
+        );
+
+
+      if(
+        parent.label === "বাবা"
+      ){
+
+        label =
+          gender(sibling.id)
+          === "male"
+
+          ? "চাচা"
+
+          : "ফুফু";
+
+      }
+
+
+      if(
+        parent.label === "মা"
+      ){
+
+        label =
+          gender(sibling.id)
+          === "male"
+
+          ? "মামা"
+
+          : "খালা";
+
+      }
+
+
+      result.push({
+
+        id:sibling.id,
+
+        label:label
+
+      });
+
+    });
+
+  });
+
+
+  return uniquePeople(
+    result
+  );
+
+}
+
+
+/* =========================================================
+   COUSINS
+========================================================= */
+
+function cousins(id){
+
+  const result = [];
+
+
+  parents(id)
+  .forEach(parent => {
+
+    siblings(parent.id)
+    .forEach(sibling => {
+
+      children(sibling.id)
+      .forEach(child => {
+
+        let prefix = "";
+
+
+        if(
+          parent.label === "বাবা"
+        ){
+
+          prefix =
+            gender(sibling.id)
+            === "male"
+
+            ? "চাচাতো"
+
+            : "ফুফাতো";
+
+        }
+
+
+        if(
+          parent.label === "মা"
+        ){
+
+          prefix =
+            gender(sibling.id)
+            === "male"
+
+            ? "মামাতো"
+
+            : "খালাতো";
+
+        }
+
+
+        let suffix =
+
+          gender(child.id)
+          === "male"
+
+          ? " ভাই"
+
+          :
+
+          gender(child.id)
+          === "female"
+
+          ? " বোন"
+
+          :
+
+          " ভাই/বোন";
+
+
+        result.push({
+
+          id:child.id,
+
+          label:
+            prefix + suffix
+
+        });
+
+      });
+
+    });
+
+  });
+
+
+  return uniquePeople(
+    result
+  );
+
+}
+
+
+/* =========================================================
+   NIECES / NEPHEWS
+========================================================= */
+
+function niecesNephews(id){
+
+  const result = [];
+
+
+  siblings(id)
+  .forEach(sibling => {
+
+    children(sibling.id)
+    .forEach(child => {
+
+      let label;
+
+
+      if(
+        gender(sibling.id)
+        === "male"
+      ){
+
+        label =
+
+          gender(child.id)
+          === "male"
+
+          ? "ভাতিজা"
+
+          : "ভাতিজি";
+
+      }
+
+      else{
+
+        label =
+
+          gender(child.id)
+          === "male"
+
+          ? "ভাগনে"
+
+          : "ভাগনি";
+
+      }
+
+
+      result.push({
+
+        id:child.id,
+
+        label:label
+
+      });
+
+    });
+
+  });
+
+
+  return uniquePeople(
+    result
+  );
+
+}
+
+
+/* =========================================================
+   PERSON CARD
+========================================================= */
+
+function personCard(
+  item,
+  isMain=false
+){
+
+  const person =
+    FT.people[item.id];
+
+
+  if(!person)
+    return "";
+
+
+  const location = [
+
+    person.village,
+
+    person.upazilla,
+
+    person.zilla
+
+  ]
+
+  .filter(Boolean)
+
+  .join(", ");
+
+
+  return `
+
+    <div
+      class="person-card"
+    >
+
+      <div
+        class="person-relation"
+      >
+
+        ${escapeHTML(
+          item.label ||
+          "Main Person"
+        )}
+
+      </div>
+
+
+      <div
+        class="person-name"
+      >
+
+        ${escapeHTML(
+          person.name ||
+          "নাম নেই"
+        )}
+
+      </div>
+
+
+      <div
+        class="person-id"
+      >
+
+        Person ID:
+        ${escapeHTML(
+          item.id
+        )}
+
+      </div>
+
+
+      ${
+        location
+
+        ?
+
+        `
+
+        <div
+          class="person-location"
+        >
+
+          📍
+          ${escapeHTML(
+            location
+          )}
+
+        </div>
+
+        `
+
+        :
+
+        ""
+      }
+
+
+      ${
+        isMain
+
+        ?
+
+        ""
+
+        :
+
+        `
+
+        <div
+          class="card-actions"
+        >
+
+          <button
+            type="button"
+            class="card-btn profile-btn"
+            data-action="profile"
+            data-id="${escapeHTML(
+              item.id
+            )}"
+          >
+            Profile
+          </button>
+
+
+          <button
+            type="button"
+            class="card-btn main-btn"
+            data-action="main"
+            data-id="${escapeHTML(
+              item.id
+            )}"
+          >
+            Main করুন
+          </button>
+
+        </div>
+
+        `
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+function makeSection(
+  title,
+  items
+){
+
+  if(!items.length)
+    return "";
+
+
+  return `
+
+    <div
+      class="section"
+    >
+
+      <div
+        class="section-title"
+      >
+
+        <h2>
+
+          ${escapeHTML(
+            title
+          )}
+
+        </h2>
+
+        <span
+          class="section-count"
+        >
+
+          ${items.length}
+          জন
+
+        </span>
+
+      </div>
+
+
+      <div
+        class="people-grid"
+      >
+
+        ${
+          items
+
+          .map(
+            item =>
+              personCard(item)
+          )
+
+          .join("")
+        }
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   SET MAIN
+========================================================= */
+
+function setMain(
+  id,
+  updateURL=true
+){
+
+  id =
+    String(
+      id || ""
+    ).trim();
+
+
+  console.log(
+    "Setting Main Person:",
+    id
+  );
+
+
+  if(!id){
+
+    showStatus(
+      "Person ID পাওয়া যায়নি।",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !FT.people[id]
+  ){
+
+    showStatus(
+      "এই Person ID Firebase-এ পাওয়া যায়নি।",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  FT.mainId =
+    id;
+
+
+  if(updateURL){
+
+    try{
+
+      const url =
+        new URL(
+          window.location.href
+        );
+
+
+      url.searchParams.set(
+        "id",
+        id
+      );
+
+
+      window.history.pushState(
+        {},
+        "",
+        url.toString()
+      );
+
+    }
+
+    catch(error){
+
+      console.warn(
+        "URL update failed:",
+        error
+      );
+
+    }
+
+  }
+
+
+  searchResults.innerHTML =
+    "";
+
+  searchResults.classList.remove(
+    "show"
+  );
+
+
+  searchInput.value =
+    FT.people[id].name ||
+    id;
+
+
+  render();
+
+
+  window.scrollTo({
+
+    top:0,
+
+    behavior:"smooth"
+
+  });
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function searchPeople(){
+
+  const keyword =
+    String(
+      searchInput.value || ""
+    )
+    .trim()
+    .toLowerCase();
+
+
+  searchResults.innerHTML =
+    "";
+
+
+  if(!keyword){
+
+    searchResults.classList.remove(
+      "show"
+    );
+
+    return;
+
+  }
+
+
+  const results =
+
+    Object.entries(
+      FT.people
+    )
+
+    .filter(
+      ([id,person]) => {
+
+        const fields = [
+
+          id,
+
+          person.name,
+
+          person.father,
+
+          person.village,
+
+          person.upazilla,
+
+          person.zilla
+
+        ];
+
+
+        return fields.some(
+
+          field =>
+
+            String(
+              field || ""
+            )
+
+            .toLowerCase()
+
+            .includes(
+              keyword
+            )
+
+        );
+
+      }
+
+    )
+
+    .slice(0,30);
+
+
+  if(
+    !results.length
+  ){
+
+    searchResults.innerHTML = `
+
+      <div
+        class="search-empty"
+      >
+
+        কোনো ব্যক্তি পাওয়া যায়নি।
+
+      </div>
+
+    `;
+
+
+    searchResults.classList.add(
+      "show"
+    );
+
+    return;
+
+  }
+
+
+  results.forEach(
+    ([id,person]) => {
+
+      const item =
+        document.createElement(
+          "button"
+        );
+
+
+      item.type =
+        "button";
+
+
+      item.className =
+        "search-result-item";
+
+
+      item.dataset.personId =
+        id;
+
+
+      item.innerHTML = `
+
+        <div
+          class="search-result-name"
+        >
+
+          ${escapeHTML(
+            person.name ||
+            "নাম নেই"
+          )}
+
+        </div>
+
+
+        <div
+          class="search-result-info"
+        >
+
+          ID:
+          ${escapeHTML(
+            id
+          )}
+
+          ${
+            person.father
+
+            ?
+
+            " • বাবা: " +
+            escapeHTML(
+              person.father
+            )
+
+            :
+
+            ""
+          }
+
+          ${
+            person.village
+
+            ?
+
+            " • " +
+            escapeHTML(
+              person.village
+            )
+
+            :
+
+            ""
+          }
+
+        </div>
+
+      `;
+
+
+      item.addEventListener(
+        "click",
+        function(event){
+
+          event.preventDefault();
+
+          event.stopPropagation();
+
+
+          const selectedId =
+            this.dataset.personId;
+
+
+          console.log(
+            "Search result clicked:",
+            selectedId
+          );
+
+
+          setMain(
+            selectedId,
+            true
+          );
+
+        }
+      );
+
+
+      searchResults.appendChild(
+        item
+      );
+
+    }
+  );
+
+
+  searchResults.classList.add(
+    "show"
+  );
+
+}
+
+
+/* =========================================================
+   SEARCH EVENTS
+========================================================= */
+
+searchInput.addEventListener(
+  "input",
+  function(){
+
+    searchPeople();
+
+  }
+);
+
+
+searchInput.addEventListener(
+  "keydown",
+  function(event){
+
+    if(
+      event.key !== "Enter"
+    ){
+
+      return;
+
+    }
+
+
+    event.preventDefault();
+
+
+    const first =
+      searchResults.querySelector(
+        ".search-result-item"
+      );
+
+
+    if(first){
+
+      const id =
+        first.dataset.personId;
+
+
+      if(id){
+
+        setMain(
+          id,
+          true
+        );
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   CLOSE SEARCH
+========================================================= */
+
+document.addEventListener(
+  "click",
+  function(event){
+
+    if(
+
+      !searchInput.contains(
+        event.target
+      )
+
+      &&
+
+      !searchResults.contains(
+        event.target
+      )
+
+    ){
+
+      searchResults.classList.remove(
+        "show"
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   CARD BUTTONS
+========================================================= */
+
+treeBox.addEventListener(
+  "click",
+  function(event){
+
+    const button =
+      event.target.closest(
+        "[data-action]"
+      );
+
+
+    if(!button)
+      return;
+
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+
+    const id =
+      button.dataset.id;
+
+
+    const action =
+      button.dataset.action;
+
+
+    if(!id)
+      return;
+
+
+    if(
+      action === "profile"
+    ){
+
+      window.location.href =
+        "/find.html?id=" +
+        encodeURIComponent(
+          id
+        );
+
+    }
+
+
+    else if(
+      action === "main"
+    ){
+
+      setMain(
+        id,
+        true
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+  if(!FT.mainId){
+
+    mainPersonBox.style.display =
+      "none";
+
+    summaryBox.style.display =
+      "none";
+
+
+    treeBox.innerHTML = `
+
+      <div
+        class="section"
+      >
+
+        <div
+          class="empty"
+        >
+
+          🌱
+
+          <br>
+
+          Search box থেকে একজন Person
+          নির্বাচন করুন।
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  const person =
+    FT.people[
+      FT.mainId
+    ];
+
+
+  if(!person){
+
+    return;
+
+  }
+
+
+  /* =================================================
+     MAIN PERSON
+  ================================================= */
+
+  mainPersonBox.style.display =
+    "block";
+
+
+  mainPersonBox.innerHTML = `
+
+    <div
+      class="main-label"
+    >
+
+      🌳 MAIN PERSON
+
+    </div>
+
+
+    <div
+      class="main-name"
+    >
+
+      ${escapeHTML(
+        person.name ||
+        "নাম নেই"
+      )}
+
+    </div>
+
+
+    <div
+      class="main-id"
+    >
+
+      Person ID:
+      ${escapeHTML(
+        FT.mainId
+      )}
+
+    </div>
+
+  `;
+
+
+  /* =================================================
+     BASIC RELATIONS
+  ================================================= */
+
+  const p =
+    parents(
+      FT.mainId
+    );
+
+  const c =
+    children(
+      FT.mainId
+    );
+
+  const s =
+    siblings(
+      FT.mainId
+    );
+
+  const sp =
+    spouses(
+      FT.mainId
+    );
+
+
+  /* =================================================
+     SUMMARY
+  ================================================= */
+
+  summaryBox.style.display =
+    "grid";
+
+
+  summaryBox.innerHTML = `
+
+    <div
+      class="summary-box"
+    >
+
+      <div
+        class="summary-number"
+      >
+        ${p.length}
+      </div>
+
+      <div
+        class="summary-label"
+      >
+        বাবা / মা
+      </div>
+
+    </div>
+
+
+    <div
+      class="summary-box"
+    >
+
+      <div
+        class="summary-number"
+      >
+        ${c.length}
+      </div>
+
+      <div
+        class="summary-label"
+      >
+        সন্তান
+      </div>
+
+    </div>
+
+
+    <div
+      class="summary-box"
+    >
+
+      <div
+        class="summary-number"
+      >
+        ${s.length}
+      </div>
+
+      <div
+        class="summary-label"
+      >
+        ভাই / বোন
+      </div>
+
+    </div>
+
+
+    <div
+      class="summary-box"
+    >
+
+      <div
+        class="summary-number"
+      >
+        ${sp.length}
+      </div>
+
+      <div
+        class="summary-label"
+      >
+        স্বামী / স্ত্রী
+      </div>
+
+    </div>
+
+  `;
+
+
+  /* =================================================
+     OTHER RELATIONS
+  ================================================= */
+
+  const gp =
+    grandparents(
+      FT.mainId
+    );
+
+  const gc =
+    grandchildren(
+      FT.mainId
+    );
+
+  const ua =
+    unclesAunts(
+      FT.mainId
+    );
+
+  const co =
+    cousins(
+      FT.mainId
+    );
+
+  const nn =
+    niecesNephews(
+      FT.mainId
+    );
+
+
+  let html = "";
+
+
+  /* =================================================
+     GENERATION 1
+  ================================================= */
+
+  html += makeSection(
+    "🌿 দাদা / দাদি / নানা / নানি",
+    gp
+  );
+
+
+  /* =================================================
+     GENERATION 2
+  ================================================= */
+
+  html += makeSection(
+    "🌿 বাবা / মা",
+    p
+  );
+
+
+  /* =================================================
+     MAIN PERSON
+  ================================================= */
+
+  html += `
+
+    <div
+      class="section"
+    >
+
+      <div
+        class="section-title"
+      >
+
+        <h2>
+          🌳 Main Person
+        </h2>
+
+      </div>
+
+
+      <div
+        class="people-grid"
+      >
+
+        ${
+          personCard(
+            {
+              id:FT.mainId,
+
+              label:"Main Person"
+            },
+
+            true
+          )
+        }
+
+
+        ${
+          sp
+
+          .map(
+            item =>
+              personCard(item)
+          )
+
+          .join("")
+        }
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  /* =================================================
+     CHILDREN
+  ================================================= */
+
+  html += makeSection(
+    "🌱 ছেলে / মেয়ে",
+    c
+  );
+
+
+  /* =================================================
+     GRANDCHILDREN
+  ================================================= */
+
+  html += makeSection(
+    "🌱 নাতি / নাতনি",
+    gc
+  );
+
+
+  /* =================================================
+     SIBLINGS
+  ================================================= */
+
+  html += makeSection(
+    "🌿 ভাই / বোন",
+    s
+  );
+
+
+  /* =================================================
+     UNCLE / AUNT
+  ================================================= */
+
+  html += makeSection(
+    "🌿 চাচা / ফুফু / মামা / খালা",
+    ua
+  );
+
+
+  /* =================================================
+     COUSINS
+  ================================================= */
+
+  html += makeSection(
+    "🌱 চাচাতো / ফুফাতো / মামাতো / খালাতো ভাই-বোন",
+    co
+  );
+
+
+  /* =================================================
+     NIECES / NEPHEWS
+  ================================================= */
+
+  html += makeSection(
+    "🌱 ভাতিজা / ভাতিজি / ভাগনে / ভাগনি",
+    nn
+  );
+
+
+  /* =================================================
+     EMPTY
+  ================================================= */
+
+  if(!html){
+
+    html = `
+
+      <div
+        class="section"
+      >
+
+        <div
+          class="empty"
+        >
+
+          🌱
+
+          <br>
+
+          এই ব্যক্তির সাথে এখনো কোনো
+          Family Relationship যোগ করা হয়নি।
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  treeBox.innerHTML =
+    html;
+
+}
+
+
+/* =========================================================
+   URL PERSON ID
+========================================================= */
+
+function getURLPerson(){
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  return params.get(
+    "id"
+  );
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function init(){
+
+  try{
+
+    showStatus(
+      "Firebase থেকে Person data লোড হচ্ছে...",
+      "info"
+    );
+
+
+    /* PEOPLE */
+
+    await loadPeople();
+
+
+    console.log(
+      "People loaded:",
+      Object.keys(
+        FT.people
+      ).length
+    );
+
+
+    /* RELATIONSHIPS */
+
+    await loadRelationships();
+
+
+    console.log(
+      "Relationships loaded:",
+      Object.keys(
+        FT.relationships
+      ).length
+    );
+
+
+    /* GRAPH */
+
+    buildGraph();
+
+
+    /* URL ID */
+
+    const urlId =
+      getURLPerson();
+
+
+    if(
+      urlId &&
+      FT.people[urlId]
+    ){
+
+      FT.mainId =
+        urlId;
+
+
+      searchInput.value =
+        FT.people[urlId].name ||
+        urlId;
+
+
+      render();
+
+    }
+
+    else{
+
+      FT.mainId =
+        null;
+
+
+      render();
+
+    }
+
+
+    hideStatus();
+
+
+    console.log(
+      "Family Tree initialized successfully."
+    );
+
+  }
+
+  catch(error){
+
+    console.error(
+      "FAMILY TREE ERROR:",
+      error
+    );
+
+
+    showStatus(
+
+      "Family Tree load করা যায়নি।<br><br>" +
+
+      "<b>সমস্যা:</b> " +
+
+      escapeHTML(
+        error.message
+      ) +
+
+      "<br><br>" +
+
+      "Firebase URL এবং Database Rules পরীক্ষা করুন।",
+
+      "error"
+
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+init();
+
+</script>
+
+</body>
+</html>
