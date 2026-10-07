@@ -3527,43 +3527,77 @@ img{
 </section>
 
 
-
-
 <script>
-const MW_DATABASE_URL =
-"https://jannat-projects-default-rtdb.firebaseio.com";
 
-let homepagePeople = [];
+/* =========================================================
+   স্মৃতির দেয়াল
+   HOMEPAGE API VERSION
+
+   Firebase সরাসরি ব্যবহার করা হচ্ছে না।
+
+   Website
+      ↓
+   /api/homepage
+      ↓
+   Cloudflare Worker
+      ↓
+   Firebase
+========================================================= */
 
 
 /* =========================================================
    BIPUL BANGLA ENTITY DECODER
-   Blogger যদি বাংলা অক্ষরকে &#....; বানিয়ে দেয়,
-   এই ফাংশন সেটাকে আবার আসল বাংলা অক্ষরে রূপান্তর করবে।
 ========================================================= */
 
 function bipulDecode(value){
-  if(value === null || value === undefined){
+
+  if(
+    value === null ||
+    value === undefined
+  ){
     return "";
   }
 
-  let result = String(value);
 
-  for(let i = 0; i < 5; i++){
-    const textarea = document.createElement("textarea");
+  let result =
+    String(value);
 
-    textarea.innerHTML = result;
 
-    const decoded = textarea.value;
+  for(
+    let i = 0;
+    i < 5;
+    i++
+  ){
 
-    if(decoded === result){
+    const textarea =
+      document.createElement(
+        "textarea"
+      );
+
+
+    textarea.innerHTML =
+      result;
+
+
+    const decoded =
+      textarea.value;
+
+
+    if(
+      decoded === result
+    ){
       break;
     }
 
-    result = decoded;
+
+    result =
+      decoded;
+
   }
 
+
   return result;
+
 }
 
 
@@ -3571,15 +3605,25 @@ function bipulDecode(value){
    SAFE TEXT SETTER
 ========================================================= */
 
-function bipulSetText(elementId, value){
+function bipulSetText(
+  elementId,
+  value
+){
 
-  const element = document.getElementById(elementId);
+  const element =
+    document.getElementById(
+      elementId
+    );
+
 
   if(!element){
     return;
   }
 
-  element.textContent = bipulDecode(value);
+
+  element.textContent =
+    bipulDecode(value);
+
 }
 
 
@@ -3587,9 +3631,12 @@ function bipulSetText(elementId, value){
    BANGLA NUMBER
 ========================================================= */
 
-function toBanglaNumber(value){
+function toBanglaNumber(
+  value
+){
 
   const map = {
+
     "0":"০",
     "1":"১",
     "2":"২",
@@ -3600,563 +3647,31 @@ function toBanglaNumber(value){
     "7":"৭",
     "8":"৮",
     "9":"৯"
+
   };
 
-  return String(value).replace(/[0-9]/g, function(n){
-    return map[n];
-  });
-}
 
+  return String(
+    value ?? 0
+  ).replace(
+    /[0-9]/g,
+    function(number){
 
-/* =========================================================
-   LOCAL DATE PARSER
-========================================================= */
-
-function parseLocalDate(value){
-
-  if(!value){
-    return null;
-  }
-
-  const parts = String(value).split("-");
-
-  if(parts.length !== 3){
-    return null;
-  }
-
-  const year = Number(parts[0]);
-  const month = Number(parts[1]) - 1;
-  const day = Number(parts[2]);
-
-  const date = new Date(year, month, day);
-
-  if(
-    date.getFullYear() !== year ||
-    date.getMonth() !== month ||
-    date.getDate() !== day
-  ){
-    return null;
-  }
-
-  return date;
-}
-
-
-/* =========================================================
-   ALIVE / DECEASED
-========================================================= */
-
-function isAlive(person){
-
-  return String(person.status).toLowerCase() !== "false";
-
-}
-
-
-/* =========================================================
-   BIRTHDAY CHECK
-========================================================= */
-
-function isBirthdayToday(dateOfBirth){
-
-  const birth = parseLocalDate(dateOfBirth);
-
-  if(!birth){
-    return false;
-  }
-
-  const today = new Date();
-
-  return (
-    birth.getMonth() === today.getMonth() &&
-    birth.getDate() === today.getDate()
-  );
-
-}
-
-
-/* =========================================================
-   LOAD HOMEPAGE DATA
-========================================================= */
-
-async function loadHomepageData(){
-
-  try{
-
-    const response = await fetch(
-      MW_DATABASE_URL + "/people.json"
-    );
-
-    if(!response.ok){
-      throw new Error("Firebase request failed");
-    }
-
-    const data = await response.json();
-
-    homepagePeople = [];
-
-
-    if(data){
-
-      Object.keys(data).forEach(function(key){
-
-        const person = data[key];
-
-        if(!person){
-          return;
-        }
-
-        if(!person.id){
-          person.id = key;
-        }
-
-        homepagePeople.push(person);
-
-      });
+      return map[number];
 
     }
-
-
-    updateStatistics();
-
-    updateBirthdays();
-
-    updateFeaturedMemory();
-
-
-  }catch(error){
-
-    console.error("Homepage:", error);
-
-
-    /* -----------------------------------------
-       Statistics
-    ----------------------------------------- */
-
-    bipulSetText(
-      "totalPeople",
-      "—"
-    );
-
-    bipulSetText(
-      "alivePeople",
-      "—"
-    );
-
-    bipulSetText(
-      "deceasedPeople",
-      "—"
-    );
-
-
-    /* -----------------------------------------
-       Birthday
-    ----------------------------------------- */
-
-    const birthdayList =
-      document.getElementById("birthdayList");
-
-    if(birthdayList){
-
-      birthdayList.innerHTML = `
-        <div class="mw-empty">
-          এই মুহূর্তে তথ্য পাওয়া যাচ্ছে না।
-        </div>
-      `;
-
-    }
-
-
-    /* -----------------------------------------
-       Featured memory
-    ----------------------------------------- */
-
-    bipulSetText(
-      "featuredName",
-      "তথ্য পাওয়া যাচ্ছে না"
-    );
-
-    bipulSetText(
-      "featuredNote",
-      "এই মুহূর্তে তথ্য লোড করা সম্ভব হয়নি।"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   UPDATE STATISTICS
-========================================================= */
-
-function updateStatistics(){
-
-  const total =
-    homepagePeople.length;
-
-
-  const alive =
-    homepagePeople.filter(function(person){
-
-      return isAlive(person);
-
-    }).length;
-
-
-  const deceased =
-    homepagePeople.filter(function(person){
-
-      return !isAlive(person);
-
-    }).length;
-
-
-  bipulSetText(
-    "totalPeople",
-    toBanglaNumber(total)
   );
-
-
-  bipulSetText(
-    "alivePeople",
-    toBanglaNumber(alive)
-  );
-
-
-  bipulSetText(
-    "deceasedPeople",
-    toBanglaNumber(deceased)
-  );
-
-}
-
-
-/* =========================================================
-   UPDATE BIRTHDAYS
-========================================================= */
-
-function updateBirthdays(){
-
-  const container =
-    document.getElementById("birthdayList");
-
-
-  if(!container){
-    return;
-  }
-
-
-  const birthdays =
-    homepagePeople.filter(function(person){
-
-      if(!isAlive(person)){
-        return false;
-      }
-
-      return isBirthdayToday(
-        person.dateOfBirth
-      );
-
-    });
-
-
-  /* -----------------------------------------
-     No birthday today
-  ----------------------------------------- */
-
-  if(!birthdays.length){
-
-    container.innerHTML = `
-      <div class="mw-empty">
-        🎂 আজ আমাদের সংরক্ষিত তালিকায় কারও জন্মদিন নেই।
-        <br>
-        আগামী কোনো শুভ দিনে হয়তো এখানে নতুন নাম দেখা যাবে।
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  /* -----------------------------------------
-     Birthday cards
-  ----------------------------------------- */
-
-  container.innerHTML =
-    birthdays
-      .slice(0, 6)
-      .map(function(person){
-
-        return `
-          <div class="mw-birthday-card">
-
-            <div class="mw-birthday-icon">
-              🎂
-            </div>
-
-            <h3>
-              ${escapeHtml(
-                person.name || "অজানা"
-              )}
-            </h3>
-
-            <p>
-              🎉 শুভ জন্মদিন
-            </p>
-
-            <a
-              class="mw-birthday-link"
-              href="/find.html?id=${encodeURIComponent(
-                person.id || ""
-              )}"
-            >
-              প্রোফাইল দেখুন →
-            </a>
-
-          </div>
-        `;
-
-      })
-      .join("");
-
-}
-
-
-/* =========================================================
-   FEATURED MEMORY
-========================================================= */
-
-function updateFeaturedMemory(){
-
-  const deceased =
-    homepagePeople.filter(function(person){
-
-      return !isAlive(person) && person.id;
-
-    });
-
-
-  /* -----------------------------------------
-     No deceased person
-  ----------------------------------------- */
-
-  if(!deceased.length){
-
-    bipulSetText(
-      "featuredName",
-      "এখনও কোনো স্মৃতি যোগ হয়নি"
-    );
-
-
-    bipulSetText(
-      "featuredFather",
-      ""
-    );
-
-
-    bipulSetText(
-      "featuredPlace",
-      ""
-    );
-
-
-    bipulSetText(
-      "featuredNote",
-      "কোনো প্রয়াত ব্যক্তির তথ্য যুক্ত হলে এখানে স্মৃতির একটি অংশ প্রদর্শিত হবে।"
-    );
-
-
-    const button =
-      document.getElementById("featuredButton");
-
-
-    if(button){
-
-      button.style.display = "none";
-
-    }
-
-
-    return;
-
-  }
-
-
-  /* -----------------------------------------
-     Today's deterministic memory
-  ----------------------------------------- */
-
-  const today =
-    new Date();
-
-
-  const dateKey =
-    today.getFullYear() +
-    "-" +
-    (today.getMonth() + 1) +
-    "-" +
-    today.getDate();
-
-
-  let hash = 0;
-
-
-  for(
-    let i = 0;
-    i < dateKey.length;
-    i++
-  ){
-
-    hash =
-      (
-        (hash * 31) +
-        dateKey.charCodeAt(i)
-      ) >>> 0;
-
-  }
-
-
-  const index =
-    hash % deceased.length;
-
-
-  const person =
-    deceased[index];
-
-
-  /* -----------------------------------------
-     Name
-  ----------------------------------------- */
-
-  bipulSetText(
-    "featuredName",
-    person.name || "অজানা"
-  );
-
-
-  /* -----------------------------------------
-     Father
-  ----------------------------------------- */
-
-  bipulSetText(
-    "featuredFather",
-    person.father
-      ? "পিতা: " + person.father
-      : ""
-  );
-
-
-  /* -----------------------------------------
-     Address
-  ----------------------------------------- */
-
-  const place = [
-    person.village,
-    person.upazilla,
-    person.zilla
-  ]
-    .filter(Boolean)
-    .join(" • ");
-
-
-  bipulSetText(
-    "featuredPlace",
-    place
-      ? "📍 " + place
-      : ""
-  );
-
-
-  /* -----------------------------------------
-     Memory note
-  ----------------------------------------- */
-
-  bipulSetText(
-    "featuredNote",
-    "তার জীবন ও পরিচয়কে শ্রদ্ধার সঙ্গে মনে রাখার একটি ছোট্ট প্রয়াস।"
-  );
-
-
-  /* -----------------------------------------
-     Button
-  ----------------------------------------- */
-
-  const button =
-    document.getElementById(
-      "featuredButton"
-    );
-
-
-  if(button){
-
-    button.href =
-      "/find.html?id=" +
-      encodeURIComponent(
-        person.id
-      );
-
-    button.style.display =
-      "inline-flex";
-
-  }
-
-}
-
-
-/* =========================================================
-   HOMEPAGE SEARCH
-========================================================= */
-
-function homepageSearch(event){
-
-  event.preventDefault();
-
-
-  const input =
-    document.getElementById(
-      "homepageSearchInput"
-    );
-
-
-  const query =
-    String(
-      input ? input.value : ""
-    ).trim();
-
-
-  /* -----------------------------------------
-     Empty search
-  ----------------------------------------- */
-
-  if(!query){
-
-    window.location.href =
-      "/find.html";
-
-    return;
-
-  }
-
-
-  /* -----------------------------------------
-     Search query
-  ----------------------------------------- */
-
-  window.location.href =
-    "/find.html?q=" +
-    encodeURIComponent(query);
 
 }
 
 
 /* =========================================================
    ESCAPE HTML
-   Firebase থেকে আসা user data নিরাপদ রাখার জন্য
 ========================================================= */
 
-function escapeHtml(value){
+function escapeHtml(
+  value
+){
 
   return String(
     value ?? ""
@@ -4191,6 +3706,599 @@ function escapeHtml(value){
 
 
 /* =========================================================
+   HOMEPAGE API
+========================================================= */
+
+async function loadHomepageData(){
+
+  try{
+
+    /* -----------------------------------------
+       Cloudflare Worker
+    ----------------------------------------- */
+
+    const response =
+      await fetch(
+        "/api/homepage",
+        {
+          method:"GET",
+          headers:{
+            "Accept":
+              "application/json"
+          },
+          cache:"no-store"
+        }
+      );
+
+
+    if(
+      !response.ok
+    ){
+
+      throw new Error(
+        "Homepage API request failed: " +
+        response.status
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if(
+      !data ||
+      data.success !== true
+    ){
+
+      throw new Error(
+        "Invalid homepage API response"
+      );
+
+    }
+
+
+    /* -----------------------------------------
+       UPDATE STATISTICS
+    ----------------------------------------- */
+
+    updateStatistics(
+      data.statistics
+    );
+
+
+    /* -----------------------------------------
+       UPDATE BIRTHDAYS
+    ----------------------------------------- */
+
+    updateBirthdays(
+      data.birthdays
+    );
+
+
+    /* -----------------------------------------
+       UPDATE FEATURED MEMORY
+    ----------------------------------------- */
+
+    updateFeaturedMemory(
+      data.featured
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Deyaler Homepage API:",
+      error
+    );
+
+
+    showHomepageError();
+
+  }
+
+}
+
+
+/* =========================================================
+   UPDATE STATISTICS
+========================================================= */
+
+function updateStatistics(
+  statistics
+){
+
+  statistics =
+    statistics || {};
+
+
+  const total =
+    Number(
+      statistics.total || 0
+    );
+
+
+  const alive =
+    Number(
+      statistics.alive || 0
+    );
+
+
+  const deceased =
+    Number(
+      statistics.deceased || 0
+    );
+
+
+  bipulSetText(
+    "totalPeople",
+    toBanglaNumber(
+      total
+    )
+  );
+
+
+  bipulSetText(
+    "alivePeople",
+    toBanglaNumber(
+      alive
+    )
+  );
+
+
+  bipulSetText(
+    "deceasedPeople",
+    toBanglaNumber(
+      deceased
+    )
+  );
+
+}
+
+
+/* =========================================================
+   UPDATE BIRTHDAYS
+========================================================= */
+
+function updateBirthdays(
+  birthdays
+){
+
+  const container =
+    document.getElementById(
+      "birthdayList"
+    );
+
+
+  if(!container){
+    return;
+  }
+
+
+  if(
+    !Array.isArray(
+      birthdays
+    )
+  ){
+
+    birthdays = [];
+
+  }
+
+
+  /* -----------------------------------------
+     No birthday today
+  ----------------------------------------- */
+
+  if(
+    birthdays.length === 0
+  ){
+
+    container.innerHTML = `
+
+      <div class="mw-empty">
+
+        🎂 আজ আমাদের সংরক্ষিত তালিকায়
+        কারও জন্মদিন নেই।
+
+        <br>
+
+        আগামী কোনো শুভ দিনে হয়তো
+        এখানে নতুন নাম দেখা যাবে।
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------
+     Birthday cards
+  ----------------------------------------- */
+
+  container.innerHTML =
+
+    birthdays
+      .slice(0,6)
+      .map(
+        function(person){
+
+          const id =
+            encodeURIComponent(
+              person.id || ""
+            );
+
+
+          const name =
+            escapeHtml(
+              person.name ||
+              "অজানা"
+            );
+
+
+          return `
+
+            <div class="mw-birthday-card">
+
+              <div class="mw-birthday-icon">
+                🎂
+              </div>
+
+              <h3>
+                ${name}
+              </h3>
+
+              <p>
+                🎉 শুভ জন্মদিন
+              </p>
+
+              <a
+                class="mw-birthday-link"
+                href="/find.html?id=${id}">
+                প্রোফাইল দেখুন →
+              </a>
+
+            </div>
+
+          `;
+
+        }
+      )
+      .join("");
+
+}
+
+
+/* =========================================================
+   UPDATE FEATURED MEMORY
+========================================================= */
+
+function updateFeaturedMemory(
+  person
+){
+
+  const photo =
+    document.getElementById(
+      "featuredPhoto"
+    );
+
+
+  const button =
+    document.getElementById(
+      "featuredButton"
+    );
+
+
+  /* -----------------------------------------
+     No featured memory
+  ----------------------------------------- */
+
+  if(
+    !person ||
+    !person.id
+  ){
+
+    bipulSetText(
+      "featuredName",
+      "এখনও কোনো স্মৃতি যোগ হয়নি"
+    );
+
+
+    bipulSetText(
+      "featuredFather",
+      ""
+    );
+
+
+    bipulSetText(
+      "featuredPlace",
+      ""
+    );
+
+
+    bipulSetText(
+      "featuredNote",
+      "কোনো প্রয়াত ব্যক্তির তথ্য যুক্ত হলে এখানে স্মৃতির একটি অংশ প্রদর্শিত হবে।"
+    );
+
+
+    if(photo){
+
+      photo.innerHTML =
+        "🕊️";
+
+    }
+
+
+    if(button){
+
+      button.style.display =
+        "none";
+
+      button.href =
+        "#";
+
+    }
+
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------
+     Featured person name
+  ----------------------------------------- */
+
+  bipulSetText(
+    "featuredName",
+    person.name ||
+    "অজানা"
+  );
+
+
+  /* -----------------------------------------
+     Father
+  ----------------------------------------- */
+
+  bipulSetText(
+    "featuredFather",
+
+    person.father
+      ? "পিতা: " +
+        person.father
+      : ""
+  );
+
+
+  /* -----------------------------------------
+     Address
+  ----------------------------------------- */
+
+  const place = [
+
+    person.village,
+    person.upazilla,
+    person.zilla
+
+  ]
+    .filter(Boolean)
+    .join(" • ");
+
+
+  bipulSetText(
+    "featuredPlace",
+
+    place
+      ? "📍 " + place
+      : ""
+  );
+
+
+  /* -----------------------------------------
+     Memory note
+  ----------------------------------------- */
+
+  bipulSetText(
+    "featuredNote",
+
+    "তার জীবন ও পরিচয়কে শ্রদ্ধার সঙ্গে মনে রাখার একটি ছোট্ট প্রয়াস।"
+  );
+
+
+  /* -----------------------------------------
+     Profile button
+  ----------------------------------------- */
+
+  if(button){
+
+    button.href =
+      "/find.html?id=" +
+      encodeURIComponent(
+        person.id
+      );
+
+
+    button.style.display =
+      "inline-flex";
+
+  }
+
+
+  /* -----------------------------------------
+     Featured photo
+
+     Current /api/homepage does not return
+     avatar yet.
+
+     তাই আপাতত default bird থাকবে।
+  ----------------------------------------- */
+
+  if(photo){
+
+    photo.innerHTML =
+      "🕊️";
+
+  }
+
+}
+
+
+/* =========================================================
+   HOMEPAGE ERROR
+========================================================= */
+
+function showHomepageError(){
+
+  /* -----------------------------------------
+     Statistics
+  ----------------------------------------- */
+
+  bipulSetText(
+    "totalPeople",
+    "—"
+  );
+
+
+  bipulSetText(
+    "alivePeople",
+    "—"
+  );
+
+
+  bipulSetText(
+    "deceasedPeople",
+    "—"
+  );
+
+
+  /* -----------------------------------------
+     Birthday
+  ----------------------------------------- */
+
+  const birthdayList =
+    document.getElementById(
+      "birthdayList"
+    );
+
+
+  if(birthdayList){
+
+    birthdayList.innerHTML = `
+
+      <div class="mw-empty">
+
+        এই মুহূর্তে তথ্য পাওয়া যাচ্ছে না।
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* -----------------------------------------
+     Featured memory
+  ----------------------------------------- */
+
+  bipulSetText(
+    "featuredName",
+    "তথ্য পাওয়া যাচ্ছে না"
+  );
+
+
+  bipulSetText(
+    "featuredFather",
+    ""
+  );
+
+
+  bipulSetText(
+    "featuredPlace",
+    ""
+  );
+
+
+  bipulSetText(
+    "featuredNote",
+    "এই মুহূর্তে তথ্য লোড করা সম্ভব হয়নি।"
+  );
+
+
+  const button =
+    document.getElementById(
+      "featuredButton"
+    );
+
+
+  if(button){
+
+    button.style.display =
+      "none";
+
+  }
+
+
+}
+
+
+/* =========================================================
+   HOMEPAGE SEARCH
+========================================================= */
+
+function homepageSearch(
+  event
+){
+
+  event.preventDefault();
+
+
+  const input =
+    document.getElementById(
+      "homepageSearchInput"
+    );
+
+
+  const query =
+    String(
+      input
+        ? input.value
+        : ""
+    ).trim();
+
+
+  /* -----------------------------------------
+     Empty search
+  ----------------------------------------- */
+
+  if(!query){
+
+    window.location.href =
+      "/find.html";
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------
+     Search page
+  ----------------------------------------- */
+
+  window.location.href =
+    "/find.html?q=" +
+    encodeURIComponent(
+      query
+    );
+
+}
+
+
+/* =========================================================
    PAGE LOAD
 ========================================================= */
 
@@ -4204,6 +4312,7 @@ document.addEventListener(
 );
 
 </script>
+
 
 <!-- =========================================================
      Bipul Sheikh
