@@ -2616,28 +2616,8 @@ let currentPerson = null;
 async function loadPeople() {
   const status = document.getElementById("status");
 
-  try {
-    allPeople = [];
-
-    if (status) {
-      status.innerText = "স্মৃতির তথ্য প্রস্তুত হচ্ছে...";
-    }
-
-    if (status) {
-      status.innerText = "নাম, পিতার নাম অথবা গ্রামের নাম লিখুন।";
-    }
-
-    return true;
-
-  } catch (error) {
-    console.error("Load error:", error);
-
-    if (status) {
-      status.innerText = "তথ্য লোড করা যায়নি।";
-    }
-
-    return false;
-  }
+  status.textContent = "নাম, পিতার নাম অথবা গ্রামের নাম লিখুন।";
+  return true;
 }
 
 /* =========================================================
