@@ -1748,6 +1748,35 @@ body{
 
 }
 
+.find-avatar-wrap {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #eaf7f1;
+}
+
+.find-avatar-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.find-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+}
+
+.result-card:focus-visible {
+  outline: 3px solid #c89b3c;
+  outline-offset: 3px;
+}
 </style>
 
 </head>
@@ -2579,56 +2608,37 @@ function buildViewURL(
    LOAD FIREBASE DATA
 ========================================================= */
 
-async function loadPeople(){
+const API_BASE = "https://deyaler.jannatsonaamar.workers.dev";
 
-  try{
+let allPeople = [];
+let currentPerson = null;
 
-    const response =
-      await fetch(
-        DATABASE_URL + "/people.json"
-      );
+async function loadPeople() {
+  const status = document.getElementById("status");
 
+  try {
+    allPeople = [];
 
-    if(!response.ok){
-
-      throw new Error(
-        "Firebase data load failed"
-      );
-
+    if (status) {
+      status.innerText = "স্মৃতির তথ্য প্রস্তুত হচ্ছে...";
     }
 
+    if (status) {
+      status.innerText = "নাম, পিতার নাম অথবা গ্রামের নাম লিখুন।";
+    }
 
-    const data =
-      await response.json();
+    return true;
 
+  } catch (error) {
+    console.error("Load error:", error);
 
-    allPeople =
-      data
-      ? Object.values(data)
-      : [];
+    if (status) {
+      status.innerText = "তথ্য লোড করা যায়নি।";
+    }
 
-
-    document
-      .getElementById("status")
-      .innerText =
-      "স্মৃতির দেয়াল প্রস্তুত।";
-
+    return false;
   }
-
-  catch(error){
-
-    console.error(error);
-
-
-    document
-      .getElementById("status")
-      .innerText =
-      "তথ্য লোড করা যায়নি।";
-
-  }
-
 }
-
 
 /* =========================================================
    VISIBILITY
@@ -2786,295 +2796,145 @@ function parseLocalDate(value){
    SEARCH
 ========================================================= */
 
-async function searchPeople(){
+async function searchPeople() {
+  const input = document.getElementById("searchInput");
+  const results = document.getElementById("results");
+  const status = document.getElementById("status");
 
-  const input =
-    document
-      .getElementById("searchInput")
-      .value
-      .trim()
-      .toLowerCase();
+  const query = input.value.trim();
 
-
-  const results =
-    document
-      .getElementById("results");
-
-
-  const status =
-    document
-      .getElementById("status");
-
-
-  if(!input){
-
+  if (!query) {
     results.innerHTML = "";
-
-    status.innerText =
-      "নাম, পিতার নাম অথবা গ্রামের নাম লিখুন।";
-
+    status.innerText = "নাম, পিতার নাম অথবা গ্রামের নাম লিখুন।";
     return;
-
   }
 
+  status.innerText = "খোঁজা হচ্ছে...";
+  results.innerHTML = "";
 
-  if(allPeople.length === 0){
-
-    await loadPeople();
-
-  }
-
-
-  const matches =
-    allPeople.filter(
-      function(person){
-
-        const name =
-          String(
-            person.name || ""
-          ).toLowerCase();
-
-
-        const father =
-          String(
-            person.father || ""
-          ).toLowerCase();
-
-
-        const village =
-          String(
-            person.village || ""
-          ).toLowerCase();
-
-
-        const upazilla =
-          String(
-            person.upazilla || ""
-          ).toLowerCase();
-
-
-        const zilla =
-          String(
-            person.zilla || ""
-          ).toLowerCase();
-
-
-        return (
-
-          name.includes(input) ||
-
-          father.includes(input) ||
-
-          village.includes(input) ||
-
-          upazilla.includes(input) ||
-
-          zilla.includes(input)
-
-        );
-
-      }
+  try {
+    const response = await fetch(
+      `${API_BASE}/api/search?q=${encodeURIComponent(query)}`
     );
 
+    if (!response.ok) {
+      throw new Error(`Search failed: ${response.status}`);
+    }
 
-  if(matches.length === 0){
+    const data = await response.json();
 
-    results.innerHTML = `
+    if (!data.success) {
+      throw new Error(data.message || "Search failed");
+    }
 
-      <div class="empty">
+    const people = Array.isArray(data.results) ? data.results : [];
 
-        <div
-          style="
-            font-size:35px;
-            margin-bottom:10px;
-          "
-        >
-          🔎
+    if (people.length === 0) {
+      results.innerHTML = `
+        <div class="empty">
+          <div style="font-size:35px;margin-bottom:10px;">🔎</div>
+          <strong>কোনো তথ্য পাওয়া যায়নি</strong>
         </div>
+      `;
+      status.innerText = "";
+      return;
+    }
 
-        <strong>
-          কোনো তথ্য পাওয়া যায়নি
-        </strong>
-
+    let html = `
+      <div class="result-heading">
+        ${toBanglaNumber(people.length)} জনের তথ্য পাওয়া গেছে
       </div>
-
     `;
 
-
-    status.innerText = "";
-
-    return;
-
-  }
-
-
-  let html = `
-
-    <div class="result-heading">
-
-      ${toBanglaNumber(matches.length)}
-      জনের তথ্য পাওয়া গেছে
-
-    </div>
-
-  `;
-
-
-  matches.forEach(
-    function(person){
-
-      const name =
-        person.name ||
-        "নাম নেই";
-
-
-      const father =
-        person.father ||
-        "পিতার নাম নেই";
-
-
-      const place =
-        [
-          person.village,
-          person.upazilla,
-          person.zilla
-        ]
-        .filter(Boolean)
-        .join(", ");
-
-
-      const visibility =
-        getVisibility(person);
-
-
-      const alive =
-        isAlive(person);
-
-
-      let privacyBadge = "";
-
-
-      if(
-        visibility === "public"
-      ){
-
-        privacyBadge = `
-
-          <span
-            class="badge badge-public"
-            style="margin-top:7px;"
-          >
-            🟢 Public
-          </span>
-
-        `;
-
-      }
-
-
-      else if(
-        visibility === "family"
-      ){
-
-        privacyBadge = `
-
-          <span
-            class="badge badge-family"
-            style="margin-top:7px;"
-          >
-            🟡 Family
-          </span>
-
-        `;
-
-      }
-
-
-      else{
-
-        privacyBadge = `
-
-          <span
-            class="badge badge-private"
-            style="margin-top:7px;"
-          >
-            🔒 Private
-          </span>
-
-        `;
-
-      }
-
-
-      html += `
-
-        <div
-          class="result-card"
-          onclick="
-            openProfile(
-              '${escapeValue(person.id)}'
-            )
-          "
-        >
-
-          <div class="result-left">
-
-            <div class="avatar">
-
-              ${alive ? "👤" : "🕊️"}
-
-            </div>
-
-
-            <div style="min-width:0;">
-
-              <div class="result-name">
-
-                ${escapeHtml(name)}
-
-              </div>
-
-
-              <div class="result-father">
-
-                পিতা:
-                ${escapeHtml(father)}
-
-              </div>
-
-
-              <div class="result-place">
-
-                ${escapeHtml(place)}
-
-              </div>
-
-
-              ${privacyBadge}
-
-            </div>
-
-          </div>
-
-
-          <div class="result-arrow">
-            ›
-          </div>
-
+    for (const person of people) {
+      const id = String(person.id || "");
+      const name = person.name || "নাম নেই";
+      const father = person.father || "পিতার নাম নেই";
+
+      const place = [
+        person.village,
+        person.upazilla,
+        person.zilla
+      ].filter(Boolean).join(", ");
+
+      const photo = person.avatar
+        ? `<img
+             src="${escapeHtmlAttribute(person.avatar)}"
+             alt="${escapeHtml(name)}-এর profile photo"
+             class="find-avatar-image"
+             loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+           >`
+        : "";
+
+      const fallback = `
+        <div class="avatar find-avatar-fallback"
+             style="${person.avatar ? "display:none;" : "display:flex;"}">
+          ${person.status === false ? "🕊️" : "👤"}
         </div>
-
       `;
 
+      html += `
+        <div class="result-card"
+             data-person-id="${escapeHtmlAttribute(id)}"
+             role="button"
+             tabindex="0">
+
+          <div class="result-left">
+            <div class="find-avatar-wrap">
+              ${photo}
+              ${fallback}
+            </div>
+
+            <div style="min-width:0;">
+              <div class="result-name">${escapeHtml(name)}</div>
+
+              <div class="result-father">
+                পিতা: ${escapeHtml(father)}
+              </div>
+
+              <div class="result-place">
+                ${escapeHtml(place)}
+              </div>
+
+              <span class="badge badge-public" style="margin-top:7px;">
+                🟢 Public
+              </span>
+            </div>
+          </div>
+
+          <div class="result-arrow">›</div>
+        </div>
+      `;
     }
-  );
 
+    results.innerHTML = html;
+    status.innerText = "";
 
-  results.innerHTML =
-    html;
+    results.querySelectorAll("[data-person-id]").forEach(card => {
+      const open = () => openProfile(card.dataset.personId);
 
+      card.addEventListener("click", open);
 
-  status.innerText = "";
+      card.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          open();
+        }
+      });
+    });
 
+  } catch (error) {
+    console.error(error);
+
+    results.innerHTML = `
+      <div class="empty">
+        সার্ভার থেকে তথ্য আনা যায়নি। কিছুক্ষণ পর আবার চেষ্টা করুন।
+      </div>
+    `;
+
+    status.innerText = "";
+  }
 }
 
 
