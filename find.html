@@ -3207,6 +3207,7 @@ function showPrivateProfile(person){
    FULL PROFILE
 ========================================================= */
 
+
 async function showFullProfile(
   person,
   familyAccess
@@ -3261,12 +3262,34 @@ async function showFullProfile(
      BASIC PROFILE
   ======================================================= */
 
-  document
-    .getElementById("profileSymbol")
-    .innerText =
-    alive
-      ? "👤"
-      : "🕊️";
+  const profileSymbol =
+    document.getElementById("profileSymbol");
+
+  if(person.avatar){
+
+    profileSymbol.innerHTML = `
+      <img
+        src="${escapeHtml(person.avatar)}"
+        alt="${escapeHtml(person.name || "প্রোফাইল ছবি")}"
+        style="
+          width:100%;
+          height:100%;
+          object-fit:cover;
+          display:block;
+          border-radius:50%;
+        "
+        onerror="this.onerror=null;this.parentElement.innerText='${alive ? "👤" : "🕊️"}';"
+      >
+    `;
+
+  }else{
+
+    profileSymbol.innerText =
+      alive
+        ? "👤"
+        : "🕊️";
+
+  }
 
 
   document
