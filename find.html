@@ -2608,17 +2608,33 @@ function buildViewURL(
    LOAD FIREBASE DATA
 ========================================================= */
 
-const API_BASE = "https://deyaler.jannatsonaamar.workers.dev";
 
-let allPeople = [];
-let currentPerson = null;
+const API_BASE = "https://deyaler.jannatsonaamar.workers.dev";
 
 async function loadPeople() {
   const status = document.getElementById("status");
 
-  status.textContent = "নাম, পিতার নাম অথবা গ্রামের নাম লিখুন।";
-  return true;
+  try {
+    const response = await fetch(`${API_BASE}/api/health`);
+    if (!response.ok) {
+      throw new Error(`Worker HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error("Worker API is unavailable");
+    }
+
+    status.innerText = "স্মৃতির দেয়াল প্রস্তুত।";
+    return true;
+  } catch (error) {
+    console.error("Worker connection error:", error);
+    status.innerText = "সার্ভারের সঙ্গে সংযোগ করা যাচ্ছে না। আবার চেষ্টা করুন।";
+    return false;
+  }
 }
+
 
 /* =========================================================
    VISIBILITY
@@ -2776,14 +2792,13 @@ function parseLocalDate(value){
    SEARCH
 ========================================================= */
 
+
 async function searchPeople() {
-  const input = document.getElementById("searchInput");
+  const input = document.getElementById("searchInput").value.trim();
   const results = document.getElementById("results");
   const status = document.getElementById("status");
 
-  const query = input.value.trim();
-
-  if (!query) {
+  if (!input) {
     results.innerHTML = "";
     status.innerText = "নাম, পিতার নাম অথবা গ্রামের নাম লিখুন।";
     return;
@@ -2794,126 +2809,79 @@ async function searchPeople() {
 
   try {
     const response = await fetch(
-      `${API_BASE}/api/search?q=${encodeURIComponent(query)}`
+      `${API_BASE}/api/search?q=${encodeURIComponent(input)}`
     );
-
-    if (!response.ok) {
-      throw new Error(`Search failed: ${response.status}`);
-    }
 
     const data = await response.json();
 
-    if (!data.success) {
-      throw new Error(data.message || "Search failed");
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || `HTTP ${response.status}`);
     }
 
-    const people = Array.isArray(data.results) ? data.results : [];
+    const matches = Array.isArray(data.results) ? data.results : [];
 
-    if (people.length === 0) {
+    if (matches.length === 0) {
       results.innerHTML = `
         <div class="empty">
           <div style="font-size:35px;margin-bottom:10px;">🔎</div>
-          <strong>কোনো তথ্য পাওয়া যায়নি</strong>
-        </div>
-      `;
+          <strong>কোনো Public প্রোফাইল পাওয়া যায়নি</strong>
+        </div>`;
       status.innerText = "";
       return;
     }
 
     let html = `
       <div class="result-heading">
-        ${toBanglaNumber(people.length)} জনের তথ্য পাওয়া গেছে
-      </div>
-    `;
+        ${toBanglaNumber(matches.length)} জনের তথ্য পাওয়া গেছে
+      </div>`;
 
-    for (const person of people) {
+    matches.forEach(person => {
       const id = String(person.id || "");
       const name = person.name || "নাম নেই";
       const father = person.father || "পিতার নাম নেই";
-
       const place = [
         person.village,
         person.upazilla,
         person.zilla
       ].filter(Boolean).join(", ");
 
-      const photo = person.avatar
-        ? `<img
-             src="${escapeHtmlAttribute(person.avatar)}"
-             alt="${escapeHtml(name)}-এর profile photo"
-             class="find-avatar-image"
-             loading="lazy"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-           >`
-        : "";
-
-      const fallback = `
-        <div class="avatar find-avatar-fallback"
-             style="${person.avatar ? "display:none;" : "display:flex;"}">
-          ${person.status === false ? "🕊️" : "👤"}
-        </div>
-      `;
+      const avatar = person.avatar
+        ? `<img src="${escapeHtml(person.avatar)}"
+                alt="${escapeHtml(name)}"
+                style="width:50px;height:50px;object-fit:cover;border-radius:15px;"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+           <span style="display:none;width:50px;height:50px;align-items:center;justify-content:center;">👤</span>`
+        : `<span>👤</span>`;
 
       html += `
         <div class="result-card"
-             data-person-id="${escapeHtmlAttribute(id)}"
              role="button"
-             tabindex="0">
+             tabindex="0"
+             onclick="openProfile('${escapeValue(id)}')"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProfile('${escapeValue(id)}')}">
 
           <div class="result-left">
-            <div class="find-avatar-wrap">
-              ${photo}
-              ${fallback}
-            </div>
-
+            <div class="avatar">${avatar}</div>
             <div style="min-width:0;">
               <div class="result-name">${escapeHtml(name)}</div>
-
-              <div class="result-father">
-                পিতা: ${escapeHtml(father)}
-              </div>
-
-              <div class="result-place">
-                ${escapeHtml(place)}
-              </div>
-
-              <span class="badge badge-public" style="margin-top:7px;">
-                🟢 Public
-              </span>
+              <div class="result-father">পিতা: ${escapeHtml(father)}</div>
+              <div class="result-place">${escapeHtml(place)}</div>
+              <span class="badge badge-public" style="margin-top:7px;">🟢 Public</span>
             </div>
           </div>
-
           <div class="result-arrow">›</div>
-        </div>
-      `;
-    }
+        </div>`;
+    });
 
     results.innerHTML = html;
     status.innerText = "";
-
-    results.querySelectorAll("[data-person-id]").forEach(card => {
-      const open = () => openProfile(card.dataset.personId);
-
-      card.addEventListener("click", open);
-
-      card.addEventListener("keydown", event => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          open();
-        }
-      });
-    });
-
   } catch (error) {
-    console.error(error);
-
+    console.error("Search error:", error);
+    status.innerText = "সার্চ করা যাচ্ছে না। কিছুক্ষণ পর আবার চেষ্টা করুন।";
     results.innerHTML = `
       <div class="empty">
-        সার্ভার থেকে তথ্য আনা যায়নি। কিছুক্ষণ পর আবার চেষ্টা করুন।
-      </div>
-    `;
-
-    status.innerText = "";
+        সার্ভার থেকে তথ্য আনা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করুন।
+      </div>`;
   }
 }
 
@@ -2922,97 +2890,64 @@ async function searchPeople() {
    OPEN PROFILE
 ========================================================= */
 
-async function openProfile(id){
 
-  if(allPeople.length === 0){
+async function openProfile(id) {
+  const status = document.getElementById("status");
+  status.innerText = "প্রোফাইল খোলা হচ্ছে...";
 
-    await loadPeople();
+  try {
+    let response = await fetch(
+      `${API_BASE}/api/person?id=${encodeURIComponent(id)}`
+    );
+    let data = await response.json();
 
-  }
+    if (response.ok && data.success && data.person) {
+      currentPerson = data.person;
+      status.innerText = "";
+      await showFullProfile(data.person, false);
+      return;
+    }
 
+    if (response.status === 403) {
+      const key = prompt(
+        "এই প্রোফাইলটি সবার জন্য উন্মুক্ত নয়।\n\nঅনুমোদিত Access Key লিখুন:"
+      );
 
-  const person =
-    allPeople.find(
-      function(p){
-
-        return String(p.id) ===
-          String(id);
-
+      if (key === null) {
+        status.innerText = "";
+        return;
       }
-    );
 
+      response = await fetch(`${API_BASE}/api/person/access`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: id, key: key })
+      });
 
-  if(!person){
+      data = await response.json();
 
-    showMessage(
-      "এই Person ID-এর কোনো তথ্য পাওয়া যায়নি।"
-    );
+      if (response.ok && data.success && data.person) {
+        currentPerson = data.person;
+        status.innerText = "";
+        await showFullProfile(data.person, true);
+        return;
+      }
 
-    return;
+      throw new Error(
+        data.message === "Invalid access key"
+          ? "Access Key সঠিক নয়।"
+          : (data.message || "প্রোফাইল খোলা যায়নি।")
+      );
+    }
 
+    throw new Error(data.message || "প্রোফাইল পাওয়া যায়নি।");
+  } catch (error) {
+    console.error("Profile error:", error);
+    status.innerText = "";
+    showMessage(error.message || "প্রোফাইল খোলা যায়নি।");
   }
-
-
-  currentPerson =
-    person;
-
-
-  const visibility =
-    getVisibility(person);
-
-
-  /*
-    PUBLIC
-  */
-
-  if(
-    visibility === "public"
-  ){
-
-    await showFullProfile(
-      person,
-      false
-    );
-
-    return;
-
-  }
-
-
-  /*
-    FAMILY
-  */
-
-  if(
-    visibility === "family"
-  ){
-
-    openFamilyAccess(
-      person
-    );
-
-    return;
-
-  }
-
-
-  /*
-    PRIVATE
-  */
-
-  if(
-    visibility === "private"
-  ){
-
-    showPrivateProfile(
-      person
-    );
-
-    return;
-
-  }
-
 }
+
 
 
 /* =========================================================
