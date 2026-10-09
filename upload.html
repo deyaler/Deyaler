@@ -644,11 +644,14 @@ AI Review System তথ্য ও ছবিগুলো যাচাই কর�
 </div>
 
 
-<script>
 
+<script>
 /* =========================================================
-   STORAGE CONFIGURATION
+   CONFIGURATION
 ========================================================= */
+
+const WEB_API_URL =
+  "https://deyaler.jannatsonaamar.workers.dev";
 
 const STORAGE_CONFIG = {
   storages: [
@@ -659,7 +662,6 @@ const STORAGE_CONFIG = {
       view:
         "https://script.google.com/macros/s/AKfycby-rtMQ3x0qRHD86ZvOGmgTwa9F7zmmPVUKa00ioIPNKXPI7ylMgQJs8IRUNz4WhGOsIw/exec"
     },
-
     {
       id: "B",
       upload:
@@ -671,1161 +673,620 @@ const STORAGE_CONFIG = {
 };
 
 /* =========================================================
-   FIREBASE
-========================================================= */
-
-const FIREBASE_URL =
-"https://jannat-projects-default-rtdb.firebaseio.com";
-
-
-/* =========================================================
    GLOBAL VARIABLES
 ========================================================= */
 
 let selectedFiles = [];
-
 let generatedPersonId = "";
-
 let selectedStorage = null;
-
+let isSubmitting = false;
 
 /* =========================================================
    STORAGE DROPDOWN
 ========================================================= */
 
-function setupStorageDropdown(){
+function setupStorageDropdown() {
+  const select = document.getElementById("storageServerSelect");
 
-  const select =
-  document.getElementById(
-    "storageServerSelect"
-  );
-
-
-  /*
-    আগের option থাকলে শুধু Auto Random রাখি
-  */
+  if (!select) return;
 
   select.innerHTML = "";
 
-  const autoOption =
-  document.createElement("option");
-
+  const autoOption = document.createElement("option");
   autoOption.value = "auto";
+  autoOption.textContent = "Auto Random";
+  select.appendChild(autoOption);
 
-  autoOption.textContent =
-  "Auto Random";
+  STORAGE_CONFIG.storages.forEach(storage => {
+    if (!storage.upload) return;
 
-  select.appendChild(
-    autoOption
+    const option = document.createElement("option");
+    option.value = storage.id;
+    option.textContent = `Server ${storage.id}`;
+    select.appendChild(option);
+  });
+}
+
+/* =========================================================
+   SELECT STORAGE SERVER
+========================================================= */
+
+function selectStorage() {
+  const selectedValue =
+    document.getElementById("storageServerSelect").value;
+
+  const availableStorages = STORAGE_CONFIG.storages.filter(
+    storage => storage.upload && storage.upload.trim() !== ""
   );
 
+  if (availableStorages.length === 0) {
+    throw new Error("কোনো ছবি আপলোড সার্ভার কনফিগার করা নেই।");
+  }
 
-  /*
-    Config থেকে A, B, C, D...
-    automatically dropdown-এ যোগ হবে।
-  */
+  if (selectedValue === "auto") {
+    const randomIndex = Math.floor(
+      Math.random() * availableStorages.length
+    );
 
-  STORAGE_CONFIG.storages.forEach(
-    storage => {
+    return availableStorages[randomIndex];
+  }
 
-      if(
-        !storage.upload ||
-        !storage.upload.trim()
-      ){
+  const storage = availableStorages.find(
+    item => item.id === selectedValue
+  );
+
+  if (!storage) {
+    throw new Error("নির্বাচিত Storage Server পাওয়া যায়নি।");
+  }
+
+  return storage;
+}
+
+/* =========================================================
+   PHOTO SELECTION AND PREVIEW
+========================================================= */
+
+document.getElementById("photoInput").addEventListener(
+  "change",
+  function () {
+    selectedFiles = Array.from(this.files || []);
+
+    const preview = document.getElementById("preview");
+    const continueBtn = document.getElementById("continueBtn");
+
+    preview.innerHTML = "";
+    continueBtn.disabled = true;
+
+    if (selectedFiles.length === 0) {
+      continueBtn.textContent = "ছবি নির্বাচন করুন";
+      return;
+    }
+
+    const maxSize = 6 * 1024 * 1024;
+
+    const invalidFile = selectedFiles.find(
+      file => file.size > maxSize
+    );
+
+    if (invalidFile) {
+      alert(
+        `"${invalidFile.name}" ছবিটি ৬ MB-এর বেশি। ` +
+        "অনুগ্রহ করে ছোট ছবি নির্বাচন করুন।"
+      );
+
+      selectedFiles = [];
+      this.value = "";
+      continueBtn.textContent = "ছবি নির্বাচন করুন";
+      return;
+    }
+
+    for (const file of selectedFiles) {
+      if (!file.type.startsWith("image/")) {
+        alert("অনুগ্রহ করে শুধু ছবির ফাইল নির্বাচন করুন.");
+        selectedFiles = [];
+        this.value = "";
+        preview.innerHTML = "";
+        continueBtn.textContent = "ছবি নির্বাচন করুন";
         return;
       }
 
-
-      const option =
-      document.createElement("option");
-
-
-      option.value =
-      storage.id;
-
-
-      option.textContent =
-      `Server ${storage.id}`;
-
-
-      select.appendChild(
-        option
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   STORAGE SELECT
-========================================================= */
-
-function selectStorage(){
-
-  const select =
-  document.getElementById(
-    "storageServerSelect"
-  );
-
-
-  const selectedValue =
-  select.value;
-
-
-  /*
-    Auto Random
-  */
-
-  if(
-    selectedValue === "auto"
-  ){
-
-    const availableStorages =
-    STORAGE_CONFIG.storages.filter(
-      storage =>
-        storage.upload &&
-        storage.upload.trim() !== ""
-    );
-
-
-    if(
-      availableStorages.length === 0
-    ){
-
-      throw new Error(
-        "কোনো Upload Storage configuration পাওয়া যায়নি।"
-      );
-
+      const img = document.createElement("img");
+      img.alt = file.name;
+      img.src = URL.createObjectURL(file);
+      preview.appendChild(img);
     }
 
-
-    const randomIndex =
-    Math.floor(
-      Math.random() *
-      availableStorages.length
-    );
-
-
-    return availableStorages[
-      randomIndex
-    ];
-
-  }
-
-
-  /*
-    User manually selected
-    server
-  */
-
-  const storage =
-  STORAGE_CONFIG.storages.find(
-    item =>
-      item.id === selectedValue &&
-      item.upload &&
-      item.upload.trim() !== ""
-  );
-
-
-  if(!storage){
-
-    throw new Error(
-      "নির্বাচিত Storage Server পাওয়া যায়নি।"
-    );
-
-  }
-
-
-  return storage;
-
-}
-
-
-/* =========================================================
-   PHOTO SELECTION
-========================================================= */
-
-document
-.getElementById("photoInput")
-.addEventListener(
-  "change",
-  function(){
-
-    selectedFiles =
-    Array.from(this.files);
-
-
-    const preview =
-    document.getElementById(
-      "preview"
-    );
-
-
-    preview.innerHTML = "";
-
-
-    if(
-      selectedFiles.length === 0
-    ){
-
-      document
-      .getElementById(
-        "continueBtn"
-      )
-      .disabled = true;
-
-      return;
-
-    }
-
-
-    let hasInvalidFile = false;
-
-
-    selectedFiles.forEach(
-      file => {
-
-        if(
-          file.size >
-          6 * 1024 * 1024
-        ){
-
-          alert(
-            `"${file.name}" ৬ MB-এর বেশি। অনুগ্রহ করে ছোট ছবি নির্বাচন করুন।`
-          );
-
-
-          hasInvalidFile = true;
-
-          return;
-
-        }
-
-
-        const img =
-        document.createElement(
-          "img"
-        );
-
-
-        img.src =
-        URL.createObjectURL(
-          file
-        );
-
-
-        preview.appendChild(
-          img
-        );
-
-      }
-    );
-
-
-    if(hasInvalidFile){
-
-      document
-      .getElementById(
-        "continueBtn"
-      )
-      .disabled = true;
-
-      return;
-
-    }
-
-
-    document
-    .getElementById(
-      "continueBtn"
-    )
-    .disabled = false;
-
-
-    document
-    .getElementById(
-      "continueBtn"
-    )
-    .innerText =
-    "তথ্য পূরণ করুন";
-
+    continueBtn.disabled = false;
+    continueBtn.textContent = "তথ্য পূরণ করুন";
   }
 );
-
 
 /* =========================================================
    STEP CONTROL
 ========================================================= */
 
-function showStep(step){
+function showStep(stepId) {
+  document.querySelectorAll(".step").forEach(step => {
+    step.classList.remove("active");
+  });
 
-  document
-  .querySelectorAll(".step")
-  .forEach(
-    el => {
+  const target = document.getElementById(stepId);
 
-      el.classList.remove(
-        "active"
-      );
-
-    }
-  );
-
-
-  document
-  .getElementById(step)
-  .classList.add(
-    "active"
-  );
-
+  if (target) {
+    target.classList.add("active");
+  }
 }
 
-
-function goToForm(){
-
-  if(
-    selectedFiles.length === 0
-  ){
-
-    alert(
-      "প্রথমে অন্তত একটি ছবি নির্বাচন করুন।"
-    );
-
+async function goToForm() {
+  if (selectedFiles.length === 0) {
+    alert("প্রথমে অন্তত একটি ছবি নির্বাচন করুন।");
     return;
-
   }
-
-
-  generateUniquePersonId();
 
   showStep("step2");
 
+  generatedPersonId = "";
+
+  document.getElementById("personIdText").textContent =
+    "তৈরি হচ্ছে...";
+
+  await generateUniquePersonId();
 }
 
-
-function backToPhotos(){
-
+function backToPhotos() {
+  if (isSubmitting) return;
   showStep("step1");
-
 }
-
 
 /* =========================================================
    PERSON ID
 ========================================================= */
 
-function createPersonId(){
-
-  const chars =
-  "abcdefghijklmnopqrstuvwxyz0123456789";
-
-
+function createPersonId() {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   let id = "";
 
-
-  for(
-    let i = 0;
-    i < 6;
-    i++
-  ){
-
+  for (let i = 0; i < 6; i++) {
     id += chars.charAt(
-      Math.floor(
-        Math.random() *
-        chars.length
-      )
+      Math.floor(Math.random() * chars.length)
     );
-
   }
-
 
   return id;
-
 }
 
+async function generateUniquePersonId() {
+  const idText = document.getElementById("personIdText");
 
-async function generateUniquePersonId(){
+  idText.textContent = "তৈরি হচ্ছে...";
+  generatedPersonId = "";
 
-  document
-  .getElementById(
-    "personIdText"
-  )
-  .innerText =
-  "Generating...";
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const id = createPersonId();
 
-
-  let attempts = 0;
-
-
-  while(
-    attempts < 10
-  ){
-
-    attempts++;
-
-
-    const id =
-    createPersonId();
-
-
-    try{
-
-      const response =
-      await fetch(
-        FIREBASE_URL +
-        "/people/" +
-        encodeURIComponent(
-          id
-        ) +
-        ".json"
+    try {
+      const response = await fetch(
+        WEB_API_URL +
+          "/api/person/check?id=" +
+          encodeURIComponent(id),
+        {
+          method: "GET",
+          cache: "no-store"
+        }
       );
 
-
-      const data =
-      await response.json();
-
-
-      if(
-        data === null
-      ){
-
-        generatedPersonId =
-        id;
-
-
-        document
-        .getElementById(
-          "personIdText"
-        )
-        .innerText =
-        id;
-
-
-        return;
-
+      if (!response.ok) {
+        throw new Error(
+          "Person ID যাচাই করা যায়নি (HTTP " +
+          response.status +
+          ")"
+        );
       }
 
-    }catch(error){
+      const data = await response.json();
 
-      console.error(
-        error
+      if (
+        data.success === true &&
+        data.exists === false
+      ) {
+        generatedPersonId = id;
+        idText.textContent = id;
+        return true;
+      }
+
+      if (data.success !== true) {
+        throw new Error(
+          data.message || "Person ID যাচাই করা যায়নি।"
+        );
+      }
+    } catch (error) {
+      console.error("Person ID check error:", error);
+
+      idText.textContent = "যাচাই ব্যর্থ";
+
+      alert(
+        "Worker API দিয়ে Person ID যাচাই করা যাচ্ছে না।\n\n" +
+        (error.message || "ইন্টারনেট সংযোগ পরীক্ষা করুন।")
       );
 
+      return false;
     }
-
   }
 
+  idText.textContent = "তৈরি হয়নি";
 
   alert(
-    "Person ID তৈরি করা যাচ্ছে না। অনুগ্রহ করে আবার চেষ্টা করুন।"
+    "ইউনিক Person ID তৈরি করা যায়নি। " +
+    "আবার চেষ্টা করুন।"
   );
 
+  return false;
 }
-
 
 /* =========================================================
    DEATH DATE
 ========================================================= */
 
-function toggleDeathDate(){
-
-  const status =
-  document.querySelector(
+function toggleDeathDate() {
+  const status = document.querySelector(
     'input[name="status"]:checked'
   );
 
+  const box = document.getElementById("deathDateBox");
+  const deathDate = document.getElementById("deathDate");
 
-  const box =
-  document.getElementById(
-    "deathDateBox"
-  );
-
-
-  if(
-    status &&
-    status.value === "false"
-  ){
-
-    box.style.display =
-    "block";
-
-  }else{
-
-    box.style.display =
-    "none";
-
-
-    document
-    .getElementById(
-      "deathDate"
-    )
-    .value = "";
-
+  if (status && status.value === "false") {
+    box.style.display = "block";
+  } else {
+    box.style.display = "none";
+    deathDate.value = "";
   }
-
 }
 
-
 /* =========================================================
-   VALIDATION
+   FORM VALIDATION
 ========================================================= */
 
-function validateForm(){
-
+function validateForm() {
   const fields = [
-
-    ["name","পূর্ণ নাম"],
-    ["father","পিতার নাম"],
-    ["village","গ্রাম"],
-    ["upazilla","উপজেলা"],
-    ["zilla","জেলা"],
-    ["dateOfBirth","জন্মতারিখ"]
-
+    ["name", "পূর্ণ নাম"],
+    ["father", "পিতার নাম"],
+    ["village", "গ্রাম"],
+    ["upazilla", "উপজেলা"],
+    ["zilla", "জেলা"],
+    ["dateOfBirth", "জন্মতারিখ"]
   ];
 
+  for (const [fieldId, fieldName] of fields) {
+    const input = document.getElementById(fieldId);
 
-  for(
-    const field of fields
-  ){
-
-    const input =
-    document.getElementById(
-      field[0]
-    );
-
-
-    if(
-      !input.value.trim()
-    ){
-
-      alert(
-        field[1] +
-        " অবশ্যই দিতে হবে।"
-      );
-
-
+    if (!input.value.trim()) {
+      alert(fieldName + " অবশ্যই দিতে হবে।");
       input.focus();
-
-
       return false;
-
     }
-
   }
 
-
-  const status =
-  document.querySelector(
+  const status = document.querySelector(
     'input[name="status"]:checked'
   );
 
-
-  if(!status){
-
-    alert(
-      "ব্যক্তিটি জীবিত নাকি মৃত—এটি নির্বাচন করুন।"
-    );
-
+  if (!status) {
+    alert("ব্যক্তিটি জীবিত নাকি মৃত—তা নির্বাচন করুন।");
     return false;
-
   }
 
+  const dateOfBirth =
+    document.getElementById("dateOfBirth").value;
 
-  if(
+  const deathDate =
+    document.getElementById("deathDate").value;
+
+  if (
     status.value === "false" &&
-    !document
-    .getElementById(
-      "deathDate"
-    )
-    .value
-  ){
-
-    alert(
-      "মৃত ব্যক্তির ক্ষেত্রে মৃত্যুর তারিখ অবশ্যই দিতে হবে।"
-    );
-
+    !deathDate
+  ) {
+    alert("মৃত ব্যক্তির মৃত্যুর তারিখ দিতে হবে।");
+    document.getElementById("deathDate").focus();
     return false;
-
   }
 
-
-  if(
-    !generatedPersonId
-  ){
-
-    alert(
-      "Person ID তৈরি হয়নি। অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।"
-    );
-
+  if (
+    status.value === "false" &&
+    deathDate &&
+    deathDate < dateOfBirth
+  ) {
+    alert("মৃত্যুর তারিখ জন্মতারিখের আগে হতে পারে না।");
+    document.getElementById("deathDate").focus();
     return false;
-
   }
 
+  if (!generatedPersonId) {
+    alert(
+      "Person ID এখনো তৈরি হয়নি। " +
+      "ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।"
+    );
+    return false;
+  }
 
   return true;
-
 }
-
-
-/* =========================================================
-   MAIN SUBMISSION
-========================================================= */
-
-async function submitInformation(){
-
-  if(
-    !validateForm()
-  ){
-    return;
-  }
-
-
-  const confirmSubmit =
-  confirm(
-    "আপনি কি নিশ্চিত যে দেওয়া সব তথ্য সঠিক এবং ছবিগুলো সঠিক ব্যক্তির?"
-  );
-
-
-  if(!confirmSubmit){
-    return;
-  }
-
-
-  document
-  .getElementById(
-    "submitBtn"
-  )
-  .disabled = true;
-
-
-  document
-  .getElementById(
-    "backBtn"
-  )
-  .disabled = true;
-
-
-  showStep("step3");
-
-
-  document
-  .getElementById(
-    "progressBox"
-  )
-  .style.display =
-  "block";
-
-
-  try{
-
-    /* =====================================================
-       STEP 1
-    ===================================================== */
-
-    updateProgress(
-      10,
-      "Person ID প্রস্তুত করা হচ্ছে..."
-    );
-
-
-    const personId =
-    generatedPersonId;
-
-
-    /* =====================================================
-       STEP 2
-       STORAGE SELECT
-    ===================================================== */
-
-    selectedStorage =
-    selectStorage();
-
-
-    console.log(
-      "Selected Storage:",
-      selectedStorage.id
-    );
-
-
-    const storageMode =
-    document
-    .getElementById(
-      "storageServerSelect"
-    )
-    .value;
-
-
-    if(
-      storageMode === "auto"
-    ){
-
-      updateProgress(
-        15,
-        `Auto Random: Storage ${selectedStorage.id} নির্বাচন করা হয়েছে...`
-      );
-
-    }else{
-
-      updateProgress(
-        15,
-        `Storage ${selectedStorage.id} নির্বাচন করা হয়েছে...`
-      );
-
-    }
-
-
-    /* =====================================================
-       STEP 3
-       FILE PREPARATION
-    ===================================================== */
-
-    updateProgress(
-      20,
-      "ছবিগুলো প্রস্তুত করা হচ্ছে..."
-    );
-
-
-    const filesData = [];
-
-
-    for(
-      let i = 0;
-      i < selectedFiles.length;
-      i++
-    ){
-
-      const file =
-      selectedFiles[i];
-
-
-      const base64 =
-      await fileToBase64(
-        file
-      );
-
-
-      filesData.push({
-
-        name:
-        file.name,
-
-        mimeType:
-        file.type,
-
-        data:
-        base64
-
-      });
-
-
-      const percent =
-      20 +
-      Math.round(
-        (
-          (i + 1) /
-          selectedFiles.length
-        ) * 25
-      );
-
-
-      updateProgress(
-        percent,
-        `ছবি প্রস্তুত হচ্ছে (${i + 1}/${selectedFiles.length})...`
-      );
-
-    }
-
-
-    /* =====================================================
-       STEP 4
-       UPLOAD
-    ===================================================== */
-
-    updateProgress(
-      50,
-      `Storage ${selectedStorage.id}-এ ছবি সংরক্ষণ করা হচ্ছে...`
-    );
-
-
-    const uploadPayload = {
-
-      personId:
-      personId,
-
-      files:
-      filesData
-
-    };
-
-
-    await fetch(
-
-      selectedStorage.upload,
-
-      {
-
-        method:
-        "POST",
-
-        mode:
-        "no-cors",
-
-        headers:{
-
-          "Content-Type":
-          "text/plain;charset=utf-8"
-
-        },
-
-        body:
-        JSON.stringify(
-          uploadPayload
-        )
-
-      }
-
-    );
-
-
-    /* =====================================================
-       STEP 5
-       FIREBASE DATA
-    ===================================================== */
-
-    updateProgress(
-      75,
-      "তথ্য সংরক্ষণ করা হচ্ছে..."
-    );
-
-
-    const status =
-    document
-    .querySelector(
-      'input[name="status"]:checked'
-    )
-    .value === "true";
-
-
-    const today =
-    new Date()
-    .toISOString()
-    .split("T")[0];
-
-
-    const personData = {
-
-      id:
-      personId,
-
-
-      name:
-      document
-      .getElementById(
-        "name"
-      )
-      .value
-      .trim(),
-
-
-      father:
-      document
-      .getElementById(
-        "father"
-      )
-      .value
-      .trim(),
-
-
-      village:
-      document
-      .getElementById(
-        "village"
-      )
-      .value
-      .trim(),
-
-
-      upazilla:
-      document
-      .getElementById(
-        "upazilla"
-      )
-      .value
-      .trim(),
-
-
-      zilla:
-      document
-      .getElementById(
-        "zilla"
-      )
-      .value
-      .trim(),
-
-
-      dateOfBirth:
-      document
-      .getElementById(
-        "dateOfBirth"
-      )
-      .value,
-
-
-      deathDate:
-      status
-      ? ""
-      : document
-        .getElementById(
-          "deathDate"
-        )
-        .value,
-
-
-      status:
-      status,
-
-
-      key:
-      "",
-
-
-      visibility:
-      "private",
-
-
-      todayDate:
-      today,
-
-
-      reviewStatus:
-      "under_review",
-
-
-      /*
-        শুধুমাত্র Storage ID
-        Firebase-এ রাখা হচ্ছে।
-
-        যেমন:
-        A
-        অথবা
-        B
-      */
-
-      storageServer:
-      selectedStorage.id
-
-    };
-
-
-    updateProgress(
-      88,
-      "AI Review-এর জন্য তথ্য প্রস্তুত করা হচ্ছে..."
-    );
-
-
-    /* =====================================================
-       SAVE TO FIREBASE
-    ===================================================== */
-
-    const firebaseResponse =
-    await fetch(
-
-      FIREBASE_URL +
-      "/people/" +
-      encodeURIComponent(
-        personId
-      ) +
-      ".json",
-
-      {
-
-        method:
-        "PUT",
-
-        headers:{
-
-          "Content-Type":
-          "application/json"
-
-        },
-
-        body:
-        JSON.stringify(
-          personData
-        )
-
-      }
-
-    );
-
-
-    if(
-      !firebaseResponse.ok
-    ){
-
-      throw new Error(
-        "Firebase save failed"
-      );
-
-    }
-
-
-    /* =====================================================
-       COMPLETE
-    ===================================================== */
-
-    updateProgress(
-      100,
-      "Submission সম্পন্ন হয়েছে।"
-    );
-
-
-    setTimeout(
-      () => {
-
-        document
-        .getElementById(
-          "finalPersonId"
-        )
-        .innerText =
-        personId;
-
-
-        showStep(
-          "step4"
-        );
-
-      },
-      800
-    );
-
-
-  }catch(error){
-
-    console.error(
-      error
-    );
-
-
-    alert(
-      "তথ্য জমা দেওয়ার সময় সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।"
-    );
-
-
-    document
-    .getElementById(
-      "submitBtn"
-    )
-    .disabled = false;
-
-
-    document
-    .getElementById(
-      "backBtn"
-    )
-    .disabled = false;
-
-
-    showStep(
-      "step2"
-    );
-
-  }
-
-}
-
 
 /* =========================================================
    PROGRESS
 ========================================================= */
 
-function updateProgress(
-  percent,
-  message
-){
+function updateProgress(percent, message) {
+  document.getElementById("progressFill").style.width =
+    percent + "%";
 
-  document
-  .getElementById(
-    "progressFill"
-  )
-  .style.width =
-  percent + "%";
+  document.getElementById("progressText").textContent =
+    message;
 
+  document.getElementById("loadingTitle").textContent =
+    message;
 
-  document
-  .getElementById(
-    "progressText"
-  )
-  .innerText =
-  message;
-
-
-  document
-  .getElementById(
-    "loadingTitle"
-  )
-  .innerText =
-  message;
-
+  document.getElementById("loadingText").textContent =
+    "দয়া করে এই পেজটি বন্ধ করবেন না।";
 }
-
 
 /* =========================================================
-   FILE → BASE64
+   FILE TO BASE64
 ========================================================= */
 
-function fileToBase64(
-  file
-){
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
 
-  return new Promise(
-    (
-      resolve,
-      reject
-    ) => {
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const commaIndex = result.indexOf(",");
 
-      const reader =
-      new FileReader();
+      if (commaIndex === -1) {
+        reject(new Error("ছবির ফাইল পড়া যায়নি।"));
+        return;
+      }
 
+      resolve(result.substring(commaIndex + 1));
+    };
 
-      reader.onload = () => {
+    reader.onerror = () => {
+      reject(new Error("ছবি পড়তে সমস্যা হয়েছে।"));
+    };
 
-        const result =
-        reader.result;
-
-
-        /*
-          data:image/jpeg;base64,...
-          থেকে শুধু Base64 অংশ নেওয়া হচ্ছে
-        */
-
-        const base64 =
-        result
-        .split(",")[1];
-
-
-        resolve(
-          base64
-        );
-
-      };
-
-
-      reader.onerror =
-      reject;
-
-
-      reader.readAsDataURL(
-        file
-      );
-
-    }
-  );
-
+    reader.readAsDataURL(file);
+  });
 }
 
+/* =========================================================
+   UPLOAD PHOTOS TO GOOGLE APPS SCRIPT
+========================================================= */
+
+async function uploadPhotosToStorage(storage, personId, filesData) {
+  const uploadPayload = {
+    personId: personId,
+    files: filesData
+  };
+
+  /*
+    আগের Google Apps Script upload পদ্ধতি রাখা হয়েছে।
+    no-cors response থেকে server-এর প্রকৃত success
+    যাচাই করা যায় না।
+  */
+
+  await fetch(storage.upload, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(uploadPayload)
+  });
+}
+
+/* =========================================================
+   SUBMIT INFORMATION THROUGH WORKER API
+========================================================= */
+
+async function submitInformation() {
+  if (isSubmitting) return;
+
+  if (!validateForm()) return;
+
+  const confirmed = confirm(
+    "আপনি কি নিশ্চিত যে দেওয়া সব তথ্য সঠিক " +
+    "এবং ছবিগুলো সঠিক ব্যক্তির?"
+  );
+
+  if (!confirmed) return;
+
+  isSubmitting = true;
+
+  const submitBtn = document.getElementById("submitBtn");
+  const backBtn = document.getElementById("backBtn");
+
+  submitBtn.disabled = true;
+  backBtn.disabled = true;
+
+  showStep("step3");
+
+  document.getElementById("progressBox").style.display =
+    "block";
+
+  updateProgress(5, "তথ্য প্রস্তুত করা হচ্ছে...");
+
+  try {
+    const personId = generatedPersonId;
+
+    /* STEP 1: SELECT STORAGE */
+
+    selectedStorage = selectStorage();
+
+    updateProgress(
+      12,
+      "Storage " + selectedStorage.id +
+      " নির্বাচন করা হয়েছে..."
+    );
+
+    /* STEP 2: CONVERT PHOTOS */
+
+    const filesData = [];
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
+
+      updateProgress(
+        15 + Math.round((i / selectedFiles.length) * 25),
+        `ছবি প্রস্তুত হচ্ছে (${i + 1}/${selectedFiles.length})...`
+      );
+
+      const base64 = await fileToBase64(file);
+
+      filesData.push({
+        name: file.name,
+        mimeType: file.type,
+        data: base64
+      });
+    }
+
+    /* STEP 3: UPLOAD PHOTOS */
+
+    updateProgress(
+      45,
+      "Storage " + selectedStorage.id +
+      "-এ ছবি পাঠানো হচ্ছে..."
+    );
+
+    await uploadPhotosToStorage(
+      selectedStorage,
+      personId,
+      filesData
+    );
+
+    /*
+      সতর্কতা:
+      no-cors mode-এ Google Apps Script-এর প্রকৃত
+      success response browser থেকে যাচাই করা যায় না।
+    */
+
+    /* STEP 4: PREPARE PERSON DATA */
+
+    updateProgress(65, "ব্যক্তির তথ্য প্রস্তুত করা হচ্ছে...");
+
+    const statusInput = document.querySelector(
+      'input[name="status"]:checked'
+    );
+
+    const isAlive = statusInput.value === "true";
+
+    const now = new Date();
+
+    const today = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Dhaka",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(now);
+
+    const personData = {
+      id: personId,
+
+      name: document.getElementById("name").value.trim(),
+
+      father: document.getElementById("father").value.trim(),
+
+      village: document.getElementById("village").value.trim(),
+
+      upazilla: document.getElementById("upazilla").value.trim(),
+
+      zilla: document.getElementById("zilla").value.trim(),
+
+      dateOfBirth:
+        document.getElementById("dateOfBirth").value,
+
+      deathDate: isAlive
+        ? ""
+        : document.getElementById("deathDate").value,
+
+      status: isAlive,
+
+      key: "",
+
+      visibility: "private",
+
+      todayDate: today,
+
+      reviewStatus: "under_review",
+
+      storageServer: selectedStorage.id
+    };
+
+    /* STEP 5: SAVE THROUGH WORKER API */
+
+    updateProgress(
+      80,
+      "Worker API দিয়ে তথ্য সংরক্ষণ করা হচ্ছে..."
+    );
+
+    const apiResponse = await fetch(
+      WEB_API_URL + "/api/person/create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(personData)
+      }
+    );
+
+    let apiResult;
+
+    try {
+      apiResult = await apiResponse.json();
+    } catch {
+      throw new Error(
+        "Worker API থেকে সঠিক response পাওয়া যায়নি।"
+      );
+    }
+
+    if (
+      !apiResponse.ok ||
+      apiResult.success !== true
+    ) {
+      throw new Error(
+        apiResult.message ||
+        "তথ্য সংরক্ষণ করা যায়নি (HTTP " +
+        apiResponse.status +
+        ")"
+      );
+    }
+
+    /* STEP 6: SUCCESS */
+
+    updateProgress(100, "তথ্য সফলভাবে সংরক্ষণ করা হয়েছে।");
+
+    document.getElementById("finalPersonId").textContent =
+      personId;
+
+    showStep("step4");
+
+  } catch (error) {
+    console.error("Submission error:", error);
+
+    alert(
+      "তথ্য জমা দেওয়ার সময় সমস্যা হয়েছে।\n\n" +
+      (error.message || "ইন্টারনেট সংযোগ পরীক্ষা করুন।")
+    );
+
+    showStep("step2");
+
+    submitBtn.disabled = false;
+    backBtn.disabled = false;
+
+  } finally {
+    isSubmitting = false;
+  }
+}
 
 /* =========================================================
    INITIALIZE
@@ -1834,6 +1295,7 @@ function fileToBase64(
 setupStorageDropdown();
 
 </script>
+
 
 </body>
 </html>
