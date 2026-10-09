@@ -1,6 +1,3 @@
-// ============================================================
-// DEYALER - FIREBASE GATEWAY WORKER
-// ============================================================
 
 const FIREBASE_DB_URL =
   "https://jannat-projects-default-rtdb.firebaseio.com";
@@ -12,18 +9,8 @@ const FIREBASE_SCOPE =
   "https://www.googleapis.com/auth/firebase.database " +
   "https://www.googleapis.com/auth/userinfo.email";
 
-
-// ============================================================
-// MAIN WORKER
-// ============================================================
-
 export default {
   async fetch(request, env) {
-
-    // --------------------------------------------------------
-    // CORS
-    // --------------------------------------------------------
-
     if (request.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
@@ -35,15 +22,8 @@ export default {
     const path = url.pathname;
 
     try {
-
-      // ======================================================
       // HEALTH CHECK
-      // ======================================================
-
-      if (
-        path === "/api/health" &&
-        request.method === "GET"
-      ) {
+      if (path === "/api/health" && request.method === "GET") {
         return json({
           success: true,
           service: "Deyaler Firebase Gateway",
@@ -51,25 +31,12 @@ export default {
         });
       }
 
-
-      // ======================================================
-      // PERSON CHECK
-      // ======================================================
-      //
-      // /api/person/check?id=Bipul
-      //
-      // Only checks whether ID exists.
-      // ======================================================
-
+      // PERSON ID CHECK
       if (
         path === "/api/person/check" &&
         request.method === "GET"
       ) {
-
-        const id =
-          getValidId(
-            url.searchParams.get("id")
-          );
+        const id = getValidId(url.searchParams.get("id"));
 
         if (!id) {
           return json({
@@ -78,47 +45,124 @@ export default {
           }, 400);
         }
 
-        const person =
-          await firebaseGet(
-            `/people/${encodeURIComponent(id)}`,
-            env
-          );
-
-        if (!person) {
-          return json({
-            success: true,
-            exists: false
-          });
-        }
+        const person = await firebaseGet(
+          `/people/${encodeURIComponent(id)}`,
+          env
+        );
 
         return json({
           success: true,
-          exists: true,
-          id: id
+          exists: !!person,
+          ...(person ? { id } : {})
         });
       }
 
+      // CREATE PERSON
+      // POST /api/person/create
+      if (
+        path === "/api/person/create" &&
+        request.method === "POST"
+      ) {
+        let body;
 
-      // ======================================================
+        try {
+          body = await request.json();
+        } catch {
+          return json({
+            success: false,
+            message: "Invalid JSON"
+          }, 400);
+        }
+
+        if (
+          !body ||
+          typeof body !== "object" ||
+          Array.isArray(body)
+        ) {
+          return json({
+            success: false,
+            message: "Invalid request body"
+          }, 400);
+        }
+
+        const id = getValidId(body.id);
+
+        if (!id) {
+          return json({
+            success: false,
+            message: "Invalid Person ID"
+          }, 400);
+        }
+
+        const requiredFields = [
+          "name",
+          "father",
+          "village",
+          "upazilla",
+          "zilla",
+          "dateOfBirth"
+        ];
+
+        for (const field of requiredFields) {
+          if (
+            typeof body[field] !== "string" ||
+            !body[field].trim()
+          ) {
+            return json({
+              success: false,
+              message: "Missing field: " + field
+            }, 400);
+          }
+        }
+
+        // Prevent overwriting an existing person.
+        const existing = await firebaseGet(
+          `/people/${encodeURIComponent(id)}`,
+          env
+        );
+
+        if (existing) {
+          return json({
+            success: false,
+            message: "Person ID already exists"
+          }, 409);
+        }
+
+        const personData = {
+          id,
+          name: body.name.trim(),
+          father: body.father.trim(),
+          village: body.village.trim(),
+          upazilla: body.upazilla.trim(),
+          zilla: body.zilla.trim(),
+          dateOfBirth: body.dateOfBirth,
+          deathDate: String(body.deathDate || ""),
+          status: body.status === true,
+          key: "",
+          visibility: "private",
+          todayDate: String(body.todayDate || ""),
+          reviewStatus: "under_review",
+          storageServer: body.storageServer === "B" ? "B" : "A"
+        };
+
+        await firebasePut(
+          `/people/${encodeURIComponent(id)}`,
+          personData,
+          env
+        );
+
+        return json({
+          success: true,
+          id
+        }, 201);
+      }
+
       // PUBLIC PERSON PROFILE
-      // ======================================================
-      //
-      // /api/person?id=Bipul
-      //
-      // avatar = profile photo
-      //
-      // Private profiles are not returned here.
-      // ======================================================
-
       if (
         path === "/api/person" &&
         request.method === "GET"
       ) {
-
-        const id =
-          getValidId(
-            url.searchParams.get("id")
-          );
+        const id = getValidId(url.searchParams.get("id"));
 
         if (!id) {
           return json({
@@ -127,11 +171,10 @@ export default {
           }, 400);
         }
 
-        const person =
-          await firebaseGet(
-            `/people/${encodeURIComponent(id)}`,
-            env
-          );
+        const person = await firebaseGet(
+          `/people/${encodeURIComponent(id)}`,
+          env
+        );
 
         if (!person) {
           return json({
@@ -140,13 +183,7 @@ export default {
           }, 404);
         }
 
-        // ----------------------------------------------------
-        // Only public profiles
-        // ----------------------------------------------------
-
-        if (
-          person.visibility !== "public"
-        ) {
+        if (person.visibility !== "public") {
           return json({
             success: false,
             message: "This profile is private"
@@ -155,45 +192,19 @@ export default {
 
         return json({
           success: true,
-
-          person:
-            publicPerson(
-              person,
-              id
-            )
+          person: publicPerson(person, id)
         });
       }
 
-
-      // ======================================================
       // PRIVATE PERSON ACCESS
-      // ======================================================
-      //
-      // POST /api/person/access
-      //
-      // Body:
-      //
-      // {
-      //   "id": "ABC123",
-      //   "key": "xxxxxxxx"
-      // }
-      //
-      // Correct key দিলে private profile পাওয়া যাবে।
-      //
-      // IMPORTANT:
-      // key কখনো response-এ ফেরত যাবে না।
-      // ======================================================
-
       if (
         path === "/api/person/access" &&
         request.method === "POST"
       ) {
-
         let body;
 
         try {
-          body =
-            await request.json();
+          body = await request.json();
         } catch {
           return json({
             success: false,
@@ -201,29 +212,20 @@ export default {
           }, 400);
         }
 
-        const id =
-          getValidId(body?.id);
+        const id = getValidId(body?.id);
+        const key = String(body?.key || "");
 
-        const key =
-          String(
-            body?.key || ""
-          );
-
-        if (
-          !id ||
-          !key
-        ) {
+        if (!id || !key) {
           return json({
             success: false,
             message: "ID and key are required"
           }, 400);
         }
 
-        const person =
-          await firebaseGet(
-            `/people/${encodeURIComponent(id)}`,
-            env
-          );
+        const person = await firebaseGet(
+          `/people/${encodeURIComponent(id)}`,
+          env
+        );
 
         if (!person) {
           return json({
@@ -232,13 +234,7 @@ export default {
           }, 404);
         }
 
-        // ----------------------------------------------------
-        // Verify key
-        // ----------------------------------------------------
-
-        if (
-          String(person.key || "") !== key
-        ) {
+        if (String(person.key || "") !== key) {
           return json({
             success: false,
             message: "Invalid access key"
@@ -247,39 +243,19 @@ export default {
 
         return json({
           success: true,
-
           authorized: true,
-
-          person:
-            publicPerson(
-              person,
-              id,
-              true
-            )
+          person: publicPerson(person, id, true)
         });
       }
 
-
-      // ======================================================
-      // SEARCH
-      // ======================================================
-      //
-      // /api/search?q=Bipul
-      //
-      // Public profiles only.
-      // ======================================================
-
+      // SEARCH PUBLIC PEOPLE
       if (
         path === "/api/search" &&
         request.method === "GET"
       ) {
-
-        const q =
-          String(
-            url.searchParams.get("q") || ""
-          )
-            .trim()
-            .toLowerCase();
+        const q = String(
+          url.searchParams.get("q") || ""
+        ).trim().toLowerCase();
 
         if (!q) {
           return json({
@@ -290,477 +266,165 @@ export default {
           });
         }
 
-        const people =
-          await firebaseGet(
-            "/people",
-            env
-          ) || {};
-
+        const people = await firebaseGet("/people", env) || {};
         const results = [];
 
-
-        for (
-          const [id, person]
-          of Object.entries(people)
-        ) {
-
+        for (const [id, person] of Object.entries(people)) {
           if (
             !person ||
-            typeof person !== "object"
-          ) {
-            continue;
-          }
-
-
-          // --------------------------------------------------
-          // Only public profiles
-          // --------------------------------------------------
-
-          if (
+            typeof person !== "object" ||
             person.visibility !== "public"
           ) {
             continue;
           }
 
+          const fields = [
+            person.name,
+            person.father,
+            person.village,
+            person.upazilla,
+            person.zilla,
+            person.id || id
+          ];
 
-          const name =
-            String(
-              person.name || ""
-            ).toLowerCase();
+          const matched = fields.some(value =>
+            String(value || "").toLowerCase().includes(q)
+          );
 
-          const father =
-            String(
-              person.father || ""
-            ).toLowerCase();
-
-          const village =
-            String(
-              person.village || ""
-            ).toLowerCase();
-
-          const upazilla =
-            String(
-              person.upazilla || ""
-            ).toLowerCase();
-
-          const zilla =
-            String(
-              person.zilla || ""
-            ).toLowerCase();
-
-          const personId =
-            String(
-              person.id || id
-            ).toLowerCase();
-
-
-          const matched =
-            name.includes(q) ||
-            father.includes(q) ||
-            village.includes(q) ||
-            upazilla.includes(q) ||
-            zilla.includes(q) ||
-            personId.includes(q);
-
-
-          if (!matched) {
-            continue;
-          }
-
-
-          // --------------------------------------------------
-          // Search result
-          // avatar = profile photo
-          // --------------------------------------------------
+          if (!matched) continue;
 
           results.push({
-
-            id:
-              person.id || id,
-
-            name:
-              person.name || "",
-
-            avatar:
-              person.avatar || "",
-
-            father:
-              person.father || "",
-
-            village:
-              person.village || "",
-
-            upazilla:
-              person.upazilla || "",
-
-            zilla:
-              person.zilla || "",
-
-            dateOfBirth:
-              person.dateOfBirth || "",
-
-            deathDate:
-              person.deathDate || "",
-
-            status:
-              person.status || "",
-
-            gender:
-              person.gender || "",
-
-            visibility:
-              "public"
+            id: person.id || id,
+            name: person.name || "",
+            avatar: person.avatar || "",
+            father: person.father || "",
+            village: person.village || "",
+            upazilla: person.upazilla || "",
+            zilla: person.zilla || "",
+            dateOfBirth: person.dateOfBirth || "",
+            deathDate: person.deathDate || "",
+            status: person.status || "",
+            gender: person.gender || "",
+            visibility: "public"
           });
         }
 
-
-        // ----------------------------------------------------
-        // Sort by name
-        // ----------------------------------------------------
-
-        results.sort(
-          (a, b) =>
-            String(a.name).localeCompare(
-              String(b.name),
-              "bn"
-            )
+        results.sort((a, b) =>
+          String(a.name).localeCompare(String(b.name), "bn")
         );
 
-
         return json({
-
           success: true,
-
           query: q,
-
-          count:
-            results.length,
-
-          results:
-            results.slice(
-              0,
-              100
-            )
+          count: results.length,
+          results: results.slice(0, 100)
         });
       }
 
-
-      // ======================================================
       // HOMEPAGE API
-      // ======================================================
-      //
-      // Statistics:
-      // ALL registered people
-      //
-      // Birthdays:
-      // PUBLIC + ALIVE
-      //
-      // Featured:
-      // PUBLIC + DECEASED
-      //
-      // avatar is included everywhere relevant.
-      // ======================================================
-
       if (
         path === "/api/homepage" &&
         request.method === "GET"
       ) {
-
-        const people =
-          await firebaseGet(
-            "/people",
-            env
-          ) || {};
-
-
-        // ----------------------------------------------------
-        // ALL PEOPLE
-        // ----------------------------------------------------
-
+        const people = await firebaseGet("/people", env) || {};
         const allPeople = [];
 
-
-        for (
-          const [id, person]
-          of Object.entries(people)
-        ) {
-
-          if (
-            !person ||
-            typeof person !== "object"
-          ) {
-            continue;
-          }
+        for (const [id, person] of Object.entries(people)) {
+          if (!person || typeof person !== "object") continue;
 
           allPeople.push({
-
-            id:
-              person.id || id,
-
-            person:
-              person
-
+            id: person.id || id,
+            person
           });
         }
 
+        const total = allPeople.length;
+        const alive = allPeople.filter(
+          item => isAlive(item.person)
+        ).length;
+        const deceased = total - alive;
 
-        // ----------------------------------------------------
-        // STATISTICS
-        //
-        // IMPORTANT:
-        // এখানে PUBLIC filter ব্যবহার করা হয়নি।
-        //
-        // Firebase-এ যত registered person আছে,
-        // সবাই count হবে।
-        // ----------------------------------------------------
+        const publicPeople = allPeople.filter(
+          item => item.person.visibility === "public"
+        );
 
-        const total =
-          allPeople.length;
-
-
-        const alive =
-          allPeople.filter(
-            item =>
-              isAlive(
-                item.person
-              )
-          ).length;
-
-
-        const deceased =
-          allPeople.filter(
-            item =>
-              !isAlive(
-                item.person
-              )
-          ).length;
-
-
-        // ----------------------------------------------------
-        // PUBLIC PEOPLE
-        //
-        // Birthday এবং Featured-এর জন্য।
-        // ----------------------------------------------------
-
-        const publicPeople =
-          allPeople.filter(
-            item =>
-              item.person.visibility === "public"
-          );
-
-
-        // ----------------------------------------------------
-        // TODAY
-        // ----------------------------------------------------
-
-        const today =
-          getDhakaDate();
-
-
-        // ====================================================
-        // TODAY'S BIRTHDAYS
-        // ====================================================
-
+        const today = getDhakaDate();
         const birthdays = [];
 
+        for (const item of publicPeople) {
+          const person = item.person;
 
-        for (
-          const item
-          of publicPeople
-        ) {
-
-          const person =
-            item.person;
-
-
-          // Deceased person's birthday
-          // এখানে দেখানো হবে না।
           if (
-            !isAlive(person)
+            !isAlive(person) ||
+            !isBirthdayToday(person.dateOfBirth, today)
           ) {
             continue;
           }
 
-
-          if (
-            isBirthdayToday(
-              person.dateOfBirth,
-              today
-            )
-          ) {
-
-            birthdays.push({
-
-              id:
-                item.id,
-
-              name:
-                person.name || "",
-
-              // Profile photo
-              avatar:
-                person.avatar || "",
-
-              dateOfBirth:
-                person.dateOfBirth || "",
-
-              father:
-                person.father || "",
-
-              village:
-                person.village || "",
-
-              upazilla:
-                person.upazilla || "",
-
-              zilla:
-                person.zilla || "",
-
-              gender:
-                person.gender || "",
-
-              status:
-                person.status || "alive"
-
-            });
-          }
+          birthdays.push({
+            id: item.id,
+            name: person.name || "",
+            avatar: person.avatar || "",
+            dateOfBirth: person.dateOfBirth || "",
+            father: person.father || "",
+            village: person.village || "",
+            upazilla: person.upazilla || "",
+            zilla: person.zilla || "",
+            gender: person.gender || "",
+            status: person.status || "alive"
+          });
         }
 
-
-        // ====================================================
-        // FEATURED MEMORY
-        // ====================================================
-        //
-        // Only public deceased people.
-        // ====================================================
-
-        const deceasedPublic =
-          publicPeople.filter(
-            item =>
-              !isAlive(
-                item.person
-              )
-          );
-
+        const deceasedPublic = publicPeople.filter(
+          item => !isAlive(item.person)
+        );
 
         let featured = null;
 
+        if (deceasedPublic.length > 0) {
+          const index = deterministicIndex(
+            today,
+            deceasedPublic.length
+          );
 
-        if (
-          deceasedPublic.length > 0
-        ) {
-
-          const index =
-            deterministicIndex(
-              today,
-              deceasedPublic.length
-            );
-
-
-          const item =
-            deceasedPublic[index];
-
-
-          const person =
-            item.person;
-
+          const item = deceasedPublic[index];
+          const person = item.person;
 
           featured = {
-
-            id:
-              item.id,
-
-            name:
-              person.name || "",
-
-            // Profile photo
-            avatar:
-              person.avatar || "",
-
-            father:
-              person.father || "",
-
-            village:
-              person.village || "",
-
-            upazilla:
-              person.upazilla || "",
-
-            zilla:
-              person.zilla || "",
-
-            dateOfBirth:
-              person.dateOfBirth || "",
-
-            deathDate:
-              person.deathDate || "",
-
-            gender:
-              person.gender || "",
-
-            status:
-              person.status || "deceased",
-
-            joinDate:
-              person.joinDate || ""
-
+            id: item.id,
+            name: person.name || "",
+            avatar: person.avatar || "",
+            father: person.father || "",
+            village: person.village || "",
+            upazilla: person.upazilla || "",
+            zilla: person.zilla || "",
+            dateOfBirth: person.dateOfBirth || "",
+            deathDate: person.deathDate || "",
+            gender: person.gender || "",
+            status: person.status || "deceased",
+            joinDate: person.joinDate || ""
           };
         }
 
-
-        // ----------------------------------------------------
-        // FINAL HOMEPAGE RESPONSE
-        // ----------------------------------------------------
-
         return json({
-
           success: true,
-
-          date:
-            today,
-
+          date: today,
           statistics: {
-
-            total:
-              total,
-
-            alive:
-              alive,
-
-            deceased:
-              deceased
-
+            total,
+            alive,
+            deceased
           },
-
-          birthdays:
-            birthdays,
-
-          featured:
-            featured
-
+          birthdays,
+          featured
         });
       }
 
-
-      // ======================================================
       // FAMILY TREE API
-      // ======================================================
-      //
-      // /api/tree?id=Bipul
-      //
-      // Public people + public relationships.
-      // ======================================================
-
       if (
         path === "/api/tree" &&
         request.method === "GET"
       ) {
-
-        const rootId =
-          getValidId(
-            url.searchParams.get("id")
-          );
-
+        const rootId = getValidId(url.searchParams.get("id"));
 
         if (!rootId) {
           return json({
@@ -769,87 +433,33 @@ export default {
           }, 400);
         }
 
-
-        const people =
-          await firebaseGet(
-            "/people",
-            env
-          ) || {};
-
-
+        const people = await firebaseGet("/people", env) || {};
         const relationships =
-          await firebaseGet(
-            "/relationships",
-            env
-          ) || {};
-
-
-        // ----------------------------------------------------
-        // PUBLIC PEOPLE
-        // ----------------------------------------------------
+          await firebaseGet("/relationships", env) || {};
 
         const publicPeople = {};
 
-
-        for (
-          const [id, person]
-          of Object.entries(people)
-        ) {
-
+        for (const [id, person] of Object.entries(people)) {
           if (
             person &&
             typeof person === "object" &&
             person.visibility === "public"
           ) {
-
-            publicPeople[id] =
-              publicPerson(
-                person,
-                id
-              );
+            publicPeople[id] = publicPerson(person, id);
           }
         }
 
-
-        // ----------------------------------------------------
-        // Root person check
-        // ----------------------------------------------------
-
-        if (
-          !publicPeople[rootId]
-        ) {
-
+        if (!publicPeople[rootId]) {
           return json({
             success: false,
             message: "Public person not found"
           }, 404);
         }
 
-
-        // ----------------------------------------------------
-        // PUBLIC RELATIONSHIPS
-        // ----------------------------------------------------
-
         const publicRelationships = {};
 
-
-        for (
-          const [
-            relationId,
-            relation
-          ]
-          of Object.entries(
-            relationships
-          )
-        ) {
-
-          if (
-            !relation ||
-            typeof relation !== "object"
-          ) {
-            continue;
-          }
-
+        for (const [relationId, relation] of Object.entries(relationships)) {
+          if (!relation || typeof relation !== "object") continue;
 
           const person1 =
             relation.person1 ||
@@ -857,13 +467,11 @@ export default {
             relation.source ||
             relation.parent;
 
-
           const person2 =
             relation.person2 ||
             relation.to ||
             relation.target ||
             relation.child;
-
 
           if (
             person1 &&
@@ -871,55 +479,27 @@ export default {
             publicPeople[person1] &&
             publicPeople[person2]
           ) {
-
-            publicRelationships[
-              relationId
-            ] = relation;
+            publicRelationships[relationId] = relation;
           }
         }
 
-
         return json({
-
           success: true,
-
-          rootId:
-            rootId,
-
-          people:
-            publicPeople,
-
-          relationships:
-            publicRelationships
-
+          rootId,
+          people: publicPeople,
+          relationships: publicRelationships
         });
       }
 
-
-      // ======================================================
-      // STATIC WEBSITE
-      // ======================================================
-
-      return env.ASSETS.fetch(
-        request
-      );
-
+      // WEBSITE ASSETS
+      return env.ASSETS.fetch(request);
 
     } catch (error) {
-
-      console.error(
-        "Deyaler Worker Error:",
-        error
-      );
-
+      console.error("Deyaler Worker Error:", error);
 
       return json({
-
         success: false,
-
-        message:
-          "Internal server error"
-
+        message: "Internal server error"
       }, 500);
     }
   }
@@ -930,51 +510,58 @@ export default {
 // FIREBASE GET
 // ============================================================
 
-async function firebaseGet(
-  path,
-  env
-) {
+async function firebaseGet(path, env) {
+  const token = await getFirebaseAccessToken(env);
 
-  const token =
-    await getFirebaseAccessToken(
-      env
-    );
-
-
-  const response =
-    await fetch(
-      FIREBASE_DB_URL +
-      path +
-      ".json",
-      {
-
-        method:
-          "GET",
-
-        headers: {
-
-          "Authorization":
-            `Bearer ${token}`,
-
-          "Content-Type":
-            "application/json"
-
-        }
+  const response = await fetch(
+    FIREBASE_DB_URL + path + ".json",
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
       }
-    );
-
+    }
+  );
 
   if (!response.ok) {
-
-    const errorText =
-      await response.text();
-
+    const errorText = await response.text();
 
     throw new Error(
       `Firebase GET failed: ${response.status} ${errorText}`
     );
   }
 
+  return await response.json();
+}
+
+
+// ============================================================
+// FIREBASE PUT
+// ============================================================
+
+async function firebasePut(path, data, env) {
+  const token = await getFirebaseAccessToken(env);
+
+  const response = await fetch(
+    FIREBASE_DB_URL + path + ".json",
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+
+    throw new Error(
+      `Firebase PUT failed: ${response.status} ${errorText}`
+    );
+  }
 
   return await response.json();
 }
@@ -984,190 +571,81 @@ async function firebaseGet(
 // FIREBASE ACCESS TOKEN
 // ============================================================
 
-async function getFirebaseAccessToken(
-  env
-) {
-
-  if (
-    !env.FIREBASE_CLIENT_EMAIL
-  ) {
-    throw new Error(
-      "FIREBASE_CLIENT_EMAIL is missing"
-    );
+async function getFirebaseAccessToken(env) {
+  if (!env.FIREBASE_CLIENT_EMAIL) {
+    throw new Error("FIREBASE_CLIENT_EMAIL is missing");
   }
 
-
-  if (
-    !env.FIREBASE_PRIVATE_KEY
-  ) {
-    throw new Error(
-      "FIREBASE_PRIVATE_KEY is missing"
-    );
+  if (!env.FIREBASE_PRIVATE_KEY) {
+    throw new Error("FIREBASE_PRIVATE_KEY is missing");
   }
 
-
-  const now =
-    Math.floor(
-      Date.now() / 1000
-    );
-
+  const now = Math.floor(Date.now() / 1000);
 
   const header = {
-
-    alg:
-      "RS256",
-
-    typ:
-      "JWT"
-
+    alg: "RS256",
+    typ: "JWT"
   };
-
 
   const payload = {
-
-    iss:
-      env.FIREBASE_CLIENT_EMAIL,
-
-    sub:
-      env.FIREBASE_CLIENT_EMAIL,
-
-    aud:
-      FIREBASE_TOKEN_URL,
-
-    iat:
-      now,
-
-    exp:
-      now + 3600,
-
-    scope:
-      FIREBASE_SCOPE
-
+    iss: env.FIREBASE_CLIENT_EMAIL,
+    sub: env.FIREBASE_CLIENT_EMAIL,
+    aud: FIREBASE_TOKEN_URL,
+    iat: now,
+    exp: now + 3600,
+    scope: FIREBASE_SCOPE
   };
 
+  const encodedHeader = base64urlEncode(JSON.stringify(header));
+  const encodedPayload = base64urlEncode(JSON.stringify(payload));
 
-  const encodedHeader =
-    base64urlEncode(
-      JSON.stringify(header)
-    );
+  const unsignedToken = encodedHeader + "." + encodedPayload;
 
+  const privateKeyPem = env.FIREBASE_PRIVATE_KEY
+    .replace(/\\n/g, "\n")
+    .trim();
 
-  const encodedPayload =
-    base64urlEncode(
-      JSON.stringify(payload)
-    );
+  const privateKey = await importPrivateKey(privateKeyPem);
 
-
-  const unsignedToken =
-    encodedHeader +
-    "." +
-    encodedPayload;
-
-
-  // ----------------------------------------------------------
-  // Private key
-  // ----------------------------------------------------------
-
-  const privateKeyPem =
-    env.FIREBASE_PRIVATE_KEY
-      .replace(
-        /\\n/g,
-        "\n"
-      )
-      .trim();
-
-
-  const privateKey =
-    await importPrivateKey(
-      privateKeyPem
-    );
-
-
-  const signature =
-    await crypto.subtle.sign(
-
-      {
-        name:
-          "RSASSA-PKCS1-v1_5"
-      },
-
-      privateKey,
-
-      new TextEncoder().encode(
-        unsignedToken
-      )
-    );
-
+  const signature = await crypto.subtle.sign(
+    { name: "RSASSA-PKCS1-v1_5" },
+    privateKey,
+    new TextEncoder().encode(unsignedToken)
+  );
 
   const jwt =
-    unsignedToken +
-    "." +
-    arrayBufferToBase64Url(
-      signature
-    );
+    unsignedToken + "." + arrayBufferToBase64Url(signature);
 
+  const tokenResponse = await fetch(
+    FIREBASE_TOKEN_URL,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        grant_type:
+          "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        assertion: jwt
+      })
+    }
+  );
 
-  // ----------------------------------------------------------
-  // Google OAuth
-  // ----------------------------------------------------------
-
-  const tokenResponse =
-    await fetch(
-      FIREBASE_TOKEN_URL,
-      {
-
-        method:
-          "POST",
-
-        headers: {
-
-          "Content-Type":
-            "application/x-www-form-urlencoded"
-
-        },
-
-        body:
-          new URLSearchParams({
-
-            grant_type:
-              "urn:ietf:params:oauth:grant-type:jwt-bearer",
-
-            assertion:
-              jwt
-
-          })
-
-      }
-    );
-
-
-  if (
-    !tokenResponse.ok
-  ) {
-
-    const errorText =
-      await tokenResponse.text();
-
+  if (!tokenResponse.ok) {
+    const errorText = await tokenResponse.text();
 
     throw new Error(
       `Google OAuth failed: ${tokenResponse.status} ${errorText}`
     );
   }
 
+  const tokenData = await tokenResponse.json();
 
-  const tokenData =
-    await tokenResponse.json();
-
-
-  if (
-    !tokenData.access_token
-  ) {
-
+  if (!tokenData.access_token) {
     throw new Error(
       "Google OAuth did not return access_token"
     );
   }
-
 
   return tokenData.access_token;
 }
@@ -1177,170 +655,54 @@ async function getFirebaseAccessToken(
 // IMPORT PRIVATE KEY
 // ============================================================
 
-async function importPrivateKey(
-  pem
-) {
+async function importPrivateKey(pem) {
+  const base64 = pem
+    .replace("-----BEGIN PRIVATE KEY-----", "")
+    .replace("-----END PRIVATE KEY-----", "")
+    .replace(/\s/g, "");
 
-  const base64 =
-    pem
-      .replace(
-        "-----BEGIN PRIVATE KEY-----",
-        ""
-      )
-      .replace(
-        "-----END PRIVATE KEY-----",
-        ""
-      )
-      .replace(
-        /\s/g,
-        ""
-      );
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
 
-
-  const binary =
-    atob(base64);
-
-
-  const bytes =
-    new Uint8Array(
-      binary.length
-    );
-
-
-  for (
-    let i = 0;
-    i < binary.length;
-    i++
-  ) {
-
-    bytes[i] =
-      binary.charCodeAt(i);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
   }
 
-
   return await crypto.subtle.importKey(
-
     "pkcs8",
-
     bytes.buffer,
-
     {
-
-      name:
-        "RSASSA-PKCS1-v1_5",
-
-      hash:
-        "SHA-256"
-
+      name: "RSASSA-PKCS1-v1_5",
+      hash: "SHA-256"
     },
-
     false,
-
-    [
-      "sign"
-    ]
-
+    ["sign"]
   );
 }
 
 
 // ============================================================
-// PUBLIC PERSON
-// ============================================================
-//
-// This is the standard profile object returned by the API.
-//
-// avatar = PROFILE PHOTO
-//
-// key is NEVER returned.
+// PUBLIC PERSON RESPONSE
 // ============================================================
 
-function publicPerson(
-  person,
-  id,
-  authorized = false
-) {
-
+function publicPerson(person, id, authorized = false) {
   return {
-
-    // --------------------------------------------------------
-    // Identity
-    // --------------------------------------------------------
-
-    id:
-      person.id || id,
-
-    name:
-      person.name || "",
-
-
-    // --------------------------------------------------------
-    // PROFILE PHOTO
-    // --------------------------------------------------------
-
-    avatar:
-      person.avatar || "",
-
-
-    // --------------------------------------------------------
-    // Basic information
-    // --------------------------------------------------------
-
-    gender:
-      person.gender || "",
-
-    dateOfBirth:
-      person.dateOfBirth || "",
-
-    deathDate:
-      person.deathDate || "",
-
-    status:
-      person.status || "",
-
-
-    // --------------------------------------------------------
-    // Family / address
-    // --------------------------------------------------------
-
-    father:
-      person.father || "",
-
-    village:
-      person.village || "",
-
-    upazilla:
-      person.upazilla || "",
-
-    zilla:
-      person.zilla || "",
-
-
-    // --------------------------------------------------------
-    // Other information
-    // --------------------------------------------------------
-
-    joinDate:
-      person.joinDate || "",
-
-    todayDate:
-      person.todayDate || "",
-
-    reviewStatus:
-      person.reviewStatus || "",
-
-    visibility:
-      person.visibility || "",
-
-    storageServer:
-      person.storageServer || ""
-
-    // --------------------------------------------------------
-    // IMPORTANT:
-    //
-    // person.key is NEVER returned.
-    // --------------------------------------------------------
-
+    id: person.id || id,
+    name: person.name || "",
+    avatar: person.avatar || "",
+    gender: person.gender || "",
+    dateOfBirth: person.dateOfBirth || "",
+    deathDate: person.deathDate || "",
+    status: person.status || "",
+    father: person.father || "",
+    village: person.village || "",
+    upazilla: person.upazilla || "",
+    zilla: person.zilla || "",
+    joinDate: person.joinDate || "",
+    todayDate: person.todayDate || "",
+    reviewStatus: person.reviewStatus || "",
+    visibility: person.visibility || "",
+    storageServer: person.storageServer || ""
   };
 }
 
@@ -1349,30 +711,12 @@ function publicPerson(
 // VALID PERSON ID
 // ============================================================
 
-function getValidId(
-  value
-) {
+function getValidId(value) {
+  if (value === null || value === undefined) return null;
 
-  if (
-    value === null ||
-    value === undefined
-  ) {
-    return null;
-  }
+  const id = String(value).trim();
 
-
-  const id =
-    String(value).trim();
-
-
-  if (!id) {
-    return null;
-  }
-
-
-  // ----------------------------------------------------------
-  // Prevent invalid Firebase path characters
-  // ----------------------------------------------------------
+  if (!id) return null;
 
   if (
     id.length > 200 ||
@@ -1384,10 +728,8 @@ function getValidId(
     id.includes("[") ||
     id.includes("]")
   ) {
-
     return null;
   }
-
 
   return id;
 }
@@ -1397,51 +739,27 @@ function getValidId(
 // ALIVE CHECK
 // ============================================================
 
-function isAlive(
-  person
-) {
+function isAlive(person) {
+  if (!person) return false;
 
-  if (!person) {
-    return false;
-  }
-
-
-  const status =
-    String(
-      person.status || ""
-    )
-      .trim()
-      .toLowerCase();
-
-
-  // ----------------------------------------------------------
-  // Explicit deceased status
-  // ----------------------------------------------------------
+  const status = String(person.status || "")
+    .trim()
+    .toLowerCase();
 
   if (
     status === "deceased" ||
     status === "dead" ||
     status === "মৃত"
   ) {
-
     return false;
   }
-
-
-  // ----------------------------------------------------------
-  // Death date means deceased
-  // ----------------------------------------------------------
 
   if (
     person.deathDate &&
-    String(
-      person.deathDate
-    ).trim() !== ""
+    String(person.deathDate).trim() !== ""
   ) {
-
     return false;
   }
-
 
   return true;
 }
@@ -1452,30 +770,15 @@ function isAlive(
 // ============================================================
 
 function getDhakaDate() {
-
   return new Intl.DateTimeFormat(
-
     "en-CA",
-
     {
-
-      timeZone:
-        "Asia/Dhaka",
-
-      year:
-        "numeric",
-
-      month:
-        "2-digit",
-
-      day:
-        "2-digit"
-
+      timeZone: "Asia/Dhaka",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
     }
-
-  ).format(
-    new Date()
-  );
+  ).format(new Date());
 }
 
 
@@ -1483,65 +786,19 @@ function getDhakaDate() {
 // BIRTHDAY CHECK
 // ============================================================
 
-function isBirthdayToday(
-  dateOfBirth,
-  today
-) {
+function isBirthdayToday(dateOfBirth, today) {
+  if (!dateOfBirth || !today) return false;
 
-  if (
-    !dateOfBirth ||
-    !today
-  ) {
+  const dobParts = String(dateOfBirth).trim().split("-");
+  const todayParts = String(today).trim().split("-");
 
+  if (dobParts.length < 3 || todayParts.length < 3) {
     return false;
   }
-
-
-  const dob =
-    String(
-      dateOfBirth
-    ).trim();
-
-
-  const current =
-    String(
-      today
-    ).trim();
-
-
-  // ----------------------------------------------------------
-  // Expected format:
-  //
-  // YYYY-MM-DD
-  // ----------------------------------------------------------
-
-  const dobParts =
-    dob.split("-");
-
-
-  const todayParts =
-    current.split("-");
-
-
-  if (
-    dobParts.length < 3 ||
-    todayParts.length < 3
-  ) {
-
-    return false;
-  }
-
 
   return (
-
-    dobParts[1] ===
-      todayParts[1]
-
-    &&
-
-    dobParts[2] ===
-      todayParts[2]
-
+    dobParts[1] === todayParts[1] &&
+    dobParts[2] === todayParts[2]
   );
 }
 
@@ -1549,126 +806,50 @@ function isBirthdayToday(
 // ============================================================
 // DETERMINISTIC INDEX
 // ============================================================
-//
-// Selects a stable featured person for the day.
-// ============================================================
 
-function deterministicIndex(
-  date,
-  length
-) {
-
-  if (
-    !length ||
-    length <= 0
-  ) {
-
-    return 0;
-  }
-
+function deterministicIndex(date, length) {
+  if (!length || length <= 0) return 0;
 
   let hash = 0;
 
-
-  for (
-    let i = 0;
-    i < date.length;
-    i++
-  ) {
-
-    hash =
-      (
-        (
-          hash << 5
-        )
-        -
-        hash
-        +
-        date.charCodeAt(i)
-      )
-      |
-      0;
+  for (let i = 0; i < date.length; i++) {
+    hash = (
+      ((hash << 5) - hash + date.charCodeAt(i)) | 0
+    );
   }
 
-
-  return (
-    Math.abs(hash) %
-    length
-  );
+  return Math.abs(hash) % length;
 }
 
 
 // ============================================================
-// BASE64URL ENCODE
+// BASE64URL HELPERS
 // ============================================================
 
-function base64urlEncode(
-  text
-) {
-
+function base64urlEncode(text) {
   return arrayBufferToBase64Url(
-    new TextEncoder().encode(
-      text
-    )
+    new TextEncoder().encode(text)
   );
 }
 
-
-// ============================================================
-// ARRAY BUFFER → BASE64URL
-// ============================================================
-
-function arrayBufferToBase64Url(
-  buffer
-) {
-
-  const bytes =
-    new Uint8Array(
-      buffer
-    );
-
-
+function arrayBufferToBase64Url(buffer) {
+  const bytes = new Uint8Array(buffer);
   let binary = "";
+  const chunkSize = 0x8000;
 
-
-  const chunkSize =
-    0x8000;
-
-
-  for (
-    let i = 0;
-    i < bytes.length;
-    i += chunkSize
-  ) {
-
-    binary +=
-      String.fromCharCode(
-        ...bytes.subarray(
-          i,
-          Math.min(
-            i + chunkSize,
-            bytes.length
-          )
-        )
-      );
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(
+      ...bytes.subarray(
+        i,
+        Math.min(i + chunkSize, bytes.length)
+      )
+    );
   }
 
-
-  return btoa(
-    binary
-  )
-    .replace(
-      /\+/g,
-      "-"
-    )
-    .replace(
-      /\//g,
-      "_"
-    )
-    .replace(
-      /=+$/g,
-      ""
-    );
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
 }
 
 
@@ -1676,34 +857,16 @@ function arrayBufferToBase64Url(
 // JSON RESPONSE
 // ============================================================
 
-function json(
-  data,
-  status = 200
-) {
-
+function json(data, status = 200) {
   return new Response(
-
-    JSON.stringify(
-      data
-    ),
-
+    JSON.stringify(data),
     {
-
-      status:
-        status,
-
+      status,
       headers: {
-
-        "Content-Type":
-          "application/json; charset=utf-8",
-
-        "Cache-Control":
-          "no-store",
-
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "no-store",
         ...corsHeaders()
-
       }
-
     }
   );
 }
@@ -1714,20 +877,10 @@ function json(
 // ============================================================
 
 function corsHeaders() {
-
   return {
-
-    "Access-Control-Allow-Origin":
-      "*",
-
-    "Access-Control-Allow-Methods":
-      "GET, POST, OPTIONS",
-
-    "Access-Control-Allow-Headers":
-      "Content-Type",
-
-    "Access-Control-Max-Age":
-      "86400"
-
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400"
   };
 }
