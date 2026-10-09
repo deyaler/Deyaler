@@ -588,7 +588,398 @@ export default {
         });
       }
 
+      // =====================================================
+      // ADMIN GEMINI AGENT — PLAN / READ-ONLY ASSISTANCE
+      // POST /api/admin/agent
+      // =====================================================
+      if (
+        path === "/api/admin/agent" &&
+        request.method === "POST"
+      ) {
+        if (!isAdminAuthorized(request, env)) {
+          return json({
+            success: false,
+            message: "Unauthorized"
+          }, 401);
+        }
 
+        if (!env.GEMINI_API_KEY) {
+          return json({
+            success: false,
+            message: "GEMINI_API_KEY is missing"
+          }, 500);
+        }
+
+        let body;
+
+        try {
+          body = await request.json();
+        } catch {
+          return json({
+            success: false,
+            message: "Invalid JSON"
+          }, 400);
+        }
+
+        const message = String(body?.message || "").trim();
+
+        if (!message || message.length > 4000) {
+          return json({
+            success: false,
+            message: "Message is required (maximum 4000 characters)"
+          }, 400);
+        }
+
+        // Provide only a limited, relevant set of matching records.
+        const allPeople = await firebaseGet("/people", env) || {};
+        const searchText = message.toLowerCase();
+        const words = searchText.split(/\s+/).filter(Boolean);
+
+        const matchedPeople = Object.entries(allPeople)
+          .filter(([id, person]) => {
+            if (!person || typeof person !== "object") return false;
+
+            const searchable = [
+              id,
+              person.id,
+              person.name,
+              person.father,
+              person.village,
+              person.upazilla,
+              person.zilla
+            ].join(" ").toLowerCase();
+
+            return words.some(word => searchable.includes(word));
+          })
+          .slice(0, 20)
+          .map(([id, person]) => ({
+            id,
+            name: String(person.name || ""),
+            father: String(person.father || ""),
+            village: String(person.village || ""),
+            upazilla: String(person.upazilla || ""),
+            zilla: String(person.zilla || ""),
+            dateOfBirth: String(person.dateOfBirth || ""),
+            deathDate: String(person.deathDate || ""),
+            status: person.status ?? "",
+            gender: String(person.gender || ""),
+            visibility: String(person.visibility || ""),
+            reviewStatus: String(person.reviewStatus || "")
+          }));
+
+        const allowedFields = [
+          "name",
+          "father",
+          "village",
+          "upazilla",
+          "zilla",
+          "dateOfBirth",
+          "deathDate",
+          "status",
+          "gender",
+          "visibility",
+          "reviewStatus",
+          "joinDate",
+          "avatar"
+        ];
+
+        const prompt = `
+You are the private admin assistant for the Deyaler family-memory website.
+
+User's request:
+${message}
+
+Matching Firebase people records:
+${JSON.stringify(matchedPeople)}
+
+You must return ONLY valid JSON with this shape:
+{
+  "reply": "Helpful Bengali response",
+  "action": null
+}
+
+If the user clearly asks to change a person's existing data, you may propose:
+{
+  "reply": "Explain the proposed change in Bengali",
+  "action": {
+    "type": "update_person",
+    "id": "existing exact person ID",
+    "fields": {
+      "allowedField": "new value"
+    }
+  }
+}
+
+Rules:
+- Never claim that data has already been changed.
+- Propose a change only when the request clearly asks for one.
+- The ID must match one of the records above exactly.
+- Only use these editable fields: ${allowedFields.join(", ")}.
+- Never propose changing "id", "key", credentials, Firebase settings, or arbitrary database paths.
+- Do not invent missing personal data.
+- visibility must be "public" or "private".
+- For status, use the user's explicit requested value; do not infer life/death status.
+- If no record matches or the request is unclear, action must be null and ask a clarifying question.
+- The website user must confirm a proposed change separately before it is applied.
+- Answer in simple Bengali unless the user requests another language.
+`;
+
+        const model = env.GEMINI_MODEL || "gemini-2.5-flash";
+        const endpoint =
+          "https://generativelanguage.googleapis.com/v1beta/models/" +
+          encodeURIComponent(model) +
+          ":generateContent";
+
+        const geminiResponse = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": env.GEMINI_API_KEY
+          },
+          body: JSON.stringify({
+            contents: [{
+              role: "user",
+              parts: [{ text: prompt }]
+            }],
+            generationConfig: {
+              responseMimeType: "application/json",
+              temperature: 0.2
+            }
+          })
+        });
+
+        const geminiData = await geminiResponse.json();
+
+        if (!geminiResponse.ok) {
+          console.error("Gemini API error:", geminiResponse.status);
+
+          return json({
+            success: false,
+            message: "Gemini API request failed",
+            status: geminiResponse.status
+          }, 502);
+        }
+
+        const responseText =
+          geminiData?.candidates?.[0]?.content?.parts
+            ?.map(part => part.text || "")
+            .join("") || "";
+
+        let result;
+
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          return json({
+            success: false,
+            message: "Gemini returned an invalid response. Please try again."
+          }, 502);
+        }
+
+        let proposedAction = null;
+
+        if (result.action && result.action.type === "update_person") {
+          const id = getValidId(result.action.id);
+          const fields = result.action.fields;
+
+          if (
+            id &&
+            matchedPeople.some(person => person.id === id) &&
+            fields &&
+            typeof fields === "object" &&
+            !Array.isArray(fields)
+          ) {
+            const cleanFields = {};
+
+            for (const [field, value] of Object.entries(fields)) {
+              if (!allowedFields.includes(field)) continue;
+
+              if (field === "status") {
+                if (
+                  typeof value !== "string" &&
+                  typeof value !== "boolean"
+                ) continue;
+
+                cleanFields[field] = value;
+                continue;
+              }
+
+              if (typeof value !== "string" || value.length > 1000) {
+                continue;
+              }
+
+              if (
+                field === "visibility" &&
+                !["public", "private"].includes(value)
+              ) {
+                continue;
+              }
+
+              cleanFields[field] = value;
+            }
+
+            if (Object.keys(cleanFields).length > 0) {
+              proposedAction = {
+                type: "update_person",
+                id,
+                fields: cleanFields
+              };
+            }
+          }
+        }
+
+        return json({
+          success: true,
+          reply: String(result.reply || "কী করতে হবে তা আরেকটু পরিষ্কার করে বলুন।"),
+          action: proposedAction,
+          requiresConfirmation: !!proposedAction
+        });
+      }
+
+      // =====================================================
+      // ADMIN GEMINI AGENT — CONFIRMED UPDATE
+      // POST /api/admin/agent/confirm
+      // =====================================================
+      if (
+        path === "/api/admin/agent/confirm" &&
+        request.method === "POST"
+      ) {
+        if (!isAdminAuthorized(request, env)) {
+          return json({
+            success: false,
+            message: "Unauthorized"
+          }, 401);
+        }
+
+        let body;
+
+        try {
+          body = await request.json();
+        } catch {
+          return json({
+            success: false,
+            message: "Invalid JSON"
+          }, 400);
+        }
+
+        if (body?.confirm !== true) {
+          return json({
+            success: false,
+            message: "Explicit confirmation is required"
+          }, 400);
+        }
+
+        const action = body.action;
+        const id = getValidId(action?.id);
+
+        if (
+          action?.type !== "update_person" ||
+          !id ||
+          !action.fields ||
+          typeof action.fields !== "object" ||
+          Array.isArray(action.fields)
+        ) {
+          return json({
+            success: false,
+            message: "Invalid update action"
+          }, 400);
+        }
+
+        const allowedFields = [
+          "name",
+          "father",
+          "village",
+          "upazilla",
+          "zilla",
+          "dateOfBirth",
+          "deathDate",
+          "status",
+          "gender",
+          "visibility",
+          "reviewStatus",
+          "joinDate",
+          "avatar"
+        ];
+
+        const cleanFields = {};
+
+        for (const [field, value] of Object.entries(action.fields)) {
+          if (!allowedFields.includes(field)) {
+            return json({
+              success: false,
+              message: "Field is not allowed: " + field
+            }, 400);
+          }
+
+          if (field === "status") {
+            if (
+              typeof value !== "string" &&
+              typeof value !== "boolean"
+            ) {
+              return json({
+                success: false,
+                message: "Invalid status value"
+              }, 400);
+            }
+
+            cleanFields[field] = value;
+            continue;
+          }
+
+          if (typeof value !== "string" || value.length > 1000) {
+            return json({
+              success: false,
+              message: "Invalid value for field: " + field
+            }, 400);
+          }
+
+          if (
+            field === "visibility" &&
+            !["public", "private"].includes(value)
+          ) {
+            return json({
+              success: false,
+              message: "visibility must be public or private"
+            }, 400);
+          }
+
+          cleanFields[field] = value;
+        }
+
+        if (Object.keys(cleanFields).length === 0) {
+          return json({
+            success: false,
+            message: "No valid fields to update"
+          }, 400);
+        }
+
+        const existing = await firebaseGet(
+          `/people/${encodeURIComponent(id)}`,
+          env
+        );
+
+        if (!existing || typeof existing !== "object") {
+          return json({
+            success: false,
+            message: "Person not found"
+          }, 404);
+        }
+
+        // Update only approved fields; leave all other data untouched.
+        await firebasePatch(
+          `/people/${encodeURIComponent(id)}`,
+          cleanFields,
+          env
+        );
+
+        return json({
+          success: true,
+          message: "Confirmed changes saved successfully",
+          id,
+          updatedFields: Object.keys(cleanFields)
+        });
+      }
+      
 
       // WEBSITE ASSETS
       return env.ASSETS.fetch(request);
@@ -979,7 +1370,71 @@ function corsHeaders() {
   return {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Max-Age": "86400"
   };
+}
+
+// ============================================================
+// ADMIN AUTHENTICATION FOR THE NEW AGENT ENDPOINTS
+// ============================================================
+
+function isAdminAuthorized(request, env) {
+  const configuredToken = String(env.ADMIN_TOKEN || "");
+
+  if (!configuredToken) return false;
+
+  const authorization = request.headers.get("Authorization") || "";
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+
+  if (!match) return false;
+
+  const suppliedToken = match[1].trim();
+
+  if (!suppliedToken || suppliedToken.length > 500) return false;
+
+  // Compare without returning token values or logging them.
+  const a = new TextEncoder().encode(suppliedToken);
+  const b = new TextEncoder().encode(configuredToken);
+
+  if (a.length !== b.length) return false;
+
+  let difference = 0;
+
+  for (let i = 0; i < a.length; i++) {
+    difference |= a[i] ^ b[i];
+  }
+
+  return difference === 0;
+}
+
+
+// ============================================================
+// FIREBASE PATCH — UPDATE SELECTED FIELDS ONLY
+// ============================================================
+
+async function firebasePatch(path, data, env) {
+  const token = await getFirebaseAccessToken(env);
+
+  const response = await fetch(
+    FIREBASE_DB_URL + path + ".json",
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+
+    throw new Error(
+      `Firebase PATCH failed: ${response.status} ${errorText}`
+    );
+  }
+
+  return await response.json();
 }
