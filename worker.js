@@ -420,76 +420,148 @@ export default {
       }
 
       // FAMILY TREE API
+    
+      // FAMILY TREE API
+      // Only names and relationship labels are returned to the browser.
+      // Real database IDs and personal details are not included in the response.
       if (
         path === "/api/tree" &&
         request.method === "GET"
       ) {
-        const rootId = getValidId(url.searchParams.get("id"));
+        const requestedId = getValidId(
+          url.searchParams.get("id")
+        );
 
-        if (!rootId) {
-          return json({
-            success: false,
-            message: "Person ID is required"
-          }, 400);
-        }
+        const people =
+          await firebaseGet("/people", env) || {};
 
-        const people = await firebaseGet("/people", env) || {};
         const relationships =
           await firebaseGet("/relationships", env) || {};
 
-        const publicPeople = {};
+        // Use the existing private key to generate opaque references.
+        // The actual Firebase IDs are never returned in the response.
+        const secret = String(env.FIREBASE_PRIVATE_KEY || "")
+          .replace(/\\n/g, "\n")
+          .trim();
 
-        for (const [id, person] of Object.entries(people)) {
+        if (!secret) {
+          throw new Error("FIREBASE_PRIVATE_KEY is missing");
+        }
+
+        const treeKey = await crypto.subtle.importKey(
+          "raw",
+          new TextEncoder().encode(secret),
+          {
+            name: "HMAC",
+            hash: "SHA-256"
+          },
+          false,
+          ["sign"]
+        );
+
+        async function makeOpaqueId(realId) {
+          const signature = await crypto.subtle.sign(
+            "HMAC",
+            treeKey,
+            new TextEncoder().encode(String(realId))
+          );
+
+          return "p_" + arrayBufferToBase64Url(signature);
+        }
+
+        const safePeople = {};
+        const realToOpaque = {};
+
+        for (const [realId, person] of Object.entries(people)) {
           if (
-            person &&
-            typeof person === "object" &&
-            person.visibility === "public"
+            !person ||
+            typeof person !== "object" ||
+            Array.isArray(person)
           ) {
-            publicPeople[id] = publicPerson(person, id);
+            continue;
+          }
+
+          const opaqueId = await makeOpaqueId(realId);
+
+          realToOpaque[realId] = opaqueId;
+
+          // Only the name is exposed.
+          safePeople[opaqueId] = {
+            name: String(person.name || "").trim() || "নাম নেই"
+          };
+        }
+
+        let rootId = null;
+
+        if (requestedId) {
+          // Accept an existing real ID for backward compatibility.
+          if (realToOpaque[requestedId]) {
+            rootId = realToOpaque[requestedId];
+          } else {
+            // Also accept an opaque ID from a previously loaded tree.
+            for (const [realId, opaqueId] of Object.entries(realToOpaque)) {
+              if (opaqueId === requestedId) {
+                rootId = opaqueId;
+                break;
+              }
+            }
+          }
+
+          if (!rootId) {
+            return json({
+              success: false,
+              message: "Person not found"
+            }, 404);
           }
         }
 
-        if (!publicPeople[rootId]) {
-          return json({
-            success: false,
-            message: "Public person not found"
-          }, 404);
-        }
+        const safeRelationships = [];
 
-        const publicRelationships = {};
+        for (const relation of Object.values(relationships)) {
+          if (!relation || typeof relation !== "object") {
+            continue;
+          }
 
-        for (const [relationId, relation] of Object.entries(relationships)) {
-          if (!relation || typeof relation !== "object") continue;
-
-          const person1 =
-            relation.person1 ||
+          const fromRaw =
             relation.from ||
             relation.source ||
+            relation.person1 ||
             relation.parent;
 
-          const person2 =
-            relation.person2 ||
+          const toRaw =
             relation.to ||
             relation.target ||
+            relation.person2 ||
             relation.child;
 
-          if (
-            person1 &&
-            person2 &&
-            publicPeople[person1] &&
-            publicPeople[person2]
-          ) {
-            publicRelationships[relationId] = relation;
+          const type = String(relation.type || "").trim();
+
+          if (!fromRaw || !toRaw || !type) {
+            continue;
           }
+
+          const from = realToOpaque[String(fromRaw)];
+          const to = realToOpaque[String(toRaw)];
+
+          if (!from || !to) {
+            continue;
+          }
+
+          safeRelationships.push({
+            from,
+            to,
+            type
+          });
         }
 
         return json({
           success: true,
           rootId,
-          people: publicPeople,
-          relationships: publicRelationships
+          people: safePeople,
+          relationships: safeRelationships
         });
       }
+
 
       // WEBSITE ASSETS
       return env.ASSETS.fetch(request);
