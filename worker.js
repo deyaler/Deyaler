@@ -750,15 +750,27 @@ Rules:
 
         const geminiData = await geminiResponse.json();
 
-        if (!geminiResponse.ok) {
-          console.error("Gemini API error:", geminiResponse.status);
+       
+if (!geminiResponse.ok) {
+  const errorData = await geminiResponse.json().catch(() => ({}));
 
-          return json({
-            success: false,
-            message: "Gemini API request failed",
-            status: geminiResponse.status
-          }, 502);
-        }
+  const errorMessage =
+    errorData?.error?.message ||
+    "Gemini API returned an unknown error";
+
+  console.error("Gemini API error:", {
+    status: geminiResponse.status,
+    message: errorMessage
+  });
+
+  return json({
+    success: false,
+    message: "Gemini API request failed",
+    status: geminiResponse.status,
+    details: errorMessage
+  }, 502);
+}
+
 
         const responseText =
           geminiData?.candidates?.[0]?.content?.parts
