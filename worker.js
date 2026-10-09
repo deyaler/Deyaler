@@ -421,9 +421,9 @@ export default {
 
       // FAMILY TREE API
     
+     
       // FAMILY TREE API
-      // Only names and relationship labels are returned to the browser.
-      // Real database IDs and personal details are not included in the response.
+      // Exposes opaque IDs, names, gender and relationships only.
       if (
         path === "/api/tree" &&
         request.method === "GET"
@@ -438,8 +438,7 @@ export default {
         const relationships =
           await firebaseGet("/relationships", env) || {};
 
-        // Use the existing private key to generate opaque references.
-        // The actual Firebase IDs are never returned in the response.
+        // Generate opaque references without exposing Firebase IDs.
         const secret = String(env.FIREBASE_PRIVATE_KEY || "")
           .replace(/\\n/g, "\n")
           .trim();
@@ -469,6 +468,28 @@ export default {
           return "p_" + arrayBufferToBase64Url(signature);
         }
 
+        // Normalize known gender values; never guess from a name.
+        function normalizeGender(value) {
+          const gender = String(value || "")
+            .trim()
+            .toLowerCase();
+
+          if ([
+            "male", "man", "boy", "পুরুষ", "ছেলে", "ছাত্র"
+          ].includes(gender)) {
+            return "male";
+          }
+
+          if ([
+            "female", "woman", "girl", "নারী", "মহিলা",
+            "মেয়ে", "মেয়ে", "ছাত্রী"
+          ].includes(gender)) {
+            return "female";
+          }
+
+          return "";
+        }
+
         const safePeople = {};
         const realToOpaque = {};
 
@@ -485,21 +506,22 @@ export default {
 
           realToOpaque[realId] = opaqueId;
 
-          // Only the name is exposed.
+          // Expose only the person's name and normalized gender.
           safePeople[opaqueId] = {
-            name: String(person.name || "").trim() || "নাম নেই"
+            name: String(person.name || "").trim() || "নাম নেই",
+            gender: normalizeGender(person.gender)
           };
         }
 
         let rootId = null;
 
         if (requestedId) {
-          // Accept an existing real ID for backward compatibility.
+          // Support a real ID supplied by a trusted caller.
           if (realToOpaque[requestedId]) {
             rootId = realToOpaque[requestedId];
           } else {
-            // Also accept an opaque ID from a previously loaded tree.
-            for (const [realId, opaqueId] of Object.entries(realToOpaque)) {
+            // Also accept an opaque ID from the tree API.
+            for (const opaqueId of Object.values(realToOpaque)) {
               if (opaqueId === requestedId) {
                 rootId = opaqueId;
                 break;
@@ -518,7 +540,11 @@ export default {
         const safeRelationships = [];
 
         for (const relation of Object.values(relationships)) {
-          if (!relation || typeof relation !== "object") {
+          if (
+            !relation ||
+            typeof relation !== "object" ||
+            Array.isArray(relation)
+          ) {
             continue;
           }
 
@@ -561,6 +587,7 @@ export default {
           relationships: safeRelationships
         });
       }
+
 
 
       // WEBSITE ASSETS
